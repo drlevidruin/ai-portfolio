@@ -3,79 +3,98 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Kriah Coach · Prototype</title>
+<title>Kriah Coach · Prototype · Pardes Day School</title>
+<meta name="description" content="Concept prototype: Kriah Coach helps elementary teachers track Hebrew reading fluency, letter mastery, and progression across the year, with weekly Claude-generated coaching insights." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet" />
 <style>
-  /* ----- Theme ----- */
+  /* =========================================================
+     Theme tokens
+     ========================================================= */
   :root {
     --navy: #343e85;
     --navy-light: #4a5298;
     --navy-dark: #2a3270;
     --green: #10653c;
     --green-light: #148a4f;
+    --green-soft: #d6ebdf;
     --brown: #5e3b1d;
+    --amber: #d97706;
+    --amber-soft: #fef3c7;
+    --amber-text: #92400e;
     --offwhite: #f8f9fc;
-    --warning: #d97706;
-    --yellow-bg: #fef3c7;
-    --yellow-text: #92400e;
+
     --gray-50: #f9fafb;
     --gray-100: #f3f4f6;
+    --gray-150: #ebedf1;
     --gray-200: #e5e7eb;
     --gray-300: #d1d5db;
     --gray-400: #9ca3af;
     --gray-500: #6b7280;
     --gray-600: #4b5563;
     --gray-700: #374151;
+    --gray-800: #1f2937;
     --gray-900: #111827;
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04);
-    --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.04);
-    --font-heading: 'Montserrat', sans-serif;
-    --font-body: 'DM Sans', sans-serif;
-    --font-hebrew: 'Frank Ruhl Libre', serif;
+
+    --shadow-xs: 0 1px 2px 0 rgb(15 23 42 / 0.04);
+    --shadow-sm: 0 1px 2px 0 rgb(15 23 42 / 0.05), 0 1px 3px 0 rgb(15 23 42 / 0.04);
+    --shadow-md: 0 4px 14px -3px rgb(15 23 42 / 0.08), 0 2px 6px -2px rgb(15 23 42 / 0.04);
+    --shadow-lg: 0 12px 28px -8px rgb(15 23 42 / 0.12), 0 4px 10px -4px rgb(15 23 42 / 0.06);
+
+    --font-heading: 'Montserrat', system-ui, sans-serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+    --font-hebrew: 'Frank Ruhl Libre', 'Times New Roman', serif;
   }
-  * { box-sizing: border-box; }
+
+  *, *::before, *::after { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
     margin: 0;
     font-family: var(--font-body);
     background: var(--offwhite);
-    color: #1a1a2e;
+    color: var(--gray-800);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.5;
+    font-feature-settings: "ss01", "kern";
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
     margin: 0;
     color: var(--gray-900);
+    letter-spacing: -0.01em;
   }
+  button { font-family: inherit; cursor: pointer; }
   ::selection { background: rgba(52, 62, 133, 0.18); }
   :focus-visible {
     outline: 2px solid var(--navy);
     outline-offset: 2px;
     border-radius: 4px;
   }
+  .tabular-nums { font-variant-numeric: tabular-nums; }
+  .heb { font-family: var(--font-hebrew); direction: rtl; unicode-bidi: isolate; }
 
-  /* ----- Layout shell ----- */
+  /* =========================================================
+     Topbar
+     ========================================================= */
   .topbar {
     position: sticky;
     top: 0;
-    z-index: 30;
+    z-index: 40;
     background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: saturate(140%) blur(8px);
-    -webkit-backdrop-filter: saturate(140%) blur(8px);
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
     border-bottom: 1px solid var(--gray-200);
   }
   .topbar-inner {
-    max-width: 1280px;
+    max-width: 1320px;
     margin: 0 auto;
-    padding: 14px 24px;
+    padding: 14px 28px;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    gap: 16px;
+    gap: 20px;
   }
   .back-link {
     display: inline-flex;
@@ -93,7 +112,7 @@
   .topbar-title {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     justify-content: center;
   }
   .topbar-title h1 {
@@ -105,18 +124,20 @@
   .badge {
     display: inline-flex;
     align-items: center;
-    padding: 2px 10px;
+    padding: 3px 10px;
     border-radius: 9999px;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 10.5px;
+    font-weight: 700;
     line-height: 1.6;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
+    white-space: nowrap;
   }
-  .badge-yellow { background: var(--yellow-bg); color: var(--yellow-text); }
-  .badge-navy { background: rgba(52, 62, 133, 0.10); color: var(--navy); }
-  .badge-green { background: rgba(16, 101, 60, 0.10); color: var(--green); }
-  .badge-gray { background: var(--gray-100); color: var(--gray-600); }
+  .badge-yellow { background: var(--amber-soft); color: var(--amber-text); }
+  .badge-navy   { background: rgba(52, 62, 133, 0.10); color: var(--navy); }
+  .badge-green  { background: rgba(16, 101, 60, 0.10); color: var(--green); }
+  .badge-gray   { background: var(--gray-100); color: var(--gray-600); }
+  .badge-amber  { background: rgba(217, 119, 6, 0.10); color: var(--amber); }
 
   .teacher-chip {
     display: inline-flex;
@@ -125,7 +146,7 @@
     justify-content: flex-end;
   }
   .teacher-chip .avatar {
-    width: 32px; height: 32px;
+    width: 34px; height: 34px;
     border-radius: 9999px;
     background: linear-gradient(135deg, var(--navy), var(--navy-light));
     color: white;
@@ -135,42 +156,126 @@
     font-weight: 700;
     font-family: var(--font-heading);
     font-size: 13px;
+    box-shadow: var(--shadow-sm);
   }
   .teacher-chip .who {
     font-size: 13px;
     color: var(--gray-700);
-    font-weight: 500;
+    font-weight: 600;
     text-align: right;
+    line-height: 1.25;
   }
-  .teacher-chip .who small { color: var(--gray-500); display: block; font-size: 11px; }
+  .teacher-chip .who small { color: var(--gray-500); display: block; font-size: 11px; font-weight: 500; }
 
-  /* ----- Main content ----- */
+  /* =========================================================
+     Page shell
+     ========================================================= */
   .page {
-    max-width: 1280px;
+    max-width: 1320px;
     margin: 0 auto;
-    padding: 24px;
+    padding: 28px;
   }
+  .page-intro {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 22px;
+  }
+  .page-intro h2 {
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .page-intro p {
+    font-size: 14px;
+    color: var(--gray-600);
+    margin: 0;
+    max-width: 720px;
+  }
+
+  /* =========================================================
+     Class summary strip
+     ========================================================= */
+  .summary-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: white;
+    border: 1px solid var(--gray-150);
+    border-radius: 16px;
+    padding: 18px 20px;
+    box-shadow: var(--shadow-xs);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: box-shadow .2s;
+  }
+  .stat-card:hover { box-shadow: var(--shadow-sm); }
+  .stat-card .label {
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--gray-500);
+  }
+  .stat-card .value {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--gray-900);
+    line-height: 1.1;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .stat-card .value small {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gray-500);
+  }
+  .stat-card .delta {
+    font-size: 12px;
+    color: var(--gray-500);
+    font-weight: 500;
+  }
+  .stat-card .delta.up { color: var(--green); }
+  .stat-card .delta.warn { color: var(--amber); }
+
+  /* =========================================================
+     Two-column layout
+     ========================================================= */
   .layout {
     display: grid;
-    grid-template-columns: 240px 1fr;
+    grid-template-columns: 280px 1fr;
     gap: 24px;
     align-items: start;
   }
 
-  /* ----- Sidebar ----- */
+  /* =========================================================
+     Sidebar
+     ========================================================= */
   .sidebar {
     position: sticky;
-    top: 76px;
+    top: 80px;
     align-self: start;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+    padding-right: 4px;
   }
+  .sidebar::-webkit-scrollbar { width: 6px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+
   .sidebar-title {
     font-family: var(--font-heading);
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     color: var(--gray-500);
-    padding: 0 4px 8px;
+    padding: 0 4px 6px;
   }
   .sidebar-title strong {
     display: block;
@@ -178,231 +283,300 @@
     font-size: 14px;
     text-transform: none;
     letter-spacing: -0.01em;
+    font-weight: 700;
     margin-top: 2px;
   }
-
   .student-list {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
   }
   .student-tile {
-    display: grid;
-    grid-template-columns: 36px 1fr auto;
-    grid-template-rows: auto auto;
-    column-gap: 10px;
-    align-items: center;
-    padding: 10px;
-    border-radius: 12px;
     background: white;
-    border: 1px solid transparent;
+    border: 1px solid var(--gray-150);
+    border-left: 3px solid transparent;
+    border-radius: 14px;
+    padding: 12px 14px;
     cursor: pointer;
-    transition: background .15s, border-color .15s, box-shadow .15s;
-    text-align: left;
-    width: 100%;
-    font-family: var(--font-body);
+    transition: all .15s;
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 12px;
+    align-items: center;
+    box-shadow: var(--shadow-xs);
+    position: relative;
   }
   .student-tile:hover {
-    background: white;
     border-color: var(--gray-200);
     box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
   }
   .student-tile.active {
-    background: white;
-    border-color: rgba(52, 62, 133, 0.35);
-    box-shadow: 0 0 0 1px rgba(52, 62, 133, 0.15), var(--shadow-sm);
+    border-left-color: var(--navy);
+    background: linear-gradient(90deg, rgba(52, 62, 133, 0.05), white 60%);
+    box-shadow: var(--shadow-sm);
   }
-  .student-tile .avatar {
-    grid-row: 1 / 3;
-    width: 36px; height: 36px;
-    border-radius: 9999px;
-    background: linear-gradient(135deg, #eef0fa, #e3e6f5);
-    color: var(--navy-dark);
-    display: inline-flex;
+  .student-tile .heb-avatar {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f1efe8, #e8e4d6);
+    color: var(--brown);
+    display: flex;
     align-items: center;
     justify-content: center;
     font-family: var(--font-hebrew);
+    font-size: 26px;
     font-weight: 700;
-    font-size: 22px;
     line-height: 1;
   }
-  .student-tile.active .avatar {
+  .student-tile.active .heb-avatar {
     background: linear-gradient(135deg, var(--navy), var(--navy-light));
-    color: white;
+    color: #fbf8ed;
   }
-  .student-tile .name {
-    grid-column: 2;
-    grid-row: 1;
-    font-size: 13px;
+  .student-tile .info {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .student-tile .info .name {
     font-weight: 600;
+    font-size: 13px;
     color: var(--gray-900);
     line-height: 1.2;
   }
-  .student-tile .pct {
-    grid-column: 3;
-    grid-row: 1;
+  .student-tile .info .grade {
     font-size: 11px;
-    font-weight: 700;
     color: var(--gray-500);
-    font-variant-numeric: tabular-nums;
+    font-weight: 500;
   }
-  .student-tile.active .pct { color: var(--navy); }
-  .student-tile .bar {
-    grid-column: 2 / span 2;
-    grid-row: 2;
-    height: 4px;
-    border-radius: 9999px;
-    background: var(--gray-100);
-    overflow: hidden;
+  .student-tile .meta-row {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
     margin-top: 4px;
   }
-  .student-tile .bar > div {
+  .student-tile .spark { width: 56px; height: 18px; flex-shrink: 0; }
+  .student-tile .progress {
+    flex: 1;
+    height: 4px;
+    background: var(--gray-150);
+    border-radius: 9999px;
+    overflow: hidden;
+    min-width: 40px;
+  }
+  .student-tile .progress > span {
+    display: block;
     height: 100%;
     background: var(--navy);
     border-radius: 9999px;
-    transition: width .4s ease;
   }
+  .student-tile .last {
+    font-size: 10.5px;
+    color: var(--gray-500);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .student-tile.active .progress > span { background: var(--green); }
 
-  /* ----- Card primitives ----- */
+  /* =========================================================
+     Right column · cards
+     ========================================================= */
+  .col {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    min-width: 0;
+  }
   .card {
     background: white;
-    border: 1px solid var(--gray-100);
-    border-radius: 16px;
-    box-shadow: var(--shadow-sm);
-    padding: 24px;
+    border: 1px solid var(--gray-150);
+    border-radius: 18px;
+    padding: 22px 24px;
+    box-shadow: var(--shadow-xs);
     transition: box-shadow .2s;
   }
-  .card:hover { box-shadow: var(--shadow-md); }
-  .card.flat:hover { box-shadow: var(--shadow-sm); }
-  .card-title {
+  .card:hover { box-shadow: var(--shadow-sm); }
+  .card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    gap: 12px;
+  }
+  .card-head h3 {
     font-size: 15px;
     font-weight: 700;
     color: var(--gray-900);
-    margin-bottom: 4px;
-    letter-spacing: -0.01em;
   }
-  .card-subtitle {
-    font-size: 12px;
+  .card-head h3 small {
     color: var(--gray-500);
-    margin-bottom: 16px;
+    font-weight: 500;
+    margin-left: 6px;
+    font-size: 12.5px;
+  }
+  .eyebrow {
+    font-family: var(--font-heading);
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gray-500);
   }
 
-  /* ----- Main column ----- */
-  .main-col {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    min-width: 0;
-  }
-
-  /* ----- Student header card ----- */
-  .student-hero {
+  /* ---------- Hero card ---------- */
+  .hero {
+    background:
+      radial-gradient(circle at top right, rgba(74, 82, 152, 0.06), transparent 55%),
+      white;
+    border: 1px solid var(--gray-150);
+    border-radius: 18px;
+    padding: 24px 26px;
+    box-shadow: var(--shadow-sm);
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: 100px 1fr;
     gap: 24px;
-    align-items: center;
   }
-  .student-hero .avatar-big {
+  .hero .heb-big {
     width: 88px; height: 88px;
-    border-radius: 20px;
-    background: linear-gradient(135deg, var(--navy), var(--navy-light));
-    color: white;
-    display: inline-flex;
+    border-radius: 24px;
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%);
+    color: #fdfcf3;
+    display: flex;
     align-items: center;
     justify-content: center;
     font-family: var(--font-hebrew);
-    font-weight: 900;
     font-size: 56px;
-    line-height: 1;
-    box-shadow: 0 8px 20px -8px rgba(52, 62, 133, 0.45);
-  }
-  .student-hero h2 {
-    font-size: 22px;
     font-weight: 700;
-    letter-spacing: -0.015em;
-    margin-bottom: 4px;
+    line-height: 1;
+    box-shadow: 0 10px 24px -10px rgba(16, 101, 60, 0.45), inset 0 -2px 0 rgba(0,0,0,0.06);
+    position: relative;
   }
-  .student-hero .role {
-    color: var(--gray-500);
-    font-size: 13px;
-    font-weight: 500;
+  .hero .heb-big::after {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.18);
+    pointer-events: none;
   }
-  .stats-row {
+  .hero-body { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .hero-name {
     display: flex;
+    align-items: center;
+    gap: 10px;
     flex-wrap: wrap;
-    gap: 18px;
-    margin-top: 14px;
   }
-  .stat {
+  .hero-name h2 {
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.15;
+  }
+  .hero-name .sub {
+    font-size: 13px;
+    color: var(--gray-500);
+    font-weight: 500;
+    margin-top: 2px;
+    display: block;
+    width: 100%;
+  }
+  .mini-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .mini-stat {
+    border: 1px solid var(--gray-150);
+    background: var(--gray-50);
+    border-radius: 12px;
+    padding: 10px 12px;
     display: flex;
     flex-direction: column;
-    min-width: 110px;
+    gap: 2px;
   }
-  .stat-label {
-    font-size: 10px;
+  .mini-stat .l {
+    font-size: 10.5px;
     color: var(--gray-500);
-    font-weight: 600;
     text-transform: uppercase;
+    font-weight: 600;
     letter-spacing: 0.06em;
   }
-  .stat-value {
+  .mini-stat .v {
     font-family: var(--font-heading);
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
     color: var(--gray-900);
-    margin-top: 2px;
+    line-height: 1.15;
   }
-  .stat-value.green { color: var(--green); }
+  .mini-stat .v small {
+    color: var(--gray-500);
+    font-weight: 500;
+    font-size: 12px;
+    margin-left: 2px;
+  }
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 14px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all .15s;
+    background: white;
+    color: var(--gray-700);
+    border-color: var(--gray-200);
+    line-height: 1;
+  }
+  .btn:hover { background: var(--gray-50); }
+  .btn:active { transform: scale(0.98); }
+  .btn svg { width: 14px; height: 14px; }
+  .btn-primary {
+    background: var(--navy);
+    color: white;
+    border-color: var(--navy);
+  }
+  .btn-primary:hover { background: var(--navy-dark); border-color: var(--navy-dark); }
+  .btn[disabled] { opacity: 0.55; cursor: not-allowed; }
+  .btn[disabled]:hover { background: white; }
 
-  /* ----- Progression milestones ----- */
+  /* ---------- Progression milestones ---------- */
+  .milestone-card { padding: 22px 26px 26px; }
   .milestones {
-    position: relative;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
-    padding: 12px 8px 0;
-  }
-  .milestones::before {
-    content: '';
-    position: absolute;
-    top: 30px;
-    left: calc(10% + 8px);
-    right: calc(10% + 8px);
-    height: 4px;
-    background: var(--gray-200);
-    border-radius: 9999px;
-    z-index: 0;
-  }
-  .milestones .progress-fill {
-    position: absolute;
-    top: 30px;
-    left: calc(10% + 8px);
-    height: 4px;
-    background: linear-gradient(90deg, var(--green), var(--green-light));
-    border-radius: 9999px;
-    z-index: 1;
-    transition: width .4s ease;
+    gap: 0;
+    align-items: start;
+    position: relative;
+    margin-top: 6px;
   }
   .milestone {
     position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
+    text-align: center;
+    padding: 0 4px;
   }
   .milestone .dot {
     width: 32px; height: 32px;
-    border-radius: 9999px;
-    display: inline-flex;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    display: flex;
     align-items: center;
     justify-content: center;
+    border: 2px solid var(--gray-200);
     background: white;
-    border: 2px solid var(--gray-300);
     color: var(--gray-400);
-    font-weight: 700;
     font-size: 14px;
-    box-shadow: 0 2px 4px rgb(0 0 0 / 0.04);
+    font-weight: 700;
+    position: relative;
+    z-index: 2;
     transition: all .2s;
   }
   .milestone.done .dot {
@@ -411,284 +585,578 @@
     color: white;
   }
   .milestone.current .dot {
-    background: var(--navy);
-    border-color: var(--navy);
-    color: white;
-    box-shadow: 0 0 0 4px rgba(52, 62, 133, 0.18);
+    background: white;
+    border-color: var(--green);
+    color: var(--green);
+    box-shadow: 0 0 0 4px rgba(16, 101, 60, 0.15);
+  }
+  .milestone.current .dot::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: conic-gradient(var(--green) 0% var(--p, 50%), transparent var(--p, 50%) 100%);
+    mask: radial-gradient(circle, transparent 50%, black 53%);
+    -webkit-mask: radial-gradient(circle, transparent 50%, black 53%);
+  }
+  .milestone.locked .dot {
+    background: var(--gray-100);
+    border-color: var(--gray-200);
+    color: var(--gray-400);
   }
   .milestone .label {
-    font-size: 11px;
+    font-size: 12.5px;
     font-weight: 600;
+    color: var(--gray-900);
+    line-height: 1.25;
+    margin-bottom: 2px;
+  }
+  .milestone.locked .label { color: var(--gray-500); font-weight: 500; }
+  .milestone .meta {
+    font-size: 11px;
     color: var(--gray-500);
-    text-align: center;
     line-height: 1.3;
   }
-  .milestone.done .label, .milestone.current .label { color: var(--gray-900); }
-  .milestone .sublabel {
-    font-size: 10px;
-    color: var(--gray-400);
-    font-weight: 500;
-    text-align: center;
+  .milestone.current .meta { color: var(--green); font-weight: 600; }
+  .milestone:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 15px;
+    left: calc(50% + 16px);
+    right: calc(-50% + 16px);
+    height: 3px;
+    background: var(--gray-200);
+    border-radius: 2px;
+    z-index: 0;
   }
+  .milestone.done:not(:last-child)::after,
+  .milestone.current:not(:last-child)::after { background: linear-gradient(90deg, var(--green), var(--green) 60%, var(--gray-200)); }
+  .milestone.done + .milestone.done::after,
+  .milestone.done + .milestone.current::after { background: var(--green); }
 
-  /* ----- Two-column grid for cards ----- */
-  .grid-2 {
+  /* ---------- Two-column grid (left/right under hero) ---------- */
+  .split {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 22px;
     align-items: start;
   }
-
-  /* ----- Fluency chart ----- */
-  .chart-wrap {
-    margin-top: 8px;
-    position: relative;
+  .split > .col-l, .split > .col-r {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    min-width: 0;
   }
-  .chart-svg { display: block; width: 100%; height: auto; }
 
-  /* ----- Letter mastery grid ----- */
+  /* ---------- Fluency chart ---------- */
+  .chart-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 17/9;
+    margin-top: 4px;
+  }
+  .chart-wrap svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--gray-600);
+  }
+  .chart-legend .swatch {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .chart-legend .swatch i {
+    width: 18px; height: 3px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+  .chart-legend .swatch.target i {
+    background: var(--amber);
+    height: 0;
+    border-top: 2px dashed var(--amber);
+    width: 18px;
+  }
+  .chart-annotation {
+    margin-top: 14px;
+    background: linear-gradient(135deg, rgba(16,101,60,0.05), rgba(16,101,60,0.02));
+    border: 1px solid rgba(16, 101, 60, 0.18);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 12.5px;
+    color: var(--gray-700);
+    line-height: 1.55;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .chart-annotation .ico {
+    flex-shrink: 0;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--green);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 1px;
+  }
+  .chart-annotation strong { color: var(--gray-900); font-weight: 700; }
+
+  /* ---------- Letter mastery grid ---------- */
   .letter-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(11, 1fr);
     gap: 8px;
     margin-top: 4px;
   }
   .letter-tile {
-    background: var(--gray-50);
-    border: 1px solid var(--gray-100);
-    border-radius: 10px;
-    padding: 10px 4px 8px;
+    aspect-ratio: 1 / 1.1;
+    border-radius: 12px;
+    border: 1px solid var(--gray-150);
+    background: white;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    transition: transform .15s, box-shadow .15s;
+    justify-content: space-between;
+    padding: 6px 4px 5px;
+    position: relative;
+    cursor: pointer;
+    transition: all .15s;
+    user-select: none;
   }
-  .letter-tile:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-sm);
-  }
-  .letter-tile .heb {
+  .letter-tile:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+  .letter-tile .letter {
     font-family: var(--font-hebrew);
-    font-size: 2rem;
+    font-size: 26px;
     font-weight: 700;
-    line-height: 1;
     color: var(--gray-900);
+    line-height: 1;
   }
-  .letter-tile.mastered .heb { color: var(--green); }
-  .letter-tile.practicing .heb { color: var(--warning); }
-  .letter-tile.working .heb { color: var(--gray-500); }
-  .letter-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 9px;
+  .letter-tile .pct {
+    font-size: 10px;
     font-weight: 600;
     color: var(--gray-500);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
   }
-  .status-dot {
-    width: 6px; height: 6px; border-radius: 9999px;
-    background: var(--gray-400);
+  .letter-tile .status {
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--gray-300);
   }
-  .letter-tile.mastered .status-dot { background: var(--green); }
-  .letter-tile.practicing .status-dot { background: var(--warning); }
-  .letter-tile.working .status-dot { background: var(--gray-400); }
+  .letter-tile.mastered { background: linear-gradient(180deg, var(--green-soft), white); border-color: rgba(16,101,60,0.25); }
+  .letter-tile.mastered .status { background: var(--green); }
+  .letter-tile.mastered .letter { color: var(--green); }
+  .letter-tile.practicing { background: linear-gradient(180deg, var(--amber-soft), white); border-color: rgba(217,119,6,0.25); }
+  .letter-tile.practicing .status { background: var(--amber); }
+  .letter-tile.practicing .letter { color: var(--amber-text); }
+  .letter-tile.working { background: var(--gray-50); border-color: var(--gray-200); }
+  .letter-tile.working .status { background: var(--gray-400); }
+  .letter-tile.working .letter { color: var(--gray-500); }
+  .letter-tile.open {
+    box-shadow: 0 0 0 3px rgba(52,62,133,0.18), var(--shadow-md);
+    border-color: var(--navy);
+    z-index: 3;
+  }
 
-  .letter-legend {
-    display: flex;
+  .letter-popover {
+    grid-column: 1 / -1;
+    background: linear-gradient(180deg, var(--gray-50), white);
+    border: 1px solid var(--gray-200);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-top: 4px;
+    display: grid;
+    grid-template-columns: 64px 1fr;
     gap: 16px;
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px solid var(--gray-100);
-    font-size: 11px;
-    color: var(--gray-600);
-    font-weight: 500;
-    flex-wrap: wrap;
+    align-items: start;
+    animation: pop .18s ease-out;
   }
-  .letter-legend > span { display: inline-flex; align-items: center; gap: 6px; }
-  .letter-legend .status-dot { width: 8px; height: 8px; }
-
-  /* ----- AI insight card ----- */
-  .ai-card {
-    background: linear-gradient(135deg, #f4f5fc, #ffffff 60%);
-    border: 1px solid rgba(52, 62, 133, 0.18);
+  @keyframes pop {
+    from { opacity: 0; transform: translateY(-3px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .letter-popover .pop-letter {
+    width: 64px; height: 64px;
+    border-radius: 14px;
+    background: white;
+    border: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-hebrew);
+    font-size: 42px;
+    color: var(--navy);
+    line-height: 1;
+  }
+  .letter-popover .pop-body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .letter-popover h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gray-900);
+  }
+  .letter-popover .pop-meta {
+    font-size: 12px;
+    color: var(--gray-600);
+    line-height: 1.55;
+  }
+  .letter-popover .pop-history {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 6px;
+  }
+  .letter-popover .pop-history .b {
+    height: 18px;
+    flex: 1;
+    border-radius: 4px;
+    background: var(--gray-150);
     position: relative;
     overflow: hidden;
   }
-  .ai-card::before {
-    content: '';
+  .letter-popover .pop-history .b > span {
     position: absolute;
-    top: 0; left: 0;
-    width: 4px; height: 100%;
-    background: linear-gradient(180deg, var(--navy), var(--navy-light));
+    inset: auto 0 0 0;
+    background: var(--navy);
+    border-radius: 4px;
   }
-  .ai-header {
+  .letter-popover .close-pop {
+    position: absolute;
+    top: 10px; right: 14px;
+    background: none;
+    border: none;
+    color: var(--gray-400);
+    font-size: 16px;
+    line-height: 1;
+    padding: 4px;
+  }
+  .letter-popover .close-pop:hover { color: var(--gray-700); }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--gray-150);
+    font-size: 12px;
+    color: var(--gray-600);
+  }
+  .legend .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .legend .pill i {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+  }
+  .legend .pill.mastered i { background: var(--green); }
+  .legend .pill.practicing i { background: var(--amber); }
+  .legend .pill.working i { background: var(--gray-400); }
+
+  /* ---------- AI insight card ---------- */
+  .insight {
+    background:
+      radial-gradient(circle at top right, rgba(52, 62, 133, 0.08), transparent 50%),
+      linear-gradient(180deg, #f6f7fc 0%, white 100%);
+    border: 1px solid rgba(52, 62, 133, 0.18);
+  }
+  .insight .eyebrow-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .insight .insight-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--navy);
+  }
+  .insight .insight-eyebrow .star {
+    width: 16px; height: 16px;
+    background: linear-gradient(135deg, var(--navy), var(--navy-light));
+    color: white;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+  }
+  .insight p {
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--gray-800);
+    margin: 0 0 12px;
+  }
+  .insight .sources {
+    font-size: 11.5px;
+    color: var(--gray-500);
+    padding-top: 12px;
+    border-top: 1px dashed var(--gray-200);
+  }
+  .insight .sources strong { color: var(--gray-700); font-weight: 600; }
+
+  /* ---------- Teacher log ---------- */
+  .log-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .log-entry {
+    border-left: 2px solid var(--gray-200);
+    padding: 4px 0 4px 14px;
+    font-size: 13px;
+    color: var(--gray-700);
+    line-height: 1.55;
+  }
+  .log-entry:hover { border-left-color: var(--navy); }
+  .log-entry .head {
     display: flex;
     align-items: center;
     gap: 8px;
+    margin-bottom: 2px;
+    font-size: 12px;
+  }
+  .log-entry .head strong { color: var(--gray-900); font-weight: 700; }
+  .log-entry .head .when { color: var(--gray-500); }
+  .log-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--gray-150);
+  }
+
+  /* ---------- Parent comm ---------- */
+  .parent-card .draft {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-150);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--gray-700);
     margin-bottom: 12px;
   }
-  .ai-header .sparkle {
-    width: 28px; height: 28px;
-    border-radius: 8px;
+  .parent-card .draft p { margin: 0 0 10px; }
+  .parent-card .draft p:last-child { margin: 0; }
+  .parent-card .recipient {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: var(--gray-500);
+    margin-bottom: 8px;
+  }
+  .parent-card .recipient .dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; }
+
+  /* ---------- Heatmap ---------- */
+  .heatmap-wrap {
+    overflow-x: auto;
+    margin-top: 8px;
+  }
+  .heatmap {
+    border-collapse: separate;
+    border-spacing: 3px;
+    margin: 0;
+    width: 100%;
+    min-width: 720px;
+  }
+  .heatmap th, .heatmap td {
+    padding: 0;
+    text-align: center;
+  }
+  .heatmap thead th {
+    font-family: var(--font-hebrew);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--gray-700);
+    line-height: 1;
+    height: 28px;
+    width: 28px;
+  }
+  .heatmap thead th:first-child { width: auto; min-width: 130px; text-align: left; padding-left: 4px; font-family: var(--font-heading); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-500); }
+  .heatmap tbody th {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--gray-700);
+    text-align: left;
+    padding-right: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .heatmap tbody th .heb-mini {
+    font-family: var(--font-hebrew);
+    color: var(--brown);
+    margin-right: 4px;
+    font-size: 16px;
+  }
+  .heatmap td .cell {
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    margin: 0 auto;
+    display: block;
+  }
+  .heatmap-key {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11.5px;
+    color: var(--gray-600);
+    margin-top: 12px;
+  }
+  .heatmap-key .scale {
+    display: flex;
+    gap: 3px;
+  }
+  .heatmap-key .scale i {
+    width: 16px; height: 12px;
+    border-radius: 3px;
+    display: inline-block;
+  }
+
+  /* ---------- "How it works" footer ---------- */
+  .howitworks {
+    background: white;
+    border: 2px dashed var(--gray-200);
+    border-radius: 18px;
+    padding: 22px 26px;
+  }
+  .howitworks h3 {
+    font-size: 15px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .howitworks h3 .star {
+    width: 18px; height: 18px;
     background: linear-gradient(135deg, var(--navy), var(--navy-light));
+    border-radius: 5px;
     color: white;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    font-size: 10px;
   }
-  .ai-header .sparkle svg { width: 16px; height: 16px; }
-  .ai-title {
+  .howitworks ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 14px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .howitworks li {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-150);
+    border-radius: 12px;
+    padding: 12px 14px;
     font-size: 13px;
+    line-height: 1.55;
+    color: var(--gray-700);
+  }
+  .howitworks li strong {
+    color: var(--gray-900);
     font-weight: 700;
-    color: var(--navy);
+    display: block;
+    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-  }
-  .ai-body {
-    font-size: 14px;
-    line-height: 1.6;
-    color: var(--gray-700);
-    margin: 0;
-  }
-  .ai-body strong { color: var(--gray-900); }
-
-  /* ----- Teacher log ----- */
-  .log-entry {
-    padding: 12px 0;
-    border-top: 1px solid var(--gray-100);
-  }
-  .log-entry:first-of-type { border-top: 0; padding-top: 4px; }
-  .log-meta {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    color: var(--gray-500);
-    margin-bottom: 4px;
-    font-weight: 500;
-  }
-  .log-meta .who {
     color: var(--navy);
-    font-weight: 600;
+    margin-bottom: 4px;
+    font-family: var(--font-heading);
   }
-  .log-text {
-    font-size: 13px;
-    color: var(--gray-700);
-    line-height: 1.5;
-  }
-
-  /* ----- Quick actions ----- */
-  .actions {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 10px 16px;
-    border-radius: 10px;
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 600;
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition: background .15s, border-color .15s, color .15s, transform .05s;
-  }
-  .btn:active:not(:disabled) { transform: scale(0.99); }
-  .btn-primary { background: var(--navy); color: white; }
-  .btn-primary:hover { background: var(--navy-dark); }
-  .btn-secondary {
-    background: white;
-    color: var(--gray-700);
-    border-color: var(--gray-300);
-  }
-  .btn-secondary:hover { background: var(--gray-50); }
-  .btn:disabled { opacity: 0.55; cursor: not-allowed; }
-  .btn svg { width: 14px; height: 14px; }
-
-  /* ----- How this is made ----- */
-  .meta-card {
-    margin-top: 28px;
-    padding: 20px 24px;
-    background: white;
-    border: 1px dashed var(--gray-300);
-    border-radius: 16px;
-    color: var(--gray-600);
-    font-size: 13px;
-    line-height: 1.6;
-  }
-  .meta-card h3 {
+  .howitworks .built {
     font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
     color: var(--gray-500);
+    border-top: 1px solid var(--gray-150);
+    padding-top: 12px;
+  }
+  .howitworks .built strong { color: var(--gray-700); }
+
+  /* ---------- Section labels ---------- */
+  .section-label {
+    margin-top: 8px;
+    font-family: var(--font-heading);
+    font-size: 11px;
     font-weight: 700;
-    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gray-500);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: -4px;
   }
-  .meta-card ul {
-    margin: 0;
-    padding-left: 18px;
-  }
-  .meta-card li { margin-bottom: 4px; }
-  .meta-card li:last-child { margin-bottom: 0; }
-
-  footer.foot {
-    max-width: 1280px;
-    margin: 24px auto 32px;
-    padding: 0 24px;
-    color: var(--gray-400);
-    font-size: 12px;
-    text-align: center;
+  .section-label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--gray-200);
   }
 
-  /* ----- Responsive ----- */
-  @media (max-width: 960px) {
+  /* =========================================================
+     Responsive
+     ========================================================= */
+  @media (max-width: 1100px) {
+    .summary-strip { grid-template-columns: repeat(2, 1fr); }
     .layout { grid-template-columns: 1fr; }
-    .sidebar { position: static; }
+    .sidebar { position: static; max-height: none; overflow: visible; }
     .student-list {
-      flex-direction: row;
-      overflow-x: auto;
-      gap: 8px;
-      padding-bottom: 6px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
     }
-    .student-tile { flex: 0 0 220px; }
-    .grid-2 { grid-template-columns: 1fr; }
-    .topbar-inner { grid-template-columns: auto 1fr auto; }
+    .split { grid-template-columns: 1fr; }
+    .howitworks ul { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) {
+    .topbar-inner { grid-template-columns: 1fr; gap: 8px; padding: 12px 18px; }
     .topbar-title { justify-content: flex-start; }
-    .teacher-chip .who { display: none; }
+    .teacher-chip { display: none; }
+    .page { padding: 18px; }
+    .summary-strip { grid-template-columns: 1fr; }
+    .student-list { grid-template-columns: 1fr; }
+    .hero { grid-template-columns: 1fr; gap: 16px; }
+    .mini-stats { grid-template-columns: repeat(2, 1fr); }
+    .milestones { grid-template-columns: repeat(5, 1fr); gap: 8px; }
+    .milestone .label { font-size: 10.5px; }
+    .milestone .meta { font-size: 10px; }
+    .letter-grid { grid-template-columns: repeat(6, 1fr); }
+    .letter-popover { grid-template-columns: 1fr; }
   }
-  @media (max-width: 540px) {
-    .student-hero { grid-template-columns: 1fr; text-align: center; }
-    .student-hero .avatar-big { margin: 0 auto; }
-    .stats-row { justify-content: center; }
-    .letter-grid { grid-template-columns: repeat(4, 1fr); }
-    .milestone .label { font-size: 10px; }
-    .milestone .sublabel { display: none; }
-    .page { padding: 16px; }
-  }
-
-  /* ----- Animation ----- */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .fade { animation: fadeUp 0.25s ease-out; }
 </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
+<!-- =========================================================
+     Topbar
+     ========================================================= -->
 <header class="topbar">
   <div class="topbar-inner">
     <div>
-      <a class="back-link" href="../../index.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      <a class="back-link" href="../../index.html"
+         onclick="if(window.history.length>1){event.preventDefault();window.history.back();}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
         Back to portfolio
       </a>
     </div>
@@ -697,550 +1165,1011 @@
       <span class="badge badge-yellow">Prototype · Concept</span>
     </div>
     <div class="teacher-chip">
-      <span class="who">Mrs. Levi<small>2nd Grade</small></span>
-      <span class="avatar">ML</span>
+      <div class="who">Mrs. Levi <small>2nd Grade · Room 14</small></div>
+      <div class="avatar">ML</div>
     </div>
   </div>
 </header>
 
 <main class="page">
+
+  <div class="page-intro">
+    <h2>2nd Grade Hebrew Reading · Spring 2026</h2>
+    <p>This is a working prototype of how Kriah Coach could help Hebrew teachers see fluency, letter mastery, and progression for every student in one place, with weekly Claude-generated coaching insights and parent updates ready to review.</p>
+  </div>
+
+  <!-- =========================================================
+       Class summary strip
+       ========================================================= -->
+  <section class="summary-strip" aria-label="Class summary">
+    <div class="stat-card">
+      <div class="label">Avg fluency</div>
+      <div class="value tabular-nums">42 <small>wpm</small></div>
+      <div class="delta up">+5 wpm vs. February</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Avg letters mastered</div>
+      <div class="value tabular-nums">14 <small>/ 22</small></div>
+      <div class="delta up">+2 since last term</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Students on track</div>
+      <div class="value tabular-nums">7 <small>/ 10</small></div>
+      <div class="delta">3 to watch closely</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Needing extra support</div>
+      <div class="value tabular-nums">2</div>
+      <div class="delta warn">Dalet · Chet — fluency &lt; 35</div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       Two-column layout
+       ========================================================= -->
   <div class="layout">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-title">
-        My Class
+    <!-- =========================================================
+         Sidebar · class roster
+         ========================================================= -->
+    <aside class="sidebar" aria-label="Student roster">
+      <div class="sidebar-title">My class
         <strong>2nd Grade · 10 students</strong>
       </div>
-      <div id="studentList" class="student-list" role="tablist"></div>
+      <div class="student-list" id="studentList"></div>
     </aside>
 
-    <!-- MAIN -->
-    <section class="main-col">
-
-      <!-- (a) Student header card -->
-      <div id="heroCard" class="card flat fade">
-        <div class="student-hero">
-          <div id="heroAvatar" class="avatar-big">א</div>
-          <div>
-            <h2 id="heroName">Alef Cohen · Grade 2</h2>
-            <div class="role">Kriah Coach · Personal progress</div>
-            <div class="stats-row">
-              <div class="stat">
-                <span class="stat-label">Current workbook</span>
-                <span id="statWorkbook" class="stat-value">Aleph Unit 2</span>
-              </div>
-              <div class="stat">
-                <span class="stat-label">Fluency</span>
-                <span id="statFluency" class="stat-value green">42 wpm</span>
-              </div>
-              <div class="stat">
-                <span class="stat-label">Last practice</span>
-                <span id="statLast" class="stat-value">2 days ago</span>
-              </div>
-              <div class="stat">
-                <span class="stat-label">Readiness</span>
-                <span id="statReadiness" class="stat-value">78%</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- (b) Progression milestones -->
-      <div class="card fade">
-        <div class="card-title">Progression</div>
-        <div class="card-subtitle">Path through the Aleph kriah curriculum</div>
-        <div id="milestones" class="milestones"></div>
-      </div>
-
-      <!-- (c) 2-column grid -->
-      <div class="grid-2">
-
-        <!-- LEFT column -->
-        <div class="main-col">
-          <!-- Fluency chart -->
-          <div class="card fade">
-            <div class="card-title">Fluency · weekly trend</div>
-            <div class="card-subtitle">Words per minute · last 10 sessions</div>
-            <div class="chart-wrap" id="chartWrap"></div>
-          </div>
-
-          <!-- Letter mastery -->
-          <div class="card fade">
-            <div class="card-title">22-letter mastery</div>
-            <div class="card-subtitle">Status across the aleph-bet</div>
-            <div id="letterGrid" class="letter-grid"></div>
-            <div class="letter-legend">
-              <span><span class="status-dot" style="background: var(--green);"></span> Mastered</span>
-              <span><span class="status-dot" style="background: var(--warning);"></span> Practicing</span>
-              <span><span class="status-dot" style="background: var(--gray-400);"></span> Working</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- RIGHT column -->
-        <div class="main-col">
-          <!-- AI insight -->
-          <div class="card ai-card fade">
-            <div class="ai-header">
-              <span class="sparkle">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.7 4.7L18.4 8.5l-4.7 1.7L12 14.9l-1.7-4.7L5.6 8.5l4.7-1.8L12 2zm6 12l1 2.7 2.7 1-2.7 1-1 2.7-1-2.7-2.7-1 2.7-1 1-2.7zM5 14l.8 2.2L8 17l-2.2.8L5 20l-.8-2.2L2 17l2.2-.8L5 14z"/></svg>
-              </span>
-              <span class="ai-title">AI Insight</span>
-              <span class="badge badge-navy" style="margin-left:auto;">Updated weekly</span>
-            </div>
-            <p id="aiBody" class="ai-body"></p>
-          </div>
-
-          <!-- Teacher log -->
-          <div class="card fade">
-            <div class="card-title">Teacher log</div>
-            <div class="card-subtitle">Recent practice notes</div>
-            <div id="teacherLog"></div>
-          </div>
-
-          <!-- Quick actions -->
-          <div class="card flat fade">
-            <div class="card-title">Quick actions</div>
-            <div class="card-subtitle">Streamlined for in-class use</div>
-            <div class="actions">
-              <button class="btn btn-primary" id="logBtn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                Log today's session
-              </button>
-              <button class="btn btn-secondary" disabled title="Demo only">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
-                Share with parent
-              </button>
-            </div>
-          </div>
-        </div>
-
-      </div><!-- /.grid-2 -->
-
-      <!-- Section 2: How this is made -->
-      <div class="meta-card">
-        <h3>How this is made</h3>
-        <ul>
-          <li>Built on the same Apps Script + Google Sheets foundation as the Pardes SIS.</li>
-          <li>AI insight is generated weekly by Claude using each student's fluency trend, workbook progress, and recent teacher notes.</li>
-          <li>Design prototype — not yet deployed in production. Data shown is fictional.</li>
-        </ul>
-      </div>
-
+    <!-- =========================================================
+         Right column · selected student detail
+         ========================================================= -->
+    <section class="col" id="studentPanel" aria-label="Student detail">
+      <!-- populated via JS -->
     </section>
+
   </div>
+
+  <!-- =========================================================
+       Below-the-fold · class-wide
+       ========================================================= -->
+  <div style="height: 32px;"></div>
+  <div class="section-label">Class-wide view</div>
+  <div style="height: 12px;"></div>
+
+  <section class="card" aria-label="Class-wide letter heatmap">
+    <div class="card-head">
+      <h3>Letter mastery heatmap <small>10 students × 22 letters · darker = stronger</small></h3>
+      <span class="badge badge-navy">Class</span>
+    </div>
+    <div class="heatmap-wrap">
+      <table class="heatmap" id="heatmapTable" aria-label="Class letter heatmap"></table>
+    </div>
+    <div class="heatmap-key">
+      <span>Lower</span>
+      <span class="scale" id="heatmapScale"></span>
+      <span>Higher</span>
+      <span style="margin-left: auto; color: var(--gray-500);">Class strengths: Aleph, Bet, Tav · Class struggles: Ayin, Tzadi, Tet</span>
+    </div>
+  </section>
+
+  <div style="height: 22px;"></div>
+
+  <section class="howitworks">
+    <h3><span class="star">&#10024;</span> How Kriah Coach works</h3>
+    <ul>
+      <li>
+        <strong>Daily</strong>
+        Each kriah session logs fluency (words per minute) and per-letter accuracy from a tap interface — fast enough to use during a 5-minute reading check.
+      </li>
+      <li>
+        <strong>Weekly</strong>
+        Claude reads the fluency trend, workbook progress, and recent teacher notes, then writes a one-paragraph coaching insight with a specific next step.
+      </li>
+      <li>
+        <strong>Monthly</strong>
+        Parents get an auto-drafted update in family-friendly language, ready for the teacher to review, edit, and send.
+      </li>
+    </ul>
+    <div class="built">
+      <strong>Built on:</strong> Apps Script · Google Sheets · Claude · the same stack that powers the Pardes SIS Dashboard. Everything stays inside the Google Workspace the school already uses.
+    </div>
+  </section>
+
 </main>
 
-<footer class="foot">
-  Pardes Day School · Kriah Coach concept · 2026
-</footer>
-
 <script>
-/* =========================================================================
-   Data
-   ========================================================================= */
-const STUDENTS = [
-  { id: 'alef',   hebrew: 'א', first: 'Alef',    last: 'Cohen',    fluency: 42, workbook: 'Aleph Unit 2', workbookPct: 50, readiness: 78, mastered: 15 },
-  { id: 'bet',    hebrew: 'ב', first: 'Bet',     last: 'Levi',     fluency: 38, workbook: 'Aleph Unit 2', workbookPct: 40, readiness: 65, mastered: 13 },
-  { id: 'gimmel', hebrew: 'ג', first: 'Gimmel',  last: 'Friedman', fluency: 51, workbook: 'Aleph Unit 3', workbookPct: 30, readiness: 88, mastered: 18 },
-  { id: 'dalet',  hebrew: 'ד', first: 'Dalet',   last: 'Goldberg', fluency: 29, workbook: 'Aleph Unit 1', workbookPct: 80, readiness: 55, mastered: 11 },
-  { id: 'hei',    hebrew: 'ה', first: 'Hei',     last: 'Shapiro',  fluency: 44, workbook: 'Aleph Unit 2', workbookPct: 60, readiness: 72, mastered: 14 },
-  { id: 'vav',    hebrew: 'ו', first: 'Vav',     last: 'Stein',    fluency: 40, workbook: 'Aleph Unit 2', workbookPct: 45, readiness: 69, mastered: 14 },
-  { id: 'zayin',  hebrew: 'ז', first: 'Zayin',   last: 'Rosen',    fluency: 48, workbook: 'Aleph Unit 3', workbookPct: 20, readiness: 82, mastered: 17 },
-  { id: 'chet',   hebrew: 'ח', first: 'Chet',    last: 'Klein',    fluency: 33, workbook: 'Aleph Unit 1', workbookPct: 70, readiness: 61, mastered: 12 },
-  { id: 'tet',    hebrew: 'ט', first: 'Tet',     last: 'Katz',     fluency: 41, workbook: 'Aleph Unit 2', workbookPct: 55, readiness: 75, mastered: 15 },
-  { id: 'yud',    hebrew: 'י', first: 'Yud',     last: 'Berg',     fluency: 39, workbook: 'Aleph Unit 2', workbookPct: 35, readiness: 71, mastered: 14 }
-];
+  /* =========================================================
+     Data · 10 students with deterministic per-student detail
+     ========================================================= */
+  const TODAY = '2026-04-24';
 
-// 22 letters in standard order.
-const LETTERS = [
-  { heb: 'א', name: 'aleph' },
-  { heb: 'ב', name: 'bet' },
-  { heb: 'ב', name: 'vet' },
-  { heb: 'ג', name: 'gimmel' },
-  { heb: 'ד', name: 'dalet' },
-  { heb: 'ה', name: 'hei' },
-  { heb: 'ו', name: 'vav' },
-  { heb: 'ז', name: 'zayin' },
-  { heb: 'ח', name: 'chet' },
-  { heb: 'ט', name: 'tet' },
-  { heb: 'י', name: 'yud' },
-  { heb: 'כ', name: 'kaf' },
-  { heb: 'כ', name: 'khaf' },
-  { heb: 'ל', name: 'lamed' },
-  { heb: 'מ', name: 'mem' },
-  { heb: 'נ', name: 'nun' },
-  { heb: 'ס', name: 'samech' },
-  { heb: 'ע', name: 'ayin' },
-  { heb: 'פ', name: 'peh' },
-  { heb: 'פ', name: 'feh' },
-  { heb: 'צ', name: 'tzadi' },
-  { heb: 'ק', name: 'kuf' }
-];
+  // Hebrew letters in correct reading order (aleph through tav)
+  const LETTERS = [
+    { id: 'alef',    heb: 'א', name: 'Aleph' },
+    { id: 'bet',     heb: 'ב', name: 'Bet' },
+    { id: 'gimmel',  heb: 'ג', name: 'Gimmel' },
+    { id: 'dalet',   heb: 'ד', name: 'Dalet' },
+    { id: 'hei',     heb: 'ה', name: 'Hei' },
+    { id: 'vav',     heb: 'ו', name: 'Vav' },
+    { id: 'zayin',   heb: 'ז', name: 'Zayin' },
+    { id: 'chet',    heb: 'ח', name: 'Chet' },
+    { id: 'tet',     heb: 'ט', name: 'Tet' },
+    { id: 'yud',     heb: 'י', name: 'Yud' },
+    { id: 'kaf',     heb: 'כ', name: 'Kaf' },
+    { id: 'lamed',   heb: 'ל', name: 'Lamed' },
+    { id: 'mem',     heb: 'מ', name: 'Mem' },
+    { id: 'nun',     heb: 'נ', name: 'Nun' },
+    { id: 'samech',  heb: 'ס', name: 'Samech' },
+    { id: 'ayin',    heb: 'ע', name: 'Ayin' },
+    { id: 'pe',      heb: 'פ', name: 'Pe' },
+    { id: 'tzadi',   heb: 'צ', name: 'Tzadi' },
+    { id: 'kuf',     heb: 'ק', name: 'Kuf' },
+    { id: 'resh',    heb: 'ר', name: 'Resh' },
+    { id: 'shin',    heb: 'ש', name: 'Shin' },
+    { id: 'tav',     heb: 'ת', name: 'Tav' },
+  ];
 
-// Curriculum milestones
-const MILESTONE_DEFS = [
-  { id: 'pre',   label: 'Pre-Aleph',     sub: 'Letter shapes' },
-  { id: 'nek',   label: 'Nekudos',       sub: 'Vowels' },
-  { id: 'u1',    label: 'Aleph Unit 1',  sub: 'Combos' },
-  { id: 'u2',    label: 'Aleph Unit 2',  sub: 'Words' },
-  { id: 'u3',    label: 'Aleph Unit 3',  sub: 'Pesukim' }
-];
-
-const TEACHER_LOG_TEMPLATES = {
-  alef: [
-    { date: '2026-04-22', who: 'Mrs. Levi',     text: 'Read a full pasuk unprompted for the first time. Kid was beaming.' },
-    { date: '2026-04-18', who: 'Mrs. Rothman',  text: 'Strong session. Ready to move on from vav.' },
-    { date: '2026-04-14', who: 'Mrs. Levi',     text: 'Attendance issue last week affected Aleph-Bet review. Caught up by Thursday.' }
-  ],
-  bet: [
-    { date: '2026-04-22', who: 'Mrs. Levi',     text: 'Solid on bet/vet distinction today. Wants to read for the class next week.' },
-    { date: '2026-04-19', who: 'Mrs. Rothman',  text: 'Slowed down on chet. We will revisit Sunday.' },
-    { date: '2026-04-15', who: 'Mrs. Levi',     text: 'Energy was great. Sang the alef-bet song twice unprompted.' }
-  ],
-  gimmel: [
-    { date: '2026-04-23', who: 'Mrs. Levi',     text: 'Crossed 50 wpm. Smooth pasuk reading, almost no decoding pauses.' },
-    { date: '2026-04-20', who: 'Mrs. Rothman',  text: 'Helped Dalet during chavruta. Natural teacher.' },
-    { date: '2026-04-16', who: 'Mrs. Levi',     text: 'Started Unit 3. Confident, asking about meaning of words.' }
-  ],
-  dalet: [
-    { date: '2026-04-22', who: 'Mrs. Levi',     text: 'Big breakthrough on chataf-patach. Practiced six in a row cleanly.' },
-    { date: '2026-04-18', who: 'Mrs. Rothman',  text: 'Still mixing dalet/resh. Worked on tail length cue.' },
-    { date: '2026-04-13', who: 'Mrs. Levi',     text: 'Tired today. Cut session short, will resume Wednesday.' }
-  ],
-  hei: [
-    { date: '2026-04-23', who: 'Mrs. Levi',     text: 'Reading with expression now. Big step from monotone last month.' },
-    { date: '2026-04-19', who: 'Mrs. Rothman',  text: 'Wants harder words. Pulled in three Unit 3 words to try.' },
-    { date: '2026-04-14', who: 'Mrs. Levi',     text: 'Confident on shva nach. Still pausing on shva na, natural at this stage.' }
-  ],
-  vav: [
-    { date: '2026-04-21', who: 'Mrs. Levi',     text: 'Steady week. Fluency holding around 40.' },
-    { date: '2026-04-17', who: 'Mrs. Rothman',  text: 'Worked on shuruk vs cholam. Improving.' },
-    { date: '2026-04-13', who: 'Mrs. Levi',     text: 'Wanted to read with a friend. Paired with Tet for chavruta, went well.' }
-  ],
-  zayin: [
-    { date: '2026-04-23', who: 'Mrs. Levi',     text: 'Top of the class on Unit 3. Already asking for Sefer Bereshit excerpts.' },
-    { date: '2026-04-20', who: 'Mrs. Rothman',  text: 'Helps the room. Volunteered to model for younger kids.' },
-    { date: '2026-04-15', who: 'Mrs. Levi',     text: 'Easy session, full focus. Reading 48 wpm with comprehension.' }
-  ],
-  chet: [
-    { date: '2026-04-22', who: 'Mrs. Levi',     text: 'Doubled session length without losing focus. Big win.' },
-    { date: '2026-04-18', who: 'Mrs. Rothman',  text: 'Stuck on chet vs hei. Visual cue with the bridge helped.' },
-    { date: '2026-04-12', who: 'Mrs. Levi',     text: 'Asked to reread the same line three times. Cared about getting it right.' }
-  ],
-  tet: [
-    { date: '2026-04-23', who: 'Mrs. Levi',     text: 'Clean session. Practiced the new word list with no errors.' },
-    { date: '2026-04-19', who: 'Mrs. Rothman',  text: 'Confident on Unit 2 vocabulary. Nearly ready for Unit 3.' },
-    { date: '2026-04-14', who: 'Mrs. Levi',     text: 'Strong reader. Quiet about it, nudge to share with the group next time.' }
-  ],
-  yud: [
-    { date: '2026-04-22', who: 'Mrs. Levi',     text: 'Steady week. Comfortable with current pace.' },
-    { date: '2026-04-18', who: 'Mrs. Rothman',  text: 'Mixed up yud and vav twice. Reviewed.' },
-    { date: '2026-04-13', who: 'Mrs. Levi',     text: 'Wanted to read with parents at home. Shared a one-pager pasuk to take.' }
-  ]
-};
-
-const AI_INSIGHTS = {
-  alef:   "<strong>Alef is ready for Aleph Unit 3.</strong> She has mastered 15 of 22 letters and her fluency crossed 40 wpm three weeks ago. Consider pairing her with <strong>Zayin</strong> for chavruta practice, he is one unit ahead and models good pace.",
-  bet:    "<strong>Bet is on track in Unit 2.</strong> Mastery is climbing steadily and fluency is consistent at 38 wpm. The small gap on bet vs vet is the highest-leverage thing to drill this week. Worth 10 minutes Monday.",
-  gimmel: "<strong>Gimmel is the strongest reader in the class.</strong> 51 wpm and 18 letters mastered. He is ready to tutor, pairing him with <strong>Dalet</strong> two days a week will accelerate both kids and free your attention.",
-  dalet:  "<strong>Dalet needs more reps, not new content.</strong> Stay in Unit 1. Fluency at 29 wpm is below the readiness threshold. The dalet/resh confusion is normal, the tail-length visual cue is working, keep going.",
-  hei:    "<strong>Hei has hit a comfortable groove.</strong> 44 wpm and reading with expression. The next move is variety: introduce three Unit 3 words a session to keep her stretching without breaking flow.",
-  vav:    "<strong>Vav is a steady mid-class reader.</strong> The shuruk/cholam confusion has narrowed in two weeks of focused practice. A short chavruta with Tet is paying off, keep that pairing.",
-  zayin:  "<strong>Zayin is ready for Sefer Bereshit excerpts.</strong> 48 wpm, 17 letters mastered, asking about meaning. Move him to short narrative pesukim, he is past the workbook stage.",
-  chet:   "<strong>Chet is rebuilding focus.</strong> The doubled session length is the leading indicator that matters more than wpm right now. Stay in Unit 1 another two weeks before re-evaluating.",
-  tet:    "<strong>Tet is quiet but capable.</strong> 41 wpm and 15 letters mastered. The growth opportunity is confidence: ask him to read aloud to the group once this week. Skill is there; the social rep is the unlock.",
-  yud:    "<strong>Yud is steady in Unit 2.</strong> Fluency 39 wpm. The yud/vav mix-up is the tell that more letter-recognition drills will help more than passage reading right now."
-};
-
-/* Per-student fluency series (10 weeks, ascending toward current value) */
-function genFluency(student) {
-  const target = student.fluency;
-  const start = Math.max(8, Math.round(target * 0.45));
-  const series = [];
-  for (let i = 0; i < 10; i++) {
-    const t = i / 9;
-    const eased = start + (target - start) * (Math.pow(t, 1.05));
-    const seed = (student.id.charCodeAt(0) + i * 7) % 13;
-    const wobble = (seed - 6) * 0.6;
-    series.push(Math.round(eased + wobble));
+  // Helper to build a 22-letter accuracy array per student.
+  // Each entry: { id, accuracy 0-100, lastPracticed, mistakes }
+  function makeLetterMap(weights, mistakeMap = {}) {
+    return LETTERS.map((L, i) => {
+      const acc = Math.max(0, Math.min(100, Math.round(weights[i])));
+      return {
+        id: L.id,
+        heb: L.heb,
+        name: L.name,
+        accuracy: acc,
+        lastPracticed: ['today', 'yesterday', '2 days ago', '3 days ago', '4 days ago'][i % 5],
+        history: [
+          Math.max(20, acc - 25 + ((i * 7) % 12)),
+          Math.max(25, acc - 18 + ((i * 5) % 10)),
+          Math.max(30, acc - 12 + ((i * 3) % 9)),
+          Math.max(40, acc - 6 + ((i * 11) % 7)),
+          acc,
+        ],
+        mistakes: mistakeMap[L.id] || null,
+      };
+    });
   }
-  series[9] = target; // pin last to stated current
-  return series;
-}
 
-/* Per-student letter statuses, deterministic by student id */
-function genLetterStatuses(student) {
-  const total = LETTERS.length; // 22
-  const masteredTarget = Math.min(total, student.mastered);
-  const practicing = Math.min(5, total - masteredTarget);
-  const working = Math.max(0, total - masteredTarget - practicing);
+  // Per-student fluency series (10 weekly readings, weeks ago → recent).
+  // Last entry is "current week" reading.
+  // Data crafted to feel realistic and unique per student.
+  const STUDENTS = [
+    {
+      id: 'alef', hebrew: 'א', first: 'Alef', last: 'Cohen',
+      level: 'Aleph Unit 2 · midway',
+      fluency: 42, fluencyTarget: 50,
+      workbook: 'Aleph Unit 2', workbookPct: 50,
+      readiness: 78, mastered: 15, lastPractice: '2 days ago',
+      milestones: [
+        { name: 'Pre-Aleph', state: 'done', date: 'Sep 2025' },
+        { name: 'Nekudos',   state: 'done', date: 'Nov 2025' },
+        { name: 'Aleph Unit 1', state: 'done', date: 'Feb 2026' },
+        { name: 'Aleph Unit 2', state: 'current', date: 'in progress · 50%', percent: 50 },
+        { name: 'Aleph Unit 3', state: 'locked', date: 'Locked · target May' },
+      ],
+      fluencySeries: [22, 26, 28, 31, 33, 35, 38, 40, 41, 42],
+      weeks: ['Wk 7','Wk 8','Wk 9','Wk 10','Wk 11','Wk 12','Wk 13','Wk 14','Wk 15','Wk 16'],
+      annotation: { date: '2026-03-15', label: 'Crossed 40 wpm', note: 'Mrs. Levi noted: "She is beaming."' },
+      letters: makeLetterMap(
+        [98,95,93,88,92,90,86,72,55,84,80,78,75,70,68,52,58,49,72,82,88,95],
+        {
+          ayin:  ['Reads as Aleph when alone', 'Drops the dot in vowelized text'],
+          pe:    ['Confuses with Fei (no dagesh)', 'Reads slowly when at end of word'],
+          tzadi: ['Rotates to Ayin shape', 'Skips when reading aloud'],
+          tet:   ['Mirror with Mem (sofit)']
+        }
+      ),
+      insight: "Alef is ready for Aleph Unit 3. She has mastered 15 of 22 letters and her fluency crossed 40 wpm three weeks ago, well ahead of pace. Consider pairing her with Zayin for chavruta practice — he is one unit ahead and can model good pacing without being intimidating. The letters she is still working on (Ayin, Pe, Tzadi) tend to give kids trouble because of the dot placement; plan to spend ten focused minutes on those before the next quiz.",
+      sources: { fluency: 12, workbook: 18, notes: 4 },
+      notes: [
+        { who: 'Mrs. Levi',    when: 'yesterday',   text: 'Self-corrected on Tzadi twice today without prompting. Big confidence shift this week.' },
+        { who: 'Mrs. Levi',    when: '3 days ago',  text: 'Asked to read out loud to the class — first time volunteering. Said yes.' },
+        { who: 'Mrs. Rothman', when: '5 days ago',  text: 'In small group, modeled Ayin clearly for Bet who was stuck. Strong peer teaching.' },
+        { who: 'Mrs. Levi',    when: 'Mar 15',      text: 'First reading at 40 wpm. She started smiling when she finished. I almost cried.' },
+        { who: 'Mrs. Levi',    when: 'Mar 8',       text: 'Reading less hesitantly on Aleph Unit 2 page 14. Holding eye contact with the page.' },
+      ],
+      parent:
+        "Hi Cohen family — Alef had a wonderful week of kriah. She is reading at 42 words per minute now, up from 33 in February, and just crossed an important fluency milestone on Aleph Unit 2. " +
+        "She is volunteering to read out loud in class for the first time, which is a real confidence shift. " +
+        "At home, you might ask her to read three lines from her current parsha sheet — five minutes is plenty. We are aiming to start Aleph Unit 3 in May. So proud of her steady progress."
+    },
+    {
+      id: 'bet', hebrew: 'ב', first: 'Bet', last: 'Levi',
+      level: 'Aleph Unit 2 · early',
+      fluency: 38, fluencyTarget: 50,
+      workbook: 'Aleph Unit 2', workbookPct: 40,
+      readiness: 65, mastered: 13, lastPractice: 'yesterday',
+      milestones: [
+        { name: 'Pre-Aleph', state: 'done', date: 'Sep 2025' },
+        { name: 'Nekudos',   state: 'done', date: 'Dec 2025' },
+        { name: 'Aleph Unit 1', state: 'done', date: 'Mar 2026' },
+        { name: 'Aleph Unit 2', state: 'current', date: 'in progress · 40%', percent: 40 },
+        { name: 'Aleph Unit 3', state: 'locked', date: 'Locked' },
+      ],
+      fluencySeries: [20, 22, 24, 26, 29, 31, 33, 35, 37, 38],
+      weeks: ['Wk 7','Wk 8','Wk 9','Wk 10','Wk 11','Wk 12','Wk 13','Wk 14','Wk 15','Wk 16'],
+      annotation: { date: '2026-04-10', label: 'Steady upward trend', note: 'Mrs. Levi noted: "Confidence on vowels is finally locking in."' },
+      letters: makeLetterMap(
+        [96,94,90,82,86,85,80,68,50,82,76,72,72,66,62,46,55,42,68,80,84,92],
+        {
+          chet:  ['Confuses with Hei (similar leg)'],
+          ayin:  ['Drops sound entirely in fast reading'],
+          tzadi: ['Reads as Tet'],
+          tet:   ['Switches with Mem mid-word']
+        }
+      ),
+      insight: "Bet is making slow but very steady gains — about 1.5 wpm each week, which is exactly the trajectory we want for a child still consolidating Unit 2. He has 13 letters fully mastered and four in active practice. The real story right now is vowel processing: he reads the letter correctly but pauses on the nikud. Try short, repeated readings of the same Aleph Unit 2 page across three days — the repetition will move vowels from conscious decoding to automatic. He is on track to start Unit 3 by early summer.",
+      sources: { fluency: 11, workbook: 16, notes: 3 },
+      notes: [
+        { who: 'Mrs. Levi',    when: 'today',       text: 'Read page 22 with much less stop-and-start than last week. Vowels are clicking.' },
+        { who: 'Mrs. Levi',    when: '2 days ago',  text: 'Still hesitating on Chet vs Hei. Will pull aside for 5 minutes tomorrow.' },
+        { who: 'Mrs. Rothman', when: '4 days ago',  text: 'Excellent posture during reading group. Following along when others read.' },
+        { who: 'Mrs. Levi',    when: 'last week',   text: 'Asked a thoughtful question about the dot in Bet vs Vet. Clear conceptual grasp.' },
+      ],
+      parent:
+        "Hi Levi family — Bet had a steady, encouraging week. His reading speed is now 38 words per minute, up from 31 a month ago, and his accuracy on vowels is improving noticeably. " +
+        "He is asking great questions about which letters take a dot, which shows he is thinking about kriah, not just decoding. " +
+        "If you can, do a short re-read with him at home — same page two evenings in a row works wonders at this stage. We are very pleased with his progress."
+    },
+    {
+      id: 'gimmel', hebrew: 'ג', first: 'Gimmel', last: 'Friedman',
+      level: 'Aleph Unit 3 · early',
+      fluency: 51, fluencyTarget: 60,
+      workbook: 'Aleph Unit 3', workbookPct: 30,
+      readiness: 88, mastered: 18, lastPractice: 'today',
+      milestones: [
+        { name: 'Pre-Aleph', state: 'done', date: 'Sep 2025' },
+        { name: 'Nekudos',   state: 'done', date: 'Oct 2025' },
+        { name: 'Aleph Unit 1', state: 'done', date: 'Jan 2026' },
+        { name: 'Aleph Unit 2', state: 'done', date: 'Mar 2026' },
+        { name: 'Aleph Unit 3', state: 'current', date: 'in progress · 30%', percent: 30 },
+      ],
+      fluencySeries: [30, 33, 36, 39, 42, 44, 46, 48, 50, 51],
+      weeks: ['Wk 7','Wk 8','Wk 9','Wk 10','Wk 11','Wk 12','Wk 13','Wk 14','Wk 15','Wk 16'],
+      annotation: { date: '2026-04-01', label: 'Started Aleph Unit 3', note: 'Mrs. Levi noted: "He is leading the front row."' },
+      letters: makeLetterMap(
+        [99,98,96,94,96,95,93,82,72,93,90,90,88,84,80,68,72,62,84,90,93,98],
+        {
+          tzadi: ['Pauses at end of word — final form throws him'],
+          tet:   ['Quick mirror with Mem occasionally'],
+          ayin:  ['Strong but slows down on long words']
+        }
+      ),
+      insight: "Gimmel is the strongest reader in the class right now — 51 wpm and 18 letters fully mastered. He started Aleph Unit 3 four weeks ahead of schedule. The risk at this level is boredom: he has the cognitive headroom for a real challenge. Consider giving him a short Tehillim verse to read aloud each Friday and rotating him as a peer reader for Bet or Dalet — modeling pace for slower readers cements his own fluency. Watch Tzadi sofit; it is the only letter still pulling his confidence down on long words.",
+      sources: { fluency: 13, workbook: 22, notes: 5 },
+      notes: [
+        { who: 'Mrs. Levi',    when: 'today',       text: 'Helped Dalet with vowel pattern in small group. Patient and clear.' },
+        { who: 'Mrs. Levi',    when: '2 days ago',  text: 'Read 8 lines of Tehillim 23 with strong cadence. Asked for "harder words next time."' },
+        { who: 'Mrs. Rothman', when: '4 days ago',  text: 'Genuinely curious about Tzadi sofit shape change. Looked it up himself.' },
+        { who: 'Mrs. Levi',    when: 'last week',   text: 'Finished Unit 2 review with 95% accuracy. Promoted to Unit 3.' },
+        { who: 'Mrs. Levi',    when: 'Apr 1',       text: 'Started Aleph Unit 3 ceremoniously. Whole class clapped. Visibly proud.' },
+      ],
+      parent:
+        "Hi Friedman family — Gimmel is reading beautifully. He is at 51 words per minute, has mastered 18 of the 22 letters, and started Aleph Unit 3 a full month ahead of pace. " +
+        "He is also stepping into a peer-leader role naturally, helping classmates with vowels in small group. " +
+        "At home, you might give him a short Tehillim verse on Shabbos to read aloud at the table — he is ready for real text and clearly enjoys the challenge. He should feel very proud."
+    },
+    {
+      id: 'dalet', hebrew: 'ד', first: 'Dalet', last: 'Goldberg',
+      level: 'Aleph Unit 1 · late',
+      fluency: 29, fluencyTarget: 40,
+      workbook: 'Aleph Unit 1', workbookPct: 80,
+      readiness: 55, mastered: 11, lastPractice: '4 days ago',
+      milestones: [
+        { name: 'Pre-Aleph', state: 'done', date: 'Oct 2025' },
+        { name: 'Nekudos',   state: 'done', date: 'Jan 2026' },
+        { name: 'Aleph Unit 1', state: 'current', date: 'in progress · 80%', percent: 80 },
+        { name: 'Aleph Unit 2', state: 'locked', date: 'Locked' },
+        { name: 'Aleph Unit 3', state: 'locked', date: 'Locked' },
+      ],
+      fluencySeries: [16, 17, 18, 20, 22, 23, 25, 27, 28, 29],
+      weeks: ['Wk 7','Wk 8','Wk 9','Wk 10','Wk 11','Wk 12','Wk 13','Wk 14','Wk 15','Wk 16'],
+      annotation: { date: '2026-04-12', label: 'Started self-correcting', note: 'Mrs. Levi noted: "He is no longer freezing on hard letters."' },
+      letters: makeLetterMap(
+        [94,90,82,68,80,78,74,55,40,72,66,62,58,54,48,32,40,28,55,70,78,86],
+        {
+          chet:  ['Skips entirely about 30% of the time'],
+          ayin:  ['Reads as silent — needs explicit cue'],
+          tzadi: ['Mirror with Ayin'],
+          tet:   ['Switches with Mem when tired'],
+          pe:    ['Confuses dot placement']
+        }
+      ),
+      insight: "Dalet needs us right now. His fluency is 29 wpm — below the on-track band — and four letters are still under 50% accuracy. The good news: his last three weeks show a clear upward turn, and he has stopped freezing on letters he doesn't recognize, which is the harder skill to teach. Recommended next step is a daily 5-minute one-on-one with Mrs. Rothman focused on Chet, Ayin, Tzadi, Pe. Hold off on starting Aleph Unit 2 for two more weeks; the foundation will save us time later. Consider sending home a phonics game for the family to play together.",
+      sources: { fluency: 14, workbook: 12, notes: 6 },
+      notes: [
+        { who: 'Mrs. Rothman', when: 'today',       text: '5-minute one-on-one. Got Chet right 7 of 10 times. Big improvement.' },
+        { who: 'Mrs. Levi',    when: '2 days ago',  text: 'Self-corrected on Ayin after a long pause. The pause is good — it means he is thinking.' },
+        { who: 'Mrs. Levi',    when: '4 days ago',  text: 'Tired in afternoon group. Recommend morning kriah from now on.' },
+        { who: 'Mrs. Rothman', when: 'last week',   text: 'Engaged when we used letter cards. Disengaged with worksheets. Note for me to remember.' },
+        { who: 'Mrs. Levi',    when: '2 weeks ago', text: 'Spoke with mom about doing 5 minutes of kriah at home. She agreed.' },
+        { who: 'Mrs. Levi',    when: 'Mar 28',      text: 'Frustrated and asked to skip kriah. We talked it through. Came back next day.' },
+      ],
+      parent:
+        "Hi Goldberg family — Dalet is working hard on his kriah and the last three weeks show real improvement. " +
+        "He is reading at 29 wpm now, which is up from 22 in February, and most importantly he has stopped freezing on letters he doesn't know — he is thinking through them. " +
+        "We are working closely with him on Chet, Ayin, and Tzadi, the letters that have been giving him trouble. " +
+        "If you can do five minutes of phonics cards at home, even three times a week, it would compound everything we are doing in school. We are very much in his corner."
+    },
+    {
+      id: 'hei', hebrew: 'ה', first: 'Hei', last: 'Shapiro',
+      level: 'Aleph Unit 2 · midway',
+      fluency: 44, fluencyTarget: 50,
+      workbook: 'Aleph Unit 2', workbookPct: 60,
+      readiness: 72, mastered: 14, lastPractice: 'yesterday',
+      milestones: [
+        { name: 'Pre-Aleph', state: 'done', date: 'Sep 2025' },
+        { name: 'Nekudos',   state: 'done', date: 'Nov 2025' },
+        { name: 'Aleph Unit 1', state: 'done', date: 'Feb 2026' },
+        { name: 'Aleph Unit 2', state: 'current', date: 'in progress · 60%', percent: 60 },
+        { name: 'Aleph Unit 3', state: 'locked', date: 'Locked' },
+      ],
+      fluencySeries: [25, 28, 30, 33, 36, 38, 40, 42, 43, 44],
+      weeks: ['Wk 7','Wk 8','Wk 9','Wk 10','Wk 11','Wk 12','Wk 13','Wk 14','Wk 15','Wk 16'],
+      annotation: { date: '2026-03-25', label: 'Hit 40 wpm', note: 'Mrs. Levi noted: "Her phrasing is becoming more natural."' },
+      letters: makeLetterMap(
+        [97,93,90,85,90,88,84,75,60,86,82,80,78,72,68,55,62,52,75,84,90,94],
+        {
+          ayin:  ['Reads as Aleph when in middle of word'],
+          tzadi: ['Confuses with Tet'],
+          tet:   ['Mirror with Mem briefly'],
+          pe:    ['Slows down significantly']
+        }
+      ),
+      insight: "Hei is right in the middle of the class — exactly where we hope a typical 2nd grader is in mid-spring. Her fluency curve is healthy and her phrasing is starting to sound natural rather than word-by-word. The gap to watch is Pe and Tzadi: she gets them right but pauses, which is dragging her wpm down. Try a 'speed round' game — read the same line three times, getting faster each time — to convert accuracy into automaticity. She is on track to finish Unit 2 by early May.",
+      sources: { fluency: 12, workbook: 17, notes: 4 },
+      notes: [
+        { who: 'Mrs. Levi',    when: 'yesterday',   text: 'Phrasing during read-aloud was lovely. She paused at the right places.' },
+        { who: 'Mrs. Levi',    when: '3 days ago',  text: 'Worked through Pe slowly but accurately. Speed will come.' },
+        { who: 'Mrs. Rothman', when: '5 days ago',  text: 'Volunteered to read with Bet. Patient with him. Strong friendship forming.' },
+        { who: 'Mrs. Levi',    when: 'Mar 25',      text: 'First reading at 40+. Her face lit up when she saw the number.' },
+      ],
+      parent:
+        "Hi Shapiro family — Hei had a great week. She is at 44 wpm and her reading is starting to sound natural — pausing where the words ask for a pause, rather than reading robotically. " +
+        "She is also being a wonderful reading partner to a classmate, which speaks to her character as much as her skills. " +
+        "We are aiming to have her finish Aleph Unit 2 by early May. At home, a quick read-aloud at bedtime — even just two lines — would be a lovely habit."
+    },
+    {
+      id: 'vav', hebrew: 'ו', first: 'Vav', last: 'Stein',
+      level: 'Aleph Unit 2 · early',
+      fluency: 40, fluencyTarget: 50,
+      workbook: 'Aleph Unit 2', workbookPct: 45,
+      readiness: 69, mastered: 14, lastPractice: '3 days ago',
+      milestones: [
+        { name: 'Pre-Aleph', state: 'done', date: 'Oct 2025' },
+        { name: 'Nekudos',   state: 'done', date: 'Dec 2025' },
+        { name: 'Aleph Unit 1', state: 'done', date: 'Mar 2026' },
+        { name: 'Aleph Unit 2', state: 'current', date: 'in progress · 45%', percent: 45 },
+        { name: 'Aleph Unit 3', state: 'locked', date: 'Locked' },
+      ],
+      fluencySeries: [22, 24, 27, 29, 31, 34, 36, 38, 39, 40],
+      weeks: ['Wk 7','Wk 8','Wk 9','Wk 10','Wk 11','Wk 12','Wk 13','Wk 14','Wk 15','Wk 16'],
+      annotation: { date: '2026-04-15', label: 'Crossed 40 wpm', note: 'Mrs. Levi noted: "Quietly proud — he never says it but you can tell."' },
+      letters: makeLetterMap(
+        [96,92,88,82,86,84,82,72,58,84,80,76,74,68,64,52,58,48,72,82,86,92],
+        {
+          ayin:  ['Drops vowel sound on long words'],
+          tzadi: ['Confuses with Ayin shape'],
+          tet:   ['Looks up to confirm before saying it'],
+          pe:    ['Hesitates with dagesh']
+        }
+      ),
+      insight: "Vav is a quiet, careful reader — the kind of student who looks up at you for confirmation before saying a hard letter. He just crossed 40 wpm and his accuracy is high, but he is slow to commit, which is keeping his fluency lower than his actual ability. Build his confidence: praise speed when it appears, not only accuracy. Try having him read to a younger sibling or to a stuffed animal at home — low-stakes oral practice will help him trust himself. Pair him with Hei in chavruta; her steadier pace will encourage him to step on the gas.",
+      sources: { fluency: 11, workbook: 15, notes: 3 },
+      notes: [
+        { who: 'Mrs. Levi',    when: 'yesterday',   text: 'Read 10 lines without looking up to check. Big win for him.' },
+        { who: 'Mrs. Levi',    when: '3 days ago',  text: 'Quiet during group but answered every prompt correctly when asked.' },
+        { who: 'Mrs. Rothman', when: 'last week',   text: 'Working on confidence as much as on letters. He knows more than he shows.' },
+        { who: 'Mrs. Levi',    when: 'Apr 15',      text: 'Crossed 40 wpm. Did not say much but his dad mentioned at pickup that he is happy.' },
+      ],
+      parent:
+        "Hi Stein family — Vav is quietly making strong progress. He just crossed 40 words per minute this week, and his accuracy is excellent — he rarely makes a mistake. " +
+        "We are working on building his confidence to read out loud without checking with us first. He knows more than he is showing. " +
+        "If he is willing, having him read a few lines aloud to a younger sibling or even a pet at home is a wonderful low-pressure way to practice. He is doing beautifully."
+    },
+    {
+      id: 'zayin', hebrew: 'ז', first: 'Zayin', last: 'Rosen',
+      level: 'Aleph Unit 3 · early',
+      fluency: 48, fluencyTarget: 60,
+      workbook: 'Aleph Unit 3', workbookPct: 20,
+      readiness: 82, mastered: 17, lastPractice: 'today',
+      milestones: [
+        { name: 'Pre-Aleph', state: 'done', date: 'Sep 2025' },
+        { name: 'Nekudos',   state: 'done', date: 'Nov 2025' },
+        { name: 'Aleph Unit 1', state: 'done', date: 'Feb 2026' },
+        { name: 'Aleph Unit 2', state: 'done', date: 'Mar 2026' },
+        { name: 'Aleph Unit 3', state: 'current', date: 'in progress · 20%', percent: 20 },
+      ],
+      fluencySeries: [28, 31, 34, 37, 40, 42, 44, 46, 47, 48],
+      weeks: ['Wk 7','Wk 8','Wk 9','Wk 10','Wk 11','Wk 12','Wk 13','Wk 14','Wk 15','Wk 16'],
+      annotation: { date: '2026-04-08', label: 'Promoted to Aleph Unit 3', note: 'Mrs. Levi noted: "Asked when he could start Tehillim."' },
+      letters: makeLetterMap(
+        [98,96,94,90,94,92,90,80,68,90,88,86,84,80,76,64,68,58,80,88,92,96],
+        {
+          ayin:  ['Solid but slows on long words'],
+          tzadi: ['Final form throws him occasionally'],
+          tet:   ['Strong']
+        }
+      ),
+      insight: "Zayin is the second-strongest reader in the class and the most natural peer model. He is at 48 wpm and just started Unit 3 — three weeks ahead of pace. He is also socially generous, which makes him an ideal chavruta partner. Pair him with Alef this month; she is ready to push from 42 to 50 and his calm pacing will help her. The only thing to watch is Tzadi sofit at the end of words — it occasionally trips him up. Otherwise, give him real text. He is asking for it.",
+      sources: { fluency: 13, workbook: 21, notes: 4 },
+      notes: [
+        { who: 'Mrs. Levi',    when: 'today',       text: 'Asked when he could start reading actual Tehillim. Loved that question.' },
+        { who: 'Mrs. Levi',    when: '2 days ago',  text: 'Helped Vav with Pe in pair work. Patient and never made him feel slow.' },
+        { who: 'Mrs. Rothman', when: '5 days ago',  text: 'Strong on Aleph Unit 3 page 2. Pace is excellent.' },
+        { who: 'Mrs. Levi',    when: 'Apr 8',       text: 'Promoted to Unit 3 with full class affirmation. Very visible joy.' },
+      ],
+      parent:
+        "Hi Rosen family — Zayin is reading wonderfully. He is at 48 wpm, has mastered 17 of 22 letters, and just started Aleph Unit 3 — three weeks ahead of schedule. " +
+        "He is also a generous classmate who helps others without being asked. " +
+        "He has been asking when he can start reading actual Tehillim, which is a great sign of motivation. At home, a verse or two at the Shabbos table would be a wonderful next step. He is thriving."
+    },
+    {
+      id: 'chet', hebrew: 'ח', first: 'Chet', last: 'Klein',
+      level: 'Aleph Unit 1 · finishing',
+      fluency: 33, fluencyTarget: 40,
+      workbook: 'Aleph Unit 1', workbookPct: 70,
+      readiness: 61, mastered: 12, lastPractice: '2 days ago',
+      milestones: [
+        { name: 'Pre-Aleph', state: 'done', date: 'Oct 2025' },
+        { name: 'Nekudos',   state: 'done', date: 'Jan 2026' },
+        { name: 'Aleph Unit 1', state: 'current', date: 'in progress · 70%', percent: 70 },
+        { name: 'Aleph Unit 2', state: 'locked', date: 'Locked' },
+        { name: 'Aleph Unit 3', state: 'locked', date: 'Locked' },
+      ],
+      fluencySeries: [18, 20, 22, 24, 26, 28, 29, 31, 32, 33],
+      weeks: ['Wk 7','Wk 8','Wk 9','Wk 10','Wk 11','Wk 12','Wk 13','Wk 14','Wk 15','Wk 16'],
+      annotation: { date: '2026-04-05', label: 'Held attention 10 full minutes', note: 'Mrs. Rothman noted: "His longest stretch this year."' },
+      letters: makeLetterMap(
+        [94,90,84,72,82,80,76,60,46,76,72,68,64,60,54,38,46,34,60,74,80,88],
+        {
+          chet:  ['Confused with Hei (similar leg shape)'],
+          ayin:  ['Often silent in fast reading'],
+          tzadi: ['Mirror with Ayin'],
+          tet:   ['Switches with Mem'],
+          pe:    ['Confuses with Bet without dot']
+        }
+      ),
+      insight: "Chet is closing the gap. His fluency went from 26 to 33 wpm in six weeks, which is a meaningful trajectory for a child finishing Unit 1. He held attention for ten full minutes during last Wednesday's reading group — his longest stretch this year. Recommended next step is to keep Mrs. Rothman's daily 5-minute pull-aside through the end of April, then promote him to Unit 2 by May 1 even if he is at 75% rather than 80% on Unit 1. The momentum matters more than the percentage. Watch Chet, Ayin, and Tzadi closely.",
+      sources: { fluency: 13, workbook: 13, notes: 5 },
+      notes: [
+        { who: 'Mrs. Rothman', when: 'today',       text: 'Pull-aside went well. Got Ayin right 6 of 8 times — best so far.' },
+        { who: 'Mrs. Levi',    when: '2 days ago',  text: 'Engaged for full reading group. No drift, no fidget.' },
+        { who: 'Mrs. Rothman', when: '4 days ago',  text: 'Tired but pushed through. Asked for water and kept going.' },
+        { who: 'Mrs. Levi',    when: 'last week',   text: 'Spoke with parents about increasing reading practice to 5 min, 4×/week. They are on board.' },
+        { who: 'Mrs. Levi',    when: 'Apr 5',       text: 'Held attention for 10 minutes — longest of the year. Real progress.' },
+      ],
+      parent:
+        "Hi Klein family — Chet had a strong week and is closing the gap. His reading speed is up to 33 wpm from 26 six weeks ago, and his attention span is growing — he held focus for a full ten minutes in reading group, which is a milestone for him. " +
+        "We are working closely with him on Chet, Ayin, and Tzadi. " +
+        "Thank you for committing to the at-home practice — it is making a real difference. We are aiming to promote him to Aleph Unit 2 by early May. He is doing the work."
+    },
+    {
+      id: 'tet', hebrew: 'ט', first: 'Tet', last: 'Katz',
+      level: 'Aleph Unit 2 · midway',
+      fluency: 41, fluencyTarget: 50,
+      workbook: 'Aleph Unit 2', workbookPct: 55,
+      readiness: 75, mastered: 15, lastPractice: 'yesterday',
+      milestones: [
+        { name: 'Pre-Aleph', state: 'done', date: 'Sep 2025' },
+        { name: 'Nekudos',   state: 'done', date: 'Nov 2025' },
+        { name: 'Aleph Unit 1', state: 'done', date: 'Feb 2026' },
+        { name: 'Aleph Unit 2', state: 'current', date: 'in progress · 55%', percent: 55 },
+        { name: 'Aleph Unit 3', state: 'locked', date: 'Locked' },
+      ],
+      fluencySeries: [23, 26, 28, 30, 33, 35, 37, 39, 40, 41],
+      weeks: ['Wk 7','Wk 8','Wk 9','Wk 10','Wk 11','Wk 12','Wk 13','Wk 14','Wk 15','Wk 16'],
+      annotation: { date: '2026-03-30', label: 'First sustained reading', note: 'Mrs. Levi noted: "Eight lines without losing place."' },
+      letters: makeLetterMap(
+        [96,93,90,84,88,86,84,74,62,86,82,78,76,72,68,55,60,50,74,84,88,93],
+        {
+          ayin:  ['Slows on long words'],
+          tzadi: ['Mirror with Ayin'],
+          tet:   ['Sometimes confuses with own letter shape elsewhere'],
+          pe:    ['Hesitates on dagesh']
+        }
+      ),
+      insight: "Tet is solidly on pace and quietly reliable. She is at 41 wpm, 15 letters mastered, and her trend line is one of the cleanest in the class — five weeks of consistent +1 wpm gains. She rarely needs intervention, which is exactly why we should make sure she is getting attention too. Consider giving her a small leadership role: leading the morning Modeh Ani reading once a week. The visibility will lift her further. She is on track to finish Unit 2 by mid-May.",
+      sources: { fluency: 12, workbook: 18, notes: 3 },
+      notes: [
+        { who: 'Mrs. Levi',    when: 'yesterday',   text: 'Read 8 lines straight without losing her place. Steady focus.' },
+        { who: 'Mrs. Levi',    when: '3 days ago',  text: 'Quiet but consistent. Needs more individual recognition than she asks for.' },
+        { who: 'Mrs. Rothman', when: 'last week',   text: 'Modeled good posture for younger reading buddy. Took it seriously.' },
+        { who: 'Mrs. Levi',    when: 'Mar 30',      text: 'First fully sustained reading. Did not look up once. Calm and proud.' },
+      ],
+      parent:
+        "Hi Katz family — Tet had a wonderful week. She is at 41 words per minute and reading with real focus — eight lines straight without losing her place this week, which is a milestone for sustained attention. " +
+        "She is the kind of student who quietly does excellent work, so I want to make sure to call out how much she is growing. " +
+        "We are going to give her a small leadership role next week, leading the morning reading. She is going to be a wonderful reader."
+    },
+    {
+      id: 'yud', hebrew: 'י', first: 'Yud', last: 'Berg',
+      level: 'Aleph Unit 2 · early',
+      fluency: 39, fluencyTarget: 50,
+      workbook: 'Aleph Unit 2', workbookPct: 35,
+      readiness: 71, mastered: 14, lastPractice: '5 days ago',
+      milestones: [
+        { name: 'Pre-Aleph', state: 'done', date: 'Sep 2025' },
+        { name: 'Nekudos',   state: 'done', date: 'Dec 2025' },
+        { name: 'Aleph Unit 1', state: 'done', date: 'Mar 2026' },
+        { name: 'Aleph Unit 2', state: 'current', date: 'in progress · 35%', percent: 35 },
+        { name: 'Aleph Unit 3', state: 'locked', date: 'Locked' },
+      ],
+      fluencySeries: [21, 24, 26, 29, 32, 34, 35, 37, 38, 39],
+      weeks: ['Wk 7','Wk 8','Wk 9','Wk 10','Wk 11','Wk 12','Wk 13','Wk 14','Wk 15','Wk 16'],
+      annotation: { date: '2026-04-02', label: 'Returned from absence', note: 'Mrs. Levi noted: "Five days out and bounced back fast."' },
+      letters: makeLetterMap(
+        [96,92,88,80,86,84,80,70,56,84,80,76,72,68,62,50,56,46,70,82,86,92],
+        {
+          ayin:  ['Reads as Aleph occasionally'],
+          tzadi: ['Mirror with Tet'],
+          tet:   ['Confuses with Mem briefly'],
+          pe:    ['Hesitates on dagesh placement']
+        }
+      ),
+      insight: "Yud was out sick for a full week earlier this month and came back strong — that resilience is worth noting. He is at 39 wpm and the gap from his 5-day absence has already mostly closed. Practice cadence is the variable to watch: his last practice was 5 days ago, the longest gap in the class. Schedule a short kriah check-in tomorrow morning. He responds well to one-on-one attention. Otherwise his trajectory is healthy and he should finish Unit 2 by late May.",
+      sources: { fluency: 10, workbook: 14, notes: 3 },
+      notes: [
+        { who: 'Mrs. Levi',    when: 'today',       text: 'Has not practiced in 5 days due to schedule. Will pull aside tomorrow morning.' },
+        { who: 'Mrs. Levi',    when: '5 days ago',  text: 'Strong group session. Engaged for full 20 minutes.' },
+        { who: 'Mrs. Rothman', when: 'last week',   text: 'Came back from absence and was nervous he had fallen behind. He hadn\'t. Reassured him.' },
+        { who: 'Mrs. Levi',    when: 'Mar 28',      text: 'Read with great expression. He likes performing more than he lets on.' },
+      ],
+      parent:
+        "Hi Berg family — Yud is doing well. He is reading at 39 wpm and bounced back wonderfully from his absence earlier this month — he barely lost ground at all. " +
+        "The one thing I would flag is practice cadence: he has not had kriah practice in the last five days. We will get him back into rhythm tomorrow morning with a one-on-one check-in. " +
+        "If you are able to do five minutes most evenings at home, even informally, the consistency would help a lot. He is a wonderful reader when he is in flow."
+    },
+  ];
 
-  const seed = student.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
-  const order = LETTERS.map((_, i) => i);
-  // deterministic shuffle
-  for (let i = order.length - 1; i > 0; i--) {
-    const j = (seed * (i + 7) + i * 13) % (i + 1);
-    [order[i], order[j]] = [order[j], order[i]];
-  }
-  const status = new Array(total);
-  order.forEach((idx, rank) => {
-    if (rank < masteredTarget) status[idx] = 'mastered';
-    else if (rank < masteredTarget + practicing) status[idx] = 'practicing';
-    else status[idx] = 'working';
-  });
-  return status;
-}
+  /* =========================================================
+     Render: sidebar tiles
+     ========================================================= */
+  const studentList = document.getElementById('studentList');
 
-/* Map workbook to milestone progress */
-function milestoneStateFor(student) {
-  const map = {
-    'Aleph Unit 1': { current: 2, currentPct: student.workbookPct },
-    'Aleph Unit 2': { current: 3, currentPct: student.workbookPct },
-    'Aleph Unit 3': { current: 4, currentPct: student.workbookPct }
-  };
-  const cfg = map[student.workbook] || { current: 3, currentPct: 50 };
-  return { currentIdx: cfg.current, currentPct: cfg.currentPct };
-}
-
-/* =========================================================================
-   Renderers
-   ========================================================================= */
-function renderSidebar(activeId) {
-  const list = document.getElementById('studentList');
-  list.innerHTML = '';
-  STUDENTS.forEach(s => {
-    const tile = document.createElement('button');
-    tile.className = 'student-tile' + (s.id === activeId ? ' active' : '');
-    tile.setAttribute('role', 'tab');
-    tile.setAttribute('aria-selected', s.id === activeId ? 'true' : 'false');
-    tile.dataset.id = s.id;
-    tile.innerHTML = `
-      <span class="avatar">${s.hebrew}</span>
-      <span class="name">${s.first} ${s.last}</span>
-      <span class="pct">${s.readiness}%</span>
-      <span class="bar"><div style="width:${s.readiness}%"></div></span>
-    `;
-    tile.addEventListener('click', () => selectStudent(s.id));
-    list.appendChild(tile);
-  });
-}
-
-function renderHero(student) {
-  document.getElementById('heroAvatar').textContent = student.hebrew;
-  document.getElementById('heroName').textContent = `${student.first} ${student.last} · Grade 2`;
-  document.getElementById('statWorkbook').textContent = student.workbook;
-  document.getElementById('statFluency').textContent = `${student.fluency} wpm`;
-  document.getElementById('statLast').textContent = lastPracticeFor(student);
-  document.getElementById('statReadiness').textContent = `${student.readiness}%`;
-}
-
-function lastPracticeFor(student) {
-  if (student.id === 'alef') return '2 days ago';
-  const opts = ['Today', 'Yesterday', '2 days ago', '3 days ago'];
-  const seed = student.id.charCodeAt(0) % opts.length;
-  return opts[seed];
-}
-
-function renderMilestones(student) {
-  const container = document.getElementById('milestones');
-  const { currentIdx, currentPct } = milestoneStateFor(student);
-  container.innerHTML = '';
-
-  const totalSegments = MILESTONE_DEFS.length - 1; // 4 segments between 5 dots
-  const filledSegments = Math.min(currentIdx, totalSegments) + (currentIdx < totalSegments ? currentPct / 100 : 0);
-  const fillFraction = filledSegments / totalSegments;
-  const fill = document.createElement('div');
-  fill.className = 'progress-fill';
-  // Track spans (calc(10% + 8px)) -> (calc(90% - 8px)) — width is fillFraction of that
-  fill.style.width = `calc((80% - 16px) * ${fillFraction})`;
-  container.appendChild(fill);
-
-  MILESTONE_DEFS.forEach((m, i) => {
-    const el = document.createElement('div');
-    let cls = 'milestone';
-    if (i < currentIdx) cls += ' done';
-    else if (i === currentIdx) cls += ' current';
-    el.className = cls;
-    let inner = '';
-    if (i < currentIdx) {
-      inner = '<span class="dot"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg></span>';
-    } else if (i === currentIdx) {
-      inner = `<span class="dot">${i + 1}</span>`;
-    } else {
-      inner = `<span class="dot"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg></span>`;
-    }
-    el.innerHTML = `${inner}<span class="label">${m.label}</span><span class="sublabel">${m.sub}</span>`;
-    container.appendChild(el);
-  });
-}
-
-function renderChart(student) {
-  const series = genFluency(student);
-  const wrap = document.getElementById('chartWrap');
-  const W = 520, H = 200, P = { l: 40, r: 24, t: 24, b: 28 };
-  const innerW = W - P.l - P.r;
-  const innerH = H - P.t - P.b;
-  const yMax = 60, yMin = 0;
-  const stepX = innerW / (series.length - 1);
-
-  const x = i => P.l + i * stepX;
-  const y = v => P.t + (1 - (v - yMin) / (yMax - yMin)) * innerH;
-
-  function smoothPath(pts) {
-    if (pts.length < 2) return '';
-    let d = `M ${pts[0].x} ${pts[0].y}`;
+  function sparkline(series, opts = {}) {
+    const { stroke = 'var(--navy)', fill = 'rgba(52,62,133,0.12)', w = 56, h = 18, pad = 2 } = opts;
+    const min = Math.min(...series);
+    const max = Math.max(...series);
+    const range = Math.max(1, max - min);
+    const stepX = (w - pad * 2) / (series.length - 1);
+    const pts = series.map((v, i) => [
+      pad + i * stepX,
+      h - pad - ((v - min) / range) * (h - pad * 2)
+    ]);
+    // Smooth path via Catmull-Rom-ish bezier
+    let d = `M ${pts[0][0]},${pts[0][1]}`;
     for (let i = 0; i < pts.length - 1; i++) {
       const p0 = pts[i - 1] || pts[i];
       const p1 = pts[i];
       const p2 = pts[i + 1];
       const p3 = pts[i + 2] || p2;
-      const cp1x = p1.x + (p2.x - p0.x) / 6;
-      const cp1y = p1.y + (p2.y - p0.y) / 6;
-      const cp2x = p2.x - (p3.x - p1.x) / 6;
-      const cp2y = p2.y - (p3.y - p1.y) / 6;
-      d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
+      const cp1x = p1[0] + (p2[0] - p0[0]) / 6;
+      const cp1y = p1[1] + (p2[1] - p0[1]) / 6;
+      const cp2x = p2[0] - (p3[0] - p1[0]) / 6;
+      const cp2y = p2[1] - (p3[1] - p1[1]) / 6;
+      d += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p2[0]},${p2[1]}`;
     }
-    return d;
+    const fillPath = `${d} L ${pts[pts.length-1][0]},${h-pad} L ${pts[0][0]},${h-pad} Z`;
+    return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">
+      <path d="${fillPath}" fill="${fill}" stroke="none"/>
+      <path d="${d}" stroke="${stroke}" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
   }
 
-  const points = series.map((v, i) => ({ x: x(i), y: y(v), v }));
-  const linePath = smoothPath(points);
-  const areaPath = `${linePath} L ${points[points.length - 1].x} ${P.t + innerH} L ${points[0].x} ${P.t + innerH} Z`;
-  const yTicks = [0, 15, 30, 45, 60];
-  const last = points[points.length - 1];
-
-  const svg = `
-  <svg class="chart-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Weekly fluency chart">
-    <defs>
-      <linearGradient id="areaFill" x1="0" x2="0" y1="0" y2="1">
-        <stop offset="0%" stop-color="#343e85" stop-opacity="0.22"/>
-        <stop offset="100%" stop-color="#343e85" stop-opacity="0.02"/>
-      </linearGradient>
-    </defs>
-    ${yTicks.map(t => `
-      <line x1="${P.l}" x2="${W - P.r}" y1="${y(t)}" y2="${y(t)}" stroke="#e5e7eb" stroke-dasharray="${t === 0 ? '0' : '3 4'}" stroke-width="1"/>
-      <text x="${P.l - 8}" y="${y(t) + 4}" font-size="10" fill="#9ca3af" text-anchor="end" font-family="DM Sans, sans-serif">${t}</text>
-    `).join('')}
-    <text x="14" y="${P.t + innerH / 2}" font-size="10" fill="#9ca3af" text-anchor="middle" transform="rotate(-90 14 ${P.t + innerH / 2})" font-family="DM Sans, sans-serif">wpm</text>
-    <path d="${areaPath}" fill="url(#areaFill)"/>
-    <path d="${linePath}" fill="none" stroke="#343e85" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-    ${points.map((p, i) => `
-      <circle cx="${p.x}" cy="${p.y}" r="${i === points.length - 1 ? 5 : 3}" fill="${i === points.length - 1 ? '#10653c' : '#ffffff'}" stroke="${i === points.length - 1 ? '#10653c' : '#343e85'}" stroke-width="2"/>
-    `).join('')}
-    <g transform="translate(${last.x}, ${last.y})">
-      <rect x="-32" y="-30" width="64" height="22" rx="11" fill="#10653c"/>
-      <text x="0" y="-15" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle" font-family="Montserrat, sans-serif">${last.v} wpm</text>
-    </g>
-    ${points.map((p, i) => {
-      let lbl = '';
-      if (i === 0) lbl = '−10w';
-      else if (i === points.length - 1) lbl = 'now';
-      else if (i % 2 === 0) lbl = '−' + (9 - i) + 'w';
-      return lbl ? `<text x="${p.x}" y="${H - 10}" font-size="10" fill="#9ca3af" text-anchor="middle" font-family="DM Sans, sans-serif">${lbl}</text>` : '';
-    }).join('')}
-  </svg>`;
-  wrap.innerHTML = svg;
-}
-
-function renderLetters(student) {
-  const grid = document.getElementById('letterGrid');
-  const statuses = genLetterStatuses(student);
-  grid.innerHTML = '';
-  LETTERS.forEach((L, i) => {
-    const status = statuses[i];
-    const tile = document.createElement('div');
-    tile.className = `letter-tile ${status}`;
-    tile.title = `${L.name} — ${status}`;
-    tile.innerHTML = `
-      <span class="heb">${L.heb}</span>
-      <span class="letter-status"><span class="status-dot"></span>${L.name}</span>
-    `;
-    grid.appendChild(tile);
-  });
-}
-
-function renderAI(student) {
-  document.getElementById('aiBody').innerHTML = AI_INSIGHTS[student.id] || AI_INSIGHTS.alef;
-}
-
-function renderTeacherLog(student) {
-  const log = TEACHER_LOG_TEMPLATES[student.id] || TEACHER_LOG_TEMPLATES.alef;
-  const wrap = document.getElementById('teacherLog');
-  wrap.innerHTML = log.map(e => `
-    <div class="log-entry">
-      <div class="log-meta">
-        <span>${e.date}</span>
-        <span>·</span>
-        <span class="who">${e.who}</span>
+  function renderStudentList(activeId) {
+    studentList.innerHTML = STUDENTS.map(s => `
+      <div class="student-tile ${s.id === activeId ? 'active' : ''}" data-id="${s.id}" role="button" tabindex="0" aria-label="Select ${s.first} ${s.last}">
+        <div class="heb-avatar"><span class="heb">${s.hebrew}</span></div>
+        <div class="info">
+          <span class="name">${s.first} ${s.last}</span>
+          <span class="grade">2nd Grade · ${s.workbook}</span>
+        </div>
+        <div class="meta-row">
+          ${sparkline(s.fluencySeries, { stroke: s.id === activeId ? 'var(--green)' : 'var(--navy)', fill: s.id === activeId ? 'rgba(16,101,60,0.14)' : 'rgba(52,62,133,0.10)' })}
+          <div class="progress" title="Readiness ${s.readiness}%"><span style="width:${s.readiness}%"></span></div>
+          <span class="last">${s.lastPractice}</span>
+        </div>
       </div>
-      <div class="log-text">${e.text}</div>
-    </div>
-  `).join('');
-}
+    `).join('');
+    // Bind clicks
+    studentList.querySelectorAll('.student-tile').forEach(t => {
+      t.addEventListener('click', () => selectStudent(t.dataset.id));
+      t.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectStudent(t.dataset.id); }
+      });
+    });
+  }
 
-/* =========================================================================
-   Selection
-   ========================================================================= */
-let activeId = 'alef';
+  /* =========================================================
+     Render: student panel (right side)
+     ========================================================= */
+  const panel = document.getElementById('studentPanel');
 
-function selectStudent(id) {
-  activeId = id;
-  const s = STUDENTS.find(x => x.id === id) || STUDENTS[0];
+  function fluencyChartSVG(s) {
+    const W = 520, H = 280, padL = 36, padR = 16, padT = 16, padB = 32;
+    const innerW = W - padL - padR;
+    const innerH = H - padT - padB;
+    const yMax = 60, yMin = 0;
+    const data = s.fluencySeries;
+    const target = s.fluencyTarget;
+    const stepX = innerW / (data.length - 1);
+    const pts = data.map((v, i) => [
+      padL + i * stepX,
+      padT + innerH - ((v - yMin) / (yMax - yMin)) * innerH
+    ]);
+    // Smooth path
+    let d = `M ${pts[0][0]},${pts[0][1]}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[i - 1] || pts[i];
+      const p1 = pts[i];
+      const p2 = pts[i + 1];
+      const p3 = pts[i + 2] || p2;
+      const cp1x = p1[0] + (p2[0] - p0[0]) / 5;
+      const cp1y = p1[1] + (p2[1] - p0[1]) / 5;
+      const cp2x = p2[0] - (p3[0] - p1[0]) / 5;
+      const cp2y = p2[1] - (p3[1] - p1[1]) / 5;
+      d += ` C ${cp1x.toFixed(2)},${cp1y.toFixed(2)} ${cp2x.toFixed(2)},${cp2y.toFixed(2)} ${p2[0].toFixed(2)},${p2[1].toFixed(2)}`;
+    }
+    const baseY = padT + innerH;
+    const fillPath = `${d} L ${pts[pts.length-1][0]},${baseY} L ${pts[0][0]},${baseY} Z`;
+    // Y gridlines at 0,15,30,45,60
+    const yTicks = [0,15,30,45,60];
+    const targetY = padT + innerH - ((target - yMin) / (yMax - yMin)) * innerH;
+    const last = pts[pts.length - 1];
+    const lastVal = data[data.length - 1];
 
-  document.querySelectorAll('.student-tile').forEach(t => {
-    const isMatch = t.dataset.id === id;
-    t.classList.toggle('active', isMatch);
-    t.setAttribute('aria-selected', isMatch ? 'true' : 'false');
-  });
+    const grid = yTicks.map(y => {
+      const yPx = padT + innerH - ((y - yMin) / (yMax - yMin)) * innerH;
+      return `
+        <line x1="${padL}" x2="${W - padR}" y1="${yPx}" y2="${yPx}" stroke="var(--gray-150)" stroke-width="1" />
+        <text x="${padL - 8}" y="${yPx + 4}" text-anchor="end" font-size="10" fill="var(--gray-500)" font-family="DM Sans">${y}</text>
+      `;
+    }).join('');
 
-  // Re-trigger fade animation on right column for visual feedback
-  document.querySelectorAll('.main-col .fade').forEach(el => {
-    el.style.animation = 'none';
-    void el.offsetWidth;
-    el.style.animation = '';
-  });
+    const dots = pts.map((p, i) => {
+      const isLast = i === pts.length - 1;
+      return `<circle cx="${p[0].toFixed(2)}" cy="${p[1].toFixed(2)}" r="${isLast ? 5.5 : 3}" fill="${isLast ? 'var(--green)' : 'var(--navy)'}" stroke="white" stroke-width="${isLast ? 2.5 : 1.5}" />`;
+    }).join('');
 
-  renderHero(s);
-  renderMilestones(s);
-  renderChart(s);
-  renderLetters(s);
-  renderAI(s);
-  renderTeacherLog(s);
-}
+    const xLabels = s.weeks.map((label, i) => {
+      const x = padL + i * stepX;
+      return `<text x="${x}" y="${H - 12}" text-anchor="middle" font-size="10" fill="var(--gray-500)" font-family="DM Sans">${label}</text>`;
+    }).join('');
 
-/* =========================================================================
-   Init
-   ========================================================================= */
-function init() {
-  renderSidebar(activeId);
-  selectStudent(activeId);
+    // Floating label for last point
+    const labelX = Math.min(W - padR - 56, last[0] + 10);
+    const labelY = Math.max(padT + 18, last[1] - 12);
+    const lastLabel = `
+      <g transform="translate(${labelX}, ${labelY})">
+        <rect x="-2" y="-14" width="50" height="22" rx="6" fill="var(--green)" />
+        <text x="22" y="2" text-anchor="middle" font-size="11.5" font-weight="700" fill="white" font-family="Montserrat">${lastVal} wpm</text>
+      </g>
+    `;
 
-  document.getElementById('logBtn').addEventListener('click', () => {
-    const btn = document.getElementById('logBtn');
-    const original = btn.innerHTML;
-    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Logged · demo only';
-    btn.disabled = true;
-    setTimeout(() => {
-      btn.innerHTML = original;
-      btn.disabled = false;
-    }, 1800);
-  });
+    return `
+      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Fluency chart">
+        <defs>
+          <linearGradient id="fluencyFill_${s.id}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="var(--navy)" stop-opacity="0.20"/>
+            <stop offset="100%" stop-color="var(--navy)" stop-opacity="0.02"/>
+          </linearGradient>
+        </defs>
+        ${grid}
+        <path d="${fillPath}" fill="url(#fluencyFill_${s.id})" />
+        <path d="${d}" stroke="var(--navy)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="${padL}" x2="${W - padR}" y1="${targetY}" y2="${targetY}" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="5 4"/>
+        <text x="${W - padR - 4}" y="${targetY - 6}" text-anchor="end" font-size="10.5" fill="var(--amber)" font-family="DM Sans" font-weight="600">Target ${target} wpm</text>
+        ${dots}
+        ${xLabels}
+        ${lastLabel}
+      </svg>
+    `;
+  }
 
-  let resizeT;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeT);
-    resizeT = setTimeout(() => {
-      const s = STUDENTS.find(x => x.id === activeId);
-      if (s) renderChart(s);
-    }, 120);
-  });
-}
+  function classifyLetter(acc) {
+    if (acc >= 90) return 'mastered';
+    if (acc >= 60) return 'practicing';
+    return 'working';
+  }
 
-document.addEventListener('DOMContentLoaded', init);
+  function letterTileHTML(L) {
+    const cls = classifyLetter(L.accuracy);
+    return `
+      <div class="letter-tile ${cls}" data-letter="${L.id}" role="button" tabindex="0" aria-label="${L.name} ${L.accuracy} percent">
+        <span class="status" aria-hidden="true"></span>
+        <span class="letter heb">${L.heb}</span>
+        <span class="pct tabular-nums">${L.accuracy}%</span>
+      </div>
+    `;
+  }
+
+  function letterPopoverHTML(L) {
+    const cls = classifyLetter(L.accuracy);
+    const statusLabel = cls === 'mastered' ? 'Mastered' : cls === 'practicing' ? 'In active practice' : 'Needs work';
+    const histBars = L.history.map(v => `
+      <div class="b" title="${v}%"><span style="height:${v}%"></span></div>
+    `).join('');
+    const mistakesHTML = L.mistakes && L.mistakes.length
+      ? `<div class="pop-meta"><strong style="color:var(--gray-900);font-weight:700;">Common mistakes:</strong> ${L.mistakes.join(' · ')}</div>`
+      : `<div class="pop-meta" style="color:var(--green);"><strong style="color:var(--green);font-weight:700;">Solid.</strong> No recurring mistakes flagged.</div>`;
+    return `
+      <div class="letter-popover" id="letterPopover" role="region" aria-label="Letter ${L.name} detail">
+        <button class="close-pop" aria-label="Close" onclick="closePopover()">&times;</button>
+        <div class="pop-letter heb">${L.heb}</div>
+        <div class="pop-body">
+          <h4>${L.name} <span class="badge badge-${cls === 'mastered' ? 'green' : cls === 'practicing' ? 'amber' : 'gray'}" style="margin-left:6px;">${statusLabel} · ${L.accuracy}%</span></h4>
+          <div class="pop-meta">Last practiced <strong>${L.lastPracticed}</strong> · accuracy trend over recent sessions:</div>
+          <div class="pop-history">${histBars}</div>
+          ${mistakesHTML}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderStudentPanel(s) {
+    const milestonesHTML = s.milestones.map(m => `
+      <div class="milestone ${m.state}" ${m.percent ? `style="--p:${m.percent}%"` : ''}>
+        <div class="dot">${m.state === 'done' ? '&#10003;' : m.state === 'locked' ? '&#128274;' : ''}</div>
+        <div class="label">${m.name}</div>
+        <div class="meta">${m.date}</div>
+      </div>
+    `).join('');
+
+    panel.innerHTML = `
+      <!-- Hero -->
+      <section class="hero" aria-label="Student summary">
+        <div class="heb-big heb">${s.hebrew}</div>
+        <div class="hero-body">
+          <div class="hero-name">
+            <h2>${s.first} ${s.last}</h2>
+            <span class="badge badge-navy">2nd Grade</span>
+            <span class="badge badge-green">${s.level}</span>
+            <span class="sub">Last practice: ${s.lastPractice}</span>
+          </div>
+          <div class="mini-stats">
+            <div class="mini-stat">
+              <div class="l">Current level</div>
+              <div class="v" style="font-size: 14px; line-height: 1.3;">${s.workbook}</div>
+            </div>
+            <div class="mini-stat">
+              <div class="l">Fluency</div>
+              <div class="v tabular-nums">${s.fluency}<small> wpm</small></div>
+            </div>
+            <div class="mini-stat">
+              <div class="l">Letters mastered</div>
+              <div class="v tabular-nums">${s.mastered}<small> / 22</small></div>
+            </div>
+            <div class="mini-stat">
+              <div class="l">Readiness</div>
+              <div class="v tabular-nums">${s.readiness}<small>%</small></div>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary" onclick="alert('Demo: would open the kriah session logger.')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+              Log session
+            </button>
+            <button class="btn" disabled title="Demo only">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M4 8h16"/></svg>
+              Share with parent
+            </button>
+            <button class="btn" onclick="alert('Demo: would export a one-page PDF report.')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+              Export report
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Milestones -->
+      <section class="card milestone-card" aria-label="Progression milestones">
+        <div class="card-head">
+          <h3>Progression milestones <small>· Year-long arc</small></h3>
+          <span class="badge badge-gray">2nd Grade Hebrew</span>
+        </div>
+        <div class="milestones">${milestonesHTML}</div>
+      </section>
+
+      <!-- Split: left = fluency + letters, right = AI insight + log + parent -->
+      <div class="split">
+        <div class="col-l">
+
+          <section class="card" aria-label="Fluency chart">
+            <div class="card-head">
+              <h3>Words per minute <small>· last 10 weeks</small></h3>
+              <span class="badge badge-navy">${s.fluency} wpm</span>
+            </div>
+            <div class="chart-wrap">${fluencyChartSVG(s)}</div>
+            <div class="chart-legend">
+              <span class="swatch"><i style="background:var(--navy);"></i> Fluency</span>
+              <span class="swatch target"><i></i> Target ${s.fluencyTarget} wpm</span>
+              <span class="swatch"><i style="background:var(--green); border-radius:50%; width:8px; height:8px;"></i> Most recent reading</span>
+            </div>
+            <div class="chart-annotation">
+              <div class="ico">&#10003;</div>
+              <div><strong>${s.annotation.label}</strong> on ${s.annotation.date}. ${s.annotation.note}</div>
+            </div>
+          </section>
+
+          <section class="card" aria-label="Letter mastery">
+            <div class="card-head">
+              <h3>Letter mastery <small>· 22 letters · click any letter</small></h3>
+              <span class="badge badge-green">${s.mastered} mastered</span>
+            </div>
+            <div class="letter-grid" id="letterGrid">
+              ${s.letters.map(letterTileHTML).join('')}
+            </div>
+            <div id="letterPopoverSlot"></div>
+            <div class="legend">
+              <span class="pill mastered"><i></i> Mastered (90%+)</span>
+              <span class="pill practicing"><i></i> Practicing (60-89%)</span>
+              <span class="pill working"><i></i> Working on it (&lt;60%)</span>
+            </div>
+          </section>
+
+        </div>
+        <div class="col-r">
+
+          <section class="card insight" aria-label="AI insight">
+            <div class="eyebrow-row">
+              <span class="insight-eyebrow"><span class="star">&#10024;</span> Weekly insight · generated 2026-04-22</span>
+              <span class="badge badge-navy">By Claude</span>
+            </div>
+            <p>${s.insight}</p>
+            <div class="sources">
+              <strong>Based on:</strong> ${s.sources.fluency} fluency recordings · ${s.sources.workbook} workbook entries · ${s.sources.notes} teacher notes
+            </div>
+          </section>
+
+          <section class="card" aria-label="Teacher log">
+            <div class="card-head">
+              <h3>Teacher notes <small>· recent</small></h3>
+              <span class="badge badge-gray">${s.notes.length} entries</span>
+            </div>
+            <div class="log-list">
+              ${s.notes.map(n => `
+                <div class="log-entry">
+                  <div class="head"><strong>${n.who}</strong><span class="when">· ${n.when}</span></div>
+                  <div>${n.text}</div>
+                </div>
+              `).join('')}
+            </div>
+            <div class="log-actions">
+              <button class="btn btn-primary" onclick="alert('Demo: would open the note composer.')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                Add note
+              </button>
+              <button class="btn">View all</button>
+            </div>
+          </section>
+
+          <section class="card parent-card" aria-label="Parent communication">
+            <div class="card-head">
+              <h3>Parent-facing update <small>· draft</small></h3>
+              <span class="badge badge-yellow">Draft</span>
+            </div>
+            <div class="recipient"><span class="dot"></span> Ready to send to family@${s.last.toLowerCase()}.example</div>
+            <div class="draft">
+              ${s.parent.split('. ').map((sentence, i, arr) => {
+                if (!sentence) return '';
+                const period = i === arr.length - 1 ? '' : '.';
+                return `<p>${sentence}${period}</p>`;
+              }).join('')}
+            </div>
+            <div class="actions">
+              <button class="btn btn-primary" disabled title="Demo only">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                Send to family
+              </button>
+              <button class="btn">Edit</button>
+              <button class="btn">Regenerate</button>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    `;
+
+    // Wire up letter tile clicks
+    panel.querySelectorAll('.letter-tile').forEach(tile => {
+      tile.addEventListener('click', () => openPopover(tile.dataset.letter));
+      tile.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPopover(tile.dataset.letter); }
+      });
+    });
+  }
+
+  function openPopover(letterId) {
+    const s = STUDENTS.find(x => x.id === currentStudentId);
+    const L = s.letters.find(x => x.id === letterId);
+    if (!L) return;
+    const slot = document.getElementById('letterPopoverSlot');
+    // Close existing
+    document.querySelectorAll('.letter-tile.open').forEach(t => t.classList.remove('open'));
+    document.querySelector(`.letter-tile[data-letter="${letterId}"]`)?.classList.add('open');
+    slot.innerHTML = letterPopoverHTML(L);
+  }
+  function closePopover() {
+    const slot = document.getElementById('letterPopoverSlot');
+    if (slot) slot.innerHTML = '';
+    document.querySelectorAll('.letter-tile.open').forEach(t => t.classList.remove('open'));
+  }
+  window.closePopover = closePopover;
+
+  /* =========================================================
+     Heatmap
+     ========================================================= */
+  function renderHeatmap() {
+    const table = document.getElementById('heatmapTable');
+    const head = `<thead><tr><th>Student</th>${LETTERS.map(L => `<th class="heb" title="${L.name}">${L.heb}</th>`).join('')}</tr></thead>`;
+    const body = `<tbody>${STUDENTS.map(s => {
+      const cells = s.letters.map(L => {
+        const acc = L.accuracy;
+        // Color: gray-150 to navy at 100
+        const t = Math.max(0, Math.min(1, acc / 100));
+        // We want a multi-stop ramp: 0 -> #f1f1f5, 0.5 -> #aab2dc, 1 -> #2a3270
+        let color;
+        if (t < 0.5) {
+          const k = t / 0.5;
+          color = mixHex('#f1f1f5', '#aab2dc', k);
+        } else {
+          const k = (t - 0.5) / 0.5;
+          color = mixHex('#aab2dc', '#2a3270', k);
+        }
+        return `<td><span class="cell" style="background:${color}" title="${s.first} · ${L.name}: ${acc}%"></span></td>`;
+      }).join('');
+      return `<tr><th><span class="heb-mini">${s.hebrew}</span> ${s.first} ${s.last}</th>${cells}</tr>`;
+    }).join('')}</tbody>`;
+    table.innerHTML = head + body;
+
+    // Scale legend
+    const scale = document.getElementById('heatmapScale');
+    const stops = [10, 30, 50, 70, 90];
+    scale.innerHTML = stops.map(t => {
+      const tt = t / 100;
+      let color;
+      if (tt < 0.5) color = mixHex('#f1f1f5', '#aab2dc', tt / 0.5);
+      else color = mixHex('#aab2dc', '#2a3270', (tt - 0.5) / 0.5);
+      return `<i style="background:${color}"></i>`;
+    }).join('');
+  }
+
+  function mixHex(a, b, t) {
+    const pa = parseInt(a.slice(1), 16);
+    const pb = parseInt(b.slice(1), 16);
+    const ar = (pa >> 16) & 255, ag = (pa >> 8) & 255, ab_ = pa & 255;
+    const br = (pb >> 16) & 255, bg = (pb >> 8) & 255, bb = pb & 255;
+    const r = Math.round(ar + (br - ar) * t);
+    const g = Math.round(ag + (bg - ag) * t);
+    const bl = Math.round(ab_ + (bb - ab_) * t);
+    return `#${[r,g,bl].map(v => v.toString(16).padStart(2, '0')).join('')}`;
+  }
+
+  /* =========================================================
+     Selection state
+     ========================================================= */
+  let currentStudentId = 'alef';
+  function selectStudent(id) {
+    currentStudentId = id;
+    const s = STUDENTS.find(x => x.id === id);
+    if (!s) return;
+    renderStudentList(id);
+    renderStudentPanel(s);
+    closePopover();
+    // Smooth scroll to top of right panel on small screens
+    if (window.innerWidth < 1100) {
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  /* =========================================================
+     Boot
+     ========================================================= */
+  renderStudentList('alef');
+  renderStudentPanel(STUDENTS[0]);
+  renderHeatmap();
 </script>
-
 </body>
 </html>

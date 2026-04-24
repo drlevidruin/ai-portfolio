@@ -18,12 +18,16 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Back-to-portfolio link sits above header */
+    /* ── Back-to-portfolio bar ── */
     .portfolio-bar {
       background: #f0f2f5;
       padding: 10px 16px 0;
       max-width: 500px;
       margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
     }
     .portfolio-bar a {
       font-size: 12px;
@@ -33,23 +37,27 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      background: white;
+      border: 1px solid #d8e6df;
+      padding: 6px 10px;
+      border-radius: 999px;
+      cursor: pointer;
     }
-    .portfolio-bar a:hover { text-decoration: underline; }
+    .portfolio-bar a:hover { background: #f0faf5; border-color: #006B3F; }
     .demo-badge {
       display: inline-block;
-      margin-left: 10px;
       font-size: 10px;
       font-weight: 700;
       color: #b45309;
       background: #fffbeb;
       border: 1px solid #fde68a;
-      padding: 2px 8px;
+      padding: 4px 10px;
       border-radius: 999px;
       letter-spacing: 0.5px;
       text-transform: uppercase;
-      vertical-align: middle;
     }
 
+    /* ── Header (matches Index.html) ── */
     .header {
       background: linear-gradient(135deg, #006B3F 0%, #004d2d 100%);
       color: white;
@@ -104,7 +112,7 @@
     .screen { display: none; }
     .screen.active { display: block; }
 
-    /* Cards */
+    /* ── Cards ── */
     .card {
       background: white;
       border-radius: 16px;
@@ -120,7 +128,7 @@
       margin-bottom: 24px;
     }
 
-    /* Fields */
+    /* ── Fields ── */
     .field { margin-bottom: 18px; }
 
     .field label {
@@ -151,7 +159,7 @@
       background: white;
     }
 
-    /* Buttons */
+    /* ── Buttons ── */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -213,14 +221,16 @@
       border: 2px solid #ddd;
       padding: 12px 24px;
     }
+    .btn-outline:hover:not(:disabled) { background: #f5f5f5; }
 
     .btn-danger-solid {
       background: #dc3545;
       color: white;
       padding: 12px 24px;
     }
+    .btn-danger-solid:hover:not(:disabled) { background: #c92a3a; }
 
-    /* Alerts */
+    /* ── Alerts ── */
     .alert-error {
       background: #fef2f2;
       color: #b91c1c;
@@ -234,39 +244,53 @@
     }
     .alert-error.visible { display: block; }
 
-    /* Demo helpers shown subtly under login */
-    .demo-shortcut {
-      margin-top: 18px;
-      padding-top: 18px;
-      border-top: 1px dashed #e0e0e0;
+    .alert-closed {
+      background: #fffbeb;
+      color: #92400e;
+      padding: 18px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 500;
+      border: 1px solid #fde68a;
       text-align: center;
     }
-    .demo-shortcut .label {
+
+    /* ── Demo shortcuts ── */
+    .demo-divider {
+      margin: 24px 0 18px;
+      border: none;
+      border-top: 1px dashed #c8d2cc;
+    }
+    .demo-shortcut-label {
       font-size: 11px;
       font-weight: 700;
       color: #888;
       text-transform: uppercase;
       letter-spacing: 0.6px;
-      margin-bottom: 10px;
+      text-align: center;
+      margin-bottom: 12px;
     }
-    .demo-shortcut button {
-      background: #f0faf5;
-      color: #006B3F;
-      border: 1px solid #b7e2c6;
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-size: 13px;
+    .demo-shortcut {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 14px;
       font-weight: 600;
       font-family: 'Montserrat', sans-serif;
+      background: #f8faf9;
+      border: 1px solid #e0e8e3;
+      border-radius: 10px;
+      color: #006B3F;
       cursor: pointer;
-      width: 100%;
-      margin-bottom: 6px;
-      min-height: 42px;
-      transition: background 0.15s;
+      margin-bottom: 8px;
+      min-height: 44px;
+      transition: background 0.15s, border-color 0.15s;
     }
-    .demo-shortcut button:hover { background: #e0f4e8; }
+    .demo-shortcut:hover { background: #f0faf5; border-color: #006B3F; }
+    .demo-shortcut .arrow { float: right; opacity: 0.5; font-weight: 400; }
 
-    /* Dashboard */
+    /* ── Dashboard ── */
     .welcome {
       font-size: 24px;
       color: #006B3F;
@@ -315,6 +339,7 @@
       border-bottom: 1px solid #f0f0f0;
       gap: 12px;
     }
+
     .teacher-row:last-child { border-bottom: none; }
 
     .teacher-info { flex: 1; min-width: 0; }
@@ -334,6 +359,7 @@
       font-weight: 600;
       margin-top: 4px;
     }
+
     .booked-badge::before {
       content: '\2713';
       display: inline-flex;
@@ -351,9 +377,10 @@
       display: flex;
       gap: 6px;
       margin-top: 8px;
+      flex-wrap: wrap;
     }
 
-    /* Teacher section */
+    /* Teacher bookings section */
     .section-title {
       font-size: 16px;
       font-weight: 700;
@@ -373,6 +400,7 @@
       box-shadow: 0 1px 6px rgba(0,0,0,0.05);
       border-left: 4px solid #006B3F;
     }
+
     .tb-when {
       font-size: 13px;
       font-weight: 700;
@@ -380,17 +408,20 @@
       text-transform: uppercase;
       letter-spacing: 0.4px;
     }
+
     .tb-student {
       font-size: 16px;
       font-weight: 700;
       color: #1a1a1a;
       margin-top: 4px;
     }
+
     .tb-family {
       font-size: 13px;
       color: #666;
       margin-top: 2px;
     }
+
     .tb-meta {
       font-size: 13px;
       color: #444;
@@ -398,7 +429,9 @@
       padding-top: 10px;
       border-top: 1px solid #f0f0f0;
     }
+
     .tb-meta div { margin-top: 3px; }
+
     .tb-meta .label { color: #888; font-weight: 500; display: inline-block; min-width: 60px; }
 
     .tb-note {
@@ -424,13 +457,14 @@
       vertical-align: middle;
     }
 
-    /* Admin */
+    /* Admin dashboard */
     .admin-stats {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
       gap: 8px;
       margin-bottom: 16px;
     }
+
     .admin-stat-card {
       background: white;
       padding: 14px 12px;
@@ -438,11 +472,13 @@
       text-align: center;
       box-shadow: 0 1px 4px rgba(0,0,0,0.05);
     }
+
     .admin-stat-num {
       font-size: 22px;
       font-weight: 700;
       color: #006B3F;
     }
+
     .admin-stat-label {
       font-size: 11px;
       color: #888;
@@ -450,6 +486,21 @@
       letter-spacing: 0.4px;
       margin-top: 2px;
     }
+
+    .admin-actions {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .admin-actions .btn {
+      flex: 1;
+      min-width: 140px;
+      padding: 10px 14px;
+      font-size: 13px;
+      min-height: 44px;
+    }
+
     .admin-day-header {
       font-size: 14px;
       font-weight: 700;
@@ -462,6 +513,7 @@
       border-radius: 10px;
       border-left: 4px solid #006B3F;
     }
+
     .admin-booking {
       background: white;
       padding: 12px 16px;
@@ -471,30 +523,37 @@
       font-size: 13px;
       line-height: 1.5;
     }
+
     .admin-booking .row1 {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
       gap: 8px;
+      flex-wrap: wrap;
     }
+
     .admin-booking .time {
       font-weight: 700;
       color: #006B3F;
       font-size: 14px;
       white-space: nowrap;
     }
+
     .admin-booking .teacher {
       font-weight: 600;
       color: #333;
     }
+
     .admin-booking .details {
       color: #555;
       margin-top: 4px;
     }
+
     .admin-booking .details .label {
       color: #888;
       font-size: 12px;
     }
+
     .admin-note {
       background: #f8faf9;
       border-left: 3px solid #006B3F;
@@ -519,6 +578,7 @@
       text-align: center;
       margin-top: 28px;
     }
+
     .signout button {
       color: #999;
       font-size: 14px;
@@ -530,9 +590,8 @@
       min-height: 44px;
       font-family: 'Montserrat', sans-serif;
     }
-    .signout button:hover { color: #555; }
 
-    /* Slot picker */
+    /* ── Slot Picker ── */
     .back-btn {
       display: inline-flex;
       align-items: center;
@@ -549,12 +608,16 @@
       font-family: 'Montserrat', sans-serif;
     }
 
-    .picker-header { margin-bottom: 24px; }
+    .picker-header {
+      margin-bottom: 24px;
+    }
+
     .picker-title {
       font-size: 20px;
       font-weight: 700;
       color: #1a1a1a;
     }
+
     .picker-subtitle {
       font-size: 14px;
       color: #888;
@@ -562,6 +625,7 @@
     }
 
     .date-group { margin-bottom: 24px; }
+
     .date-label {
       font-size: 13px;
       font-weight: 700;
@@ -593,24 +657,29 @@
       text-align: center;
       transition: opacity 0.15s, transform 0.15s, border-color 0.15s, background 0.15s;
     }
+
     .slot-btn:hover:not(:disabled) {
       border-color: #006B3F;
       background: #f0faf5;
       color: #006B3F;
     }
+
     .slot-btn:active:not(:disabled) { transform: scale(0.96); }
+
     .slot-btn.selected {
       background: #006B3F;
       color: white;
       border-color: #006B3F;
     }
-    .slot-btn:disabled {
+
+    .slot-btn.taken {
       background: #f5f5f5;
-      color: #bbb;
-      border-color: #eee;
+      color: #b8b8b8;
+      border-color: #ececec;
       cursor: not-allowed;
       text-decoration: line-through;
     }
+    .slot-btn.taken:hover { background: #f5f5f5; color: #b8b8b8; border-color: #ececec; }
 
     .confirm-panel {
       background: white;
@@ -619,19 +688,29 @@
       margin-top: 20px;
       box-shadow: 0 2px 12px rgba(0,0,0,0.06);
       border: 2px solid #006B3F;
+      animation: panelIn 0.25s ease;
     }
+    @keyframes panelIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .confirm-panel h3 {
       font-size: 17px;
       font-weight: 700;
       color: #006B3F;
       margin-bottom: 16px;
     }
+
     .confirm-detail {
       font-size: 14px;
       color: #555;
       margin-bottom: 4px;
     }
-    .confirm-detail strong { color: #1a1a1a; }
+
+    .confirm-detail strong {
+      color: #1a1a1a;
+    }
 
     .confirm-note {
       width: 100%;
@@ -645,7 +724,10 @@
       margin-top: 6px;
       outline: none;
     }
-    .confirm-note:focus { border-color: #006B3F; }
+
+    .confirm-note:focus {
+      border-color: #006B3F;
+    }
 
     .confirm-note-label {
       font-size: 12px;
@@ -669,10 +751,12 @@
       background: white;
       transition: border-color 0.15s, background 0.15s;
     }
+
     .inperson-check:hover {
       border-color: #006B3F;
       background: #f8faf9;
     }
+
     .inperson-check input[type="checkbox"] {
       width: 20px;
       height: 20px;
@@ -681,17 +765,21 @@
       accent-color: #006B3F;
       flex-shrink: 0;
     }
+
     .inperson-check:has(input:checked) {
       border-color: #006B3F;
       background: #f0faf5;
     }
+
     .inperson-text { display: flex; flex-direction: column; gap: 3px; }
+
     .inperson-title {
       font-size: 14px;
       font-weight: 600;
       color: #1a1a1a;
       line-height: 1.3;
     }
+
     .inperson-sub {
       font-size: 12px;
       color: #777;
@@ -703,14 +791,48 @@
       gap: 10px;
       margin-top: 20px;
     }
+
     .confirm-actions .btn { flex: 1; }
+
     .btn-back {
       background: white;
       color: #666;
       border: 2px solid #ddd;
     }
+    .btn-back:hover:not(:disabled) { background: #f5f5f5; }
 
-    /* Modal */
+    .no-slots {
+      color: #999;
+      font-size: 15px;
+      padding: 32px 20px;
+      text-align: center;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    /* ── Family choice ── */
+    .family-choice {
+      display: block;
+      padding: 16px 20px;
+      font-size: 16px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      color: #333;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 10px;
+      min-height: 52px;
+      transition: opacity 0.15s, transform 0.15s, border-color 0.15s, background 0.15s;
+    }
+
+    .family-choice:hover { border-color: #006B3F; background: #f0faf5; color: #006B3F; }
+
+    /* ── Modal ── */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -732,40 +854,130 @@
       width: 100%;
       text-align: center;
       box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      animation: modalIn 0.2s ease;
     }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.94); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
     .modal h3 {
       font-size: 18px;
       font-weight: 700;
       margin-bottom: 8px;
     }
+
     .modal p {
       font-size: 14px;
       color: #666;
       margin-bottom: 24px;
       line-height: 1.5;
     }
-    .modal-buttons { display: flex; gap: 10px; }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
     .modal-buttons .btn { flex: 1; }
 
-    .start-over { text-align: center; margin-top: 16px; }
-    .start-over button {
-      color: #999;
-      font-size: 13px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 8px 16px;
-      min-height: 44px;
-      font-family: 'Montserrat', sans-serif;
+    /* ── Print Slots Modal ── */
+    .print-modal {
+      max-width: 720px;
+      width: calc(100% - 32px);
+      max-height: 90vh;
+      overflow-y: auto;
+      text-align: left;
+      padding: 24px;
     }
-    .start-over button:hover { color: #555; }
+    .print-modal h3 {
+      color: #006B3F;
+      text-align: left;
+      margin-bottom: 4px;
+    }
+    .print-modal .print-sub {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 18px;
+    }
+    .print-teacher-card {
+      background: #fafafa;
+      border-radius: 12px;
+      padding: 18px 20px;
+      border: 1px solid #e8efea;
+    }
+    .print-teacher-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      border-bottom: 2px solid #006B3F;
+    }
+    .print-teacher-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #006B3F;
+    }
+    .print-teacher-stats {
+      font-size: 12px;
+      color: #666;
+    }
+    .print-teacher-stats strong { color: #006B3F; }
+    .print-day { margin-bottom: 14px; }
+    .print-day:last-child { margin-bottom: 0; }
+    .print-day-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1a1a1a;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .print-slots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 6px;
+    }
+    .print-slot {
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 8px;
+      text-align: center;
+      line-height: 1.3;
+    }
+    .print-slot.open {
+      background: white;
+      color: #006B3F;
+      border: 1px solid #b0d9c4;
+    }
+    .print-slot.booked {
+      background: #006B3F;
+      color: white;
+    }
+    .print-slot .slot-label {
+      display: block;
+      font-size: 10px;
+      font-weight: 500;
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+    .print-modal-close {
+      display: block;
+      margin: 16px auto 0;
+      max-width: 180px;
+    }
 
+    /* ── Toast ── */
     .toast {
       position: fixed;
       top: 16px;
       left: 50%;
       transform: translateX(-50%);
-      background: #006B3F;
+      background: #dc3545;
       color: white;
       padding: 14px 24px;
       border-radius: 12px;
@@ -777,24 +989,44 @@
       text-align: center;
       animation: toastIn 0.3s ease;
     }
+    .toast.success { background: #006B3F; }
+    .toast.warn { background: #b45309; }
     .toast.error { background: #dc3545; }
 
     @keyframes toastIn {
       from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
       to { opacity: 1; transform: translateX(-50%) translateY(0); }
     }
+
+    .start-over {
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    .start-over button {
+      color: #999;
+      font-size: 13px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px 16px;
+      min-height: 44px;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .start-over button:hover { color: #006B3F; }
   </style>
 </head>
 <body>
 
+  <!-- Back-to-portfolio bar (above header) -->
   <div class="portfolio-bar">
-    <a href="../../index.html">&#8592; Back to portfolio</a>
-    <span class="demo-badge">Interactive Demo</span>
+    <a href="#" id="back-to-portfolio">&larr; Back to portfolio</a>
+    <span class="demo-badge">Demo</span>
   </div>
 
   <div class="header">
     <div class="logo-badge">
-      <div class="logo-text"><span class="star">&#10022;</span>Pardes</div>
+      <div class="logo-text"><span class="star">&#10039;</span>Pardes</div>
     </div>
     <h1>Pardes Day School</h1>
     <div class="subtitle">Parent-Teacher Conferences</div>
@@ -818,13 +1050,6 @@
             <input type="tel" id="input-phone4" placeholder="4 digits" maxlength="4" inputmode="numeric" pattern="[0-9]*">
           </div>
           <button class="btn btn-primary" id="btn-login" onclick="handleLogin()">Find My Family</button>
-
-          <div class="demo-shortcut">
-            <div class="label">Demo shortcuts</div>
-            <button type="button" onclick="demoSignIn('parent')">Sign in as demo family (Cohen)</button>
-            <button type="button" onclick="demoSignIn('teacher')">Switch to teacher view (Mrs. Levi)</button>
-            <button type="button" onclick="demoSignIn('admin')">Switch to admin view</button>
-          </div>
         </div>
 
         <div id="login-step-fullphone" style="display:none;">
@@ -835,6 +1060,24 @@
           <button class="btn btn-primary" onclick="handleFullPhoneLogin()">Continue</button>
           <div class="start-over"><button type="button" onclick="resetLogin()">Start over</button></div>
         </div>
+
+        <div id="login-step-disambig" style="display:none;">
+          <p style="font-size:15px;color:#666;margin-bottom:18px;">Multiple families found. Please select yours:</p>
+          <div id="disambig-list"></div>
+          <div class="start-over"><button type="button" onclick="resetLogin()">Start over</button></div>
+        </div>
+
+        <hr class="demo-divider">
+        <div class="demo-shortcut-label">Demo shortcuts</div>
+        <button type="button" class="demo-shortcut" onclick="demoLogin('parent')">
+          Sign in as Cohen family (parent) <span class="arrow">&rarr;</span>
+        </button>
+        <button type="button" class="demo-shortcut" onclick="demoLogin('teacher')">
+          Sign in as Mrs. Levi (teacher) <span class="arrow">&rarr;</span>
+        </button>
+        <button type="button" class="demo-shortcut" onclick="demoLogin('admin')">
+          Sign in as Admin <span class="arrow">&rarr;</span>
+        </button>
       </div>
     </div>
 
@@ -867,7 +1110,7 @@
           </span>
         </label>
         <div class="confirm-note-label">Anything you'd like the teacher to know? (optional)</div>
-        <textarea id="confirm-note" class="confirm-note" placeholder="Any special requests or topics to discuss" maxlength="500"></textarea>
+        <textarea id="confirm-note" class="confirm-note" placeholder="Any special requests or topics to discuss" maxlength="500" aria-label="Optional note for teacher"></textarea>
         <div class="confirm-actions">
           <button type="button" class="btn btn-back" onclick="clearSlotSelection()">Pick Another Time</button>
           <button type="button" class="btn btn-primary" id="btn-confirm-book" onclick="confirmBooking()" style="flex:2;">Confirm Booking</button>
@@ -888,131 +1131,166 @@
     </div>
   </div>
 
-<script>
-  /* =========================================================
-     Demo data — fixed sample family + teachers + slot grid.
-     Stays in memory; reloading the page resets state.
-     ========================================================= */
+  <!-- PRINT SLOTS MODAL -->
+  <div class="modal-overlay" id="print-modal">
+    <div class="modal print-modal">
+      <h3>Print Slot Sheet</h3>
+      <div class="print-sub">Slot verification &middot; Mrs. Levi &middot; May 11&ndash;18, 2026</div>
+      <div id="print-modal-content"></div>
+      <button class="btn btn-outline print-modal-close" onclick="closePrintModal()">Close</button>
+    </div>
+  </div>
 
-  // Three demo dates (Mon May 11, Wed May 13, Thu May 14, 2026)
-  var DEMO_DATES = [
-    { date: '2026-05-11', label: 'Mon, May 11' },
-    { date: '2026-05-13', label: 'Wed, May 13' },
-    { date: '2026-05-14', label: 'Thu, May 14' }
+<script>
+  /* ────────────────────────────────────────────────────────────────────
+     DEMO DATA — mirrors the structure the real Apps Script backend returns.
+     ──────────────────────────────────────────────────────────────────── */
+
+  // Five conference dates (May 11-18, 2026)
+  var DATES = [
+    { iso: '2026-05-11', long: 'Monday, May 11',    short: 'Mon May 11' },
+    { iso: '2026-05-13', long: 'Wednesday, May 13', short: 'Wed May 13' },
+    { iso: '2026-05-14', long: 'Thursday, May 14',  short: 'Thu May 14' },
+    { iso: '2026-05-15', long: 'Friday, May 15',    short: 'Fri May 15' },
+    { iso: '2026-05-18', long: 'Monday, May 18',    short: 'Mon May 18' }
   ];
 
-  // Generate 4:00–5:00 PM slots in 15-min increments per teacher per date
-  function buildSlotGrid() {
-    var times = ['4:00 PM','4:15 PM','4:30 PM','4:45 PM','5:00 PM','5:15 PM'];
-    var endMap = {'4:00 PM':'4:15 PM','4:15 PM':'4:30 PM','4:30 PM':'4:45 PM','4:45 PM':'5:00 PM','5:00 PM':'5:15 PM','5:15 PM':'5:30 PM'};
-    var teachers = ['Mrs. Levi','Mrs. Rothman','Mr. Stein','Ms. Friedman','Mr. Cohen','Mrs. Klein','Mr. Berg','Ms. Goldberg','Mrs. Shapiro'];
-    var grid = {};
-    teachers.forEach(function(t) {
-      grid[t] = [];
-      DEMO_DATES.forEach(function(d) {
-        times.forEach(function(time, i) {
-          grid[t].push({
-            slot_id: t + '|' + d.date + '|' + time,
-            teacher_name: t,
-            date: d.date,
-            start_time: time,
-            end_time: endMap[time],
-            taken: false
-          });
-        });
-      });
-    });
-    // Mark a couple of "taken" slots for realism
-    var markTaken = [
-      'Mrs. Levi|2026-05-11|4:30 PM',
-      'Mrs. Levi|2026-05-13|4:00 PM',
-      'Mr. Stein|2026-05-13|4:15 PM',
-      'Ms. Friedman|2026-05-11|4:45 PM',
-      'Mr. Cohen|2026-05-14|5:00 PM',
-      'Ms. Goldberg|2026-05-13|4:30 PM' // pre-booked for David
-    ];
-    Object.keys(grid).forEach(function(t) {
-      grid[t].forEach(function(s) {
-        if (markTaken.indexOf(s.slot_id) !== -1) s.taken = true;
-      });
-    });
-    return grid;
+  function endTime(start) {
+    // start is "h:mm AM/PM" — add 15 minutes
+    var m = start.match(/^(\d+):(\d+)\s*(AM|PM)$/);
+    if (!m) return start;
+    var h = parseInt(m[1], 10);
+    var mins = parseInt(m[2], 10);
+    var per = m[3];
+    mins += 15;
+    if (mins >= 60) { mins -= 60; h += 1; }
+    if (h > 12) { h -= 12; per = (per === 'AM') ? 'PM' : 'AM'; }
+    return h + ':' + (mins < 10 ? '0' : '') + mins + ' ' + per;
   }
 
-  var SLOT_GRID = buildSlotGrid();
+  // Standard time grid: 4:00 to 5:15 PM in 15-min increments
+  var TIME_GRID = ['4:00 PM', '4:15 PM', '4:30 PM', '4:45 PM', '5:00 PM', '5:15 PM'];
 
-  var ROOMS = ['Room 12','Room 7','Room 14','Room 3','Library','Room 9','Room 21','Room 5','Room 17'];
-  function roomFor(teacher) {
-    var idx = Math.abs((teacher || '').split('').reduce(function(a, c) { return a + c.charCodeAt(0); }, 0)) % ROOMS.length;
-    return ROOMS[idx];
-  }
-
-  var TEACHER_PHONES = {
-    'Mrs. Levi':    '(216) 555-0101',
-    'Mrs. Rothman': '(216) 555-0102',
-    'Mr. Stein':    '(216) 555-0103',
-    'Ms. Friedman': '(216) 555-0104',
-    'Mr. Cohen':    '(216) 555-0105',
-    'Mrs. Klein':   '(216) 555-0106',
-    'Mr. Berg':     '(216) 555-0107',
-    'Ms. Goldberg': '(216) 555-0108',
-    'Mrs. Shapiro': '(216) 555-0109'
+  // Teacher directory (locations / room assignments, used in confirm panel)
+  var TEACHERS = {
+    'Mrs. Levi':     { location: 'Room 12',     grades: [1] },
+    'Mrs. Rothman':  { location: 'Room 8',      grades: [1] },
+    'Mr. Stein':     { location: 'Gym',         grades: [1, 3, 5] },
+    'Ms. Friedman':  { location: 'Room 18',     grades: [3] },
+    'Mr. Cohen':     { location: 'Room 22',     grades: [3] },
+    'Mrs. Klein':    { location: 'Music Room',  grades: [3] },
+    'Mr. Berg':      { location: 'Room 31',     grades: [5] },
+    'Ms. Goldberg':  { location: 'Library',     grades: [5] },
+    'Mrs. Shapiro':  { location: 'Room 27',     grades: [5] }
   };
 
-  // Cohen family — 3 children, varied teachers
-  var FAMILY = {
-    family_id: 'cohen-001',
+  // The signed-in family
+  var COHEN_FAMILY = {
+    family_id: 'fam-cohen',
     family_name: 'Cohen Family',
+    parent_phone: '(305) 555-0101',
     children: [
-      { name: 'Alef',     grade: '1st', teachers: ['Mrs. Levi','Mrs. Rothman','Mr. Stein'] },
-      { name: 'Shoshana', grade: '3rd', teachers: ['Ms. Friedman','Mr. Cohen','Mrs. Klein','Mr. Stein'] },
-      { name: 'David',    grade: '5th', teachers: ['Mr. Berg','Ms. Goldberg','Mrs. Shapiro'] }
+      { name: 'Alef Cohen',     grade: 1, teachers: ['Mrs. Levi', 'Mrs. Rothman', 'Mr. Stein'] },
+      { name: 'Shoshana Cohen', grade: 3, teachers: ['Ms. Friedman', 'Mr. Cohen', 'Mrs. Klein', 'Mr. Stein'] },
+      { name: 'David Cohen',    grade: 5, teachers: ['Mr. Berg', 'Ms. Goldberg', 'Mrs. Shapiro', 'Mr. Stein'] }
     ]
   };
 
-  // In-memory bookings list. Pre-seed one so the cancel/reschedule UI is visible immediately.
+  // Other families (for admin view + fake bookings)
+  var OTHER_FAMILIES = {
+    'Goldstein Family':  { phone: '(305) 555-0202' },
+    'Mizrahi Family':    { phone: '(305) 555-0303' },
+    'Rosenberg Family':  { phone: '(305) 555-0404' },
+    'Abramov Family':    { phone: '(305) 555-0505' },
+    'Katz Family':       { phone: '(305) 555-0606' },
+    'Hadad Family':      { phone: '(305) 555-0707' }
+  };
+
+  // Pre-existing bookings (these slots are "taken" in the picker).
+  // booking_id is a stable id; conference_format is 'In-Person Requested' or 'Phone Call'.
   var BOOKINGS = [
-    {
-      booking_id: 'bk-seed-1',
-      teacher_name: 'Ms. Goldberg',
-      student_name: 'David',
-      date: '2026-05-13',
-      start_time: '4:30 PM',
-      end_time: '4:45 PM',
-      family_name: 'Cohen Family',
-      parent_phone: '(216) 555-0411',
-      parent_note: '',
-      conference_format: 'Phone Call'
-    }
-  ];
+    // Cohen family — David already booked with Ms. Goldberg (per spec)
+    { booking_id: 'bk-001', family_id: 'fam-cohen', family_name: 'Cohen Family',
+      student_name: 'David Cohen', teacher_name: 'Ms. Goldberg',
+      date: '2026-05-13', start_time: '4:30 PM', end_time: '4:45 PM',
+      conference_format: 'Phone Call', parent_phone: '(305) 555-0101', parent_note: '' },
 
-  // Other families that exist for the admin view (mocked)
-  var OTHER_BOOKINGS = [
-    { booking_id: 'bk-x1', teacher_name: 'Mrs. Levi',    student_name: 'Yael',    family_name: 'Friedman Family',
+    // Other families — varied across teachers and dates
+    { booking_id: 'bk-002', family_id: 'fam-goldstein', family_name: 'Goldstein Family',
+      student_name: 'Eitan Goldstein', teacher_name: 'Mrs. Levi',
+      date: '2026-05-11', start_time: '4:00 PM', end_time: '4:15 PM',
+      conference_format: 'In-Person Requested', parent_phone: '(305) 555-0202',
+      parent_note: 'Would love to discuss reading progress.' },
+
+    { booking_id: 'bk-003', family_id: 'fam-mizrahi', family_name: 'Mizrahi Family',
+      student_name: 'Noa Mizrahi', teacher_name: 'Mrs. Levi',
       date: '2026-05-11', start_time: '4:30 PM', end_time: '4:45 PM',
-      parent_phone: '(216) 555-0212', parent_note: 'Wants to discuss reading progress.', conference_format: 'In-Person Requested' },
-    { booking_id: 'bk-x2', teacher_name: 'Mrs. Levi',    student_name: 'Noam',    family_name: 'Katz Family',
-      date: '2026-05-13', start_time: '4:00 PM', end_time: '4:15 PM',
-      parent_phone: '(216) 555-0314', parent_note: '', conference_format: 'Phone Call' },
-    { booking_id: 'bk-x3', teacher_name: 'Mr. Stein',    student_name: 'Eli',     family_name: 'Roth Family',
+      conference_format: 'Phone Call', parent_phone: '(305) 555-0303', parent_note: '' },
+
+    { booking_id: 'bk-004', family_id: 'fam-rosenberg', family_name: 'Rosenberg Family',
+      student_name: 'Yael Rosenberg', teacher_name: 'Mrs. Levi',
       date: '2026-05-13', start_time: '4:15 PM', end_time: '4:30 PM',
-      parent_phone: '(216) 555-0518', parent_note: '', conference_format: 'Phone Call' },
-    { booking_id: 'bk-x4', teacher_name: 'Ms. Friedman', student_name: 'Maya',    family_name: 'Levi Family',
+      conference_format: 'Phone Call', parent_phone: '(305) 555-0404', parent_note: '' },
+
+    { booking_id: 'bk-005', family_id: 'fam-abramov', family_name: 'Abramov Family',
+      student_name: 'Daniel Abramov', teacher_name: 'Mrs. Levi',
+      date: '2026-05-14', start_time: '4:45 PM', end_time: '5:00 PM',
+      conference_format: 'In-Person Requested', parent_phone: '(305) 555-0505',
+      parent_note: 'Will bring older sibling Avi too.' },
+
+    { booking_id: 'bk-006', family_id: 'fam-katz', family_name: 'Katz Family',
+      student_name: 'Maya Katz', teacher_name: 'Mrs. Levi',
+      date: '2026-05-15', start_time: '4:00 PM', end_time: '4:15 PM',
+      conference_format: 'Phone Call', parent_phone: '(305) 555-0606', parent_note: '' },
+
+    { booking_id: 'bk-007', family_id: 'fam-hadad', family_name: 'Hadad Family',
+      student_name: 'Liav Hadad', teacher_name: 'Mr. Berg',
+      date: '2026-05-13', start_time: '4:00 PM', end_time: '4:15 PM',
+      conference_format: 'In-Person Requested', parent_phone: '(305) 555-0707', parent_note: '' },
+
+    { booking_id: 'bk-008', family_id: 'fam-goldstein', family_name: 'Goldstein Family',
+      student_name: 'Talia Goldstein', teacher_name: 'Ms. Friedman',
       date: '2026-05-11', start_time: '4:45 PM', end_time: '5:00 PM',
-      parent_phone: '(216) 555-0719', parent_note: 'Concerned about homework volume.', conference_format: 'In-Person Requested' },
-    { booking_id: 'bk-x5', teacher_name: 'Mr. Cohen',    student_name: 'Aviva',   family_name: 'Goldstein Family',
-      date: '2026-05-14', start_time: '5:00 PM', end_time: '5:15 PM',
-      parent_phone: '(216) 555-0823', parent_note: '', conference_format: 'Phone Call' },
-    { booking_id: 'bk-x6', teacher_name: 'Mrs. Shapiro', student_name: 'Dov',     family_name: 'Berman Family',
-      date: '2026-05-14', start_time: '4:30 PM', end_time: '4:45 PM',
-      parent_phone: '(216) 555-0931', parent_note: '', conference_format: 'Phone Call' }
+      conference_format: 'Phone Call', parent_phone: '(305) 555-0202', parent_note: '' },
+
+    { booking_id: 'bk-009', family_id: 'fam-mizrahi', family_name: 'Mizrahi Family',
+      student_name: 'Adi Mizrahi', teacher_name: 'Mr. Cohen',
+      date: '2026-05-15', start_time: '4:30 PM', end_time: '4:45 PM',
+      conference_format: 'Phone Call', parent_phone: '(305) 555-0303', parent_note: '' },
+
+    { booking_id: 'bk-010', family_id: 'fam-rosenberg', family_name: 'Rosenberg Family',
+      student_name: 'Itai Rosenberg', teacher_name: 'Mrs. Klein',
+      date: '2026-05-18', start_time: '4:15 PM', end_time: '4:30 PM',
+      conference_format: 'In-Person Requested', parent_phone: '(305) 555-0404',
+      parent_note: 'Hebrew conversation level question.' },
+
+    { booking_id: 'bk-011', family_id: 'fam-katz', family_name: 'Katz Family',
+      student_name: 'Maya Katz', teacher_name: 'Mr. Stein',
+      date: '2026-05-14', start_time: '4:15 PM', end_time: '4:30 PM',
+      conference_format: 'Phone Call', parent_phone: '(305) 555-0606', parent_note: '' },
+
+    { booking_id: 'bk-012', family_id: 'fam-abramov', family_name: 'Abramov Family',
+      student_name: 'Daniel Abramov', teacher_name: 'Mrs. Shapiro',
+      date: '2026-05-18', start_time: '5:00 PM', end_time: '5:15 PM',
+      conference_format: 'Phone Call', parent_phone: '(305) 555-0505', parent_note: '' },
+
+    { booking_id: 'bk-013', family_id: 'fam-hadad', family_name: 'Hadad Family',
+      student_name: 'Liav Hadad', teacher_name: 'Mrs. Rothman',
+      date: '2026-05-15', start_time: '4:30 PM', end_time: '4:45 PM',
+      conference_format: 'Phone Call', parent_phone: '(305) 555-0707', parent_note: '' },
+
+    { booking_id: 'bk-014', family_id: 'fam-goldstein', family_name: 'Goldstein Family',
+      student_name: 'Eitan Goldstein', teacher_name: 'Mrs. Rothman',
+      date: '2026-05-13', start_time: '5:00 PM', end_time: '5:15 PM',
+      conference_format: 'In-Person Requested', parent_phone: '(305) 555-0202', parent_note: '' }
   ];
 
-  /* =========================================================
-     App state
-     ========================================================= */
-  var currentRole = null;       // 'parent' | 'teacher' | 'admin'
-  var currentTeacherName = null;
+  /* ────────────────────────────────────────────────────────────────────
+     STATE
+     ──────────────────────────────────────────────────────────────────── */
+  var currentRole = null;          // 'parent' | 'teacher' | 'admin'
+  var currentFamily = null;        // {family_id, family_name, children, ...}
+  var currentTeacherName = null;   // for teacher view
   var pendingCancelId = null;
   var currentPickerTeacher = null;
   var currentPickerStudent = null;
@@ -1022,9 +1300,9 @@
   var selectedSlotTime = null;
   var selectedSlotEnd = null;
 
-  /* =========================================================
-     Helpers
-     ========================================================= */
+  /* ────────────────────────────────────────────────────────────────────
+     UTILITIES
+     ──────────────────────────────────────────────────────────────────── */
   function el(id) { return document.getElementById(id); }
 
   function showScreen(id) {
@@ -1033,46 +1311,56 @@
     window.scrollTo(0, 0);
   }
 
-  function formatDate(dateStr) {
-    if (!dateStr) return '';
-    try {
-      var d = new Date(dateStr + 'T12:00:00');
-      return new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).format(d);
-    } catch (e) { return dateStr; }
+  function formatDate(iso) {
+    var d = DATES.find(function(x) { return x.iso === iso; });
+    return d ? d.short : iso;
   }
-  function formatDateLong(dateStr) {
-    if (!dateStr) return '';
-    try {
-      var d = new Date(dateStr + 'T12:00:00');
-      return new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).format(d);
-    } catch (e) { return dateStr; }
+  function formatDateLong(iso) {
+    var d = DATES.find(function(x) { return x.iso === iso; });
+    return d ? d.long : iso;
   }
 
-  function showToast(msg, isError) {
+  // Toast — three flavors: success (green), warn (amber), error (red)
+  function showToast(msg, kind, duration) {
     var existing = document.querySelector('.toast');
     if (existing) existing.remove();
     var t = document.createElement('div');
-    t.className = 'toast' + (isError ? ' error' : '');
+    t.className = 'toast ' + (kind || 'error');
     t.textContent = msg;
     document.body.appendChild(t);
-    setTimeout(function() { t.remove(); }, 3500);
+    setTimeout(function() { if (t.parentNode) t.remove(); }, duration || 3500);
   }
 
-  function showLoginError(msg) { var e = el('login-error'); e.textContent = msg; e.classList.add('visible'); }
-  function hideLoginError() { el('login-error').classList.remove('visible'); el('login-error').textContent = ''; }
-
-  /* =========================================================
-     Login (demo: lenient)
-     ========================================================= */
+  /* ────────────────────────────────────────────────────────────────────
+     LOGIN
+     ──────────────────────────────────────────────────────────────────── */
   function handleLogin() {
     var lastName = el('input-lastname').value.trim();
     var phone4 = el('input-phone4').value.trim();
     if (!lastName) { showLoginError('Please enter your last name.'); return; }
     if (!/^\d{4}$/.test(phone4)) { showLoginError('Please enter exactly 4 digits.'); return; }
+
+    setLoginLoading(true);
     hideLoginError();
-    // Step 2: full phone
-    el('login-step-1').style.display = 'none';
-    el('login-step-fullphone').style.display = 'block';
+
+    // Simulate server lookup
+    setTimeout(function() {
+      setLoginLoading(false);
+      var ln = lastName.toLowerCase();
+      // "Cohen" + "0101" → success
+      if (ln === 'cohen' && phone4 === '0101') {
+        loginAs('parent');
+        return;
+      }
+      // "Levi" + any 4 digits → multiple matches → fullphone step (demo)
+      if (ln === 'levi') {
+        el('login-step-1').style.display = 'none';
+        el('login-step-fullphone').style.display = 'block';
+        el('input-fullphone').focus();
+        return;
+      }
+      showLoginError('Family not found. Please check your last name and phone number, or contact the school office.');
+    }, 350);
   }
 
   function handleFullPhoneLogin() {
@@ -1081,21 +1369,72 @@
       showLoginError('Please enter your full phone number.');
       return;
     }
+    setLoginLoading(true);
     hideLoginError();
-    // Demo: any phone works → Cohen family
-    demoSignIn('parent');
+
+    setTimeout(function() {
+      setLoginLoading(false);
+      // Demo: any full phone for "Levi" shows the disambiguation list
+      el('login-step-fullphone').style.display = 'none';
+      el('login-step-disambig').style.display = 'block';
+
+      var list = el('disambig-list');
+      list.textContent = '';
+      var families = [
+        { family_id: 'fam-levi-a', family_name: 'Levi Family (Aviva & Yoni)' },
+        { family_id: 'fam-levi-b', family_name: 'Levi Family (Sara & Tomer)' }
+      ];
+      families.forEach(function(f) {
+        var btn = document.createElement('button');
+        btn.className = 'family-choice';
+        btn.textContent = f.family_name;
+        btn.addEventListener('click', function() { selectFamily(f.family_id); });
+        list.appendChild(btn);
+      });
+    }, 300);
   }
 
-  function demoSignIn(role) {
+  function selectFamily(fid) {
+    setLoginLoading(true);
+    setTimeout(function() {
+      setLoginLoading(false);
+      // In the demo, both choices land on the parent dashboard (Cohen mock data)
+      loginAs('parent');
+    }, 250);
+  }
+
+  function demoLogin(role) {
+    hideLoginError();
+    loginAs(role);
+  }
+
+  function loginAs(role) {
     currentRole = role;
-    if (role === 'teacher') currentTeacherName = 'Mrs. Levi';
-    else if (role === 'admin') currentTeacherName = null;
-    showDashboard();
+    if (role === 'parent') {
+      currentFamily = COHEN_FAMILY;
+      currentTeacherName = null;
+      el('welcome-msg').textContent = 'Welcome, ' + currentFamily.family_name;
+    } else if (role === 'teacher') {
+      currentFamily = null;
+      currentTeacherName = 'Mrs. Levi';
+      el('welcome-msg').textContent = 'Welcome, ' + currentTeacherName;
+    } else if (role === 'admin') {
+      currentFamily = null;
+      currentTeacherName = null;
+      el('welcome-msg').textContent = 'Welcome, Admin';
+    }
+    showScreen('dashboard');
+    renderDashboard();
   }
 
   function handleLogout() {
     currentRole = null;
+    currentFamily = null;
     currentTeacherName = null;
+    pendingCancelId = null;
+    el('teacher-section').textContent = '';
+    el('admin-section').textContent = '';
+    el('dashboard-content').textContent = '';
     resetLogin();
     showScreen('login');
   }
@@ -1103,54 +1442,65 @@
   function resetLogin() {
     el('login-step-1').style.display = 'block';
     el('login-step-fullphone').style.display = 'none';
+    el('login-step-disambig').style.display = 'none';
     el('input-lastname').value = '';
     el('input-phone4').value = '';
     el('input-fullphone').value = '';
     hideLoginError();
   }
 
-  /* =========================================================
-     Dashboard rendering
-     ========================================================= */
+  function showLoginError(msg) {
+    var e = el('login-error');
+    e.textContent = msg;
+    e.classList.add('visible');
+  }
+  function hideLoginError() {
+    el('login-error').classList.remove('visible');
+    el('login-error').textContent = '';
+  }
+
+  function setLoginLoading(on) {
+    document.querySelectorAll('#screen-login .btn').forEach(function(b) { b.disabled = on; });
+    var btn = el('btn-login');
+    if (btn) btn.textContent = on ? 'Searching...' : 'Find My Family';
+  }
+
+  /* ────────────────────────────────────────────────────────────────────
+     DASHBOARD ROUTER
+     ──────────────────────────────────────────────────────────────────── */
   function showDashboard() {
     showScreen('dashboard');
-    var welcomeMsg = el('welcome-msg');
-    var welcomeSub = el('welcome-sub');
+    renderDashboard();
+  }
 
-    el('admin-section').textContent = '';
+  function renderDashboard() {
     el('dashboard-content').textContent = '';
     el('teacher-section').textContent = '';
+    el('admin-section').textContent = '';
+    var subtitle = el('welcome-sub');
 
     if (currentRole === 'admin') {
-      welcomeMsg.textContent = 'Welcome, Admin';
-      welcomeSub.textContent = 'Admin view \u2014 all scheduled conferences';
-      renderAdminSection(allBookings());
+      subtitle.textContent = 'Admin view \u2014 all scheduled conferences';
+      renderAdminSection();
     } else if (currentRole === 'teacher') {
-      welcomeMsg.textContent = 'Welcome, ' + currentTeacherName;
-      welcomeSub.textContent = "You're signed in as a teacher.";
-      renderTeacherSection(currentTeacherName, bookingsForTeacher(currentTeacherName));
-    } else {
-      welcomeMsg.textContent = 'Welcome, ' + FAMILY.family_name;
-      welcomeSub.textContent = 'Tap "Book" to schedule a conference';
-      renderParentDashboard();
+      subtitle.textContent = "You're signed in as a teacher.";
+      renderTeacherSection(currentTeacherName);
+    } else if (currentRole === 'parent') {
+      subtitle.textContent = 'Tap "Book" to schedule a conference';
+      renderParentSection();
     }
   }
 
-  function allBookings() {
-    return BOOKINGS.concat(OTHER_BOOKINGS);
-  }
-
-  function bookingsForTeacher(teacherName) {
-    return allBookings().filter(function(b) { return b.teacher_name === teacherName; })
-      .sort(function(a, b) {
-        if (a.date !== b.date) return a.date < b.date ? -1 : 1;
-        return a.start_time < b.start_time ? -1 : 1;
-      });
-  }
-
-  function renderParentDashboard() {
+  /* ────────────────────────────────────────────────────────────────────
+     PARENT DASHBOARD
+     ──────────────────────────────────────────────────────────────────── */
+  function renderParentSection() {
     var content = el('dashboard-content');
-    FAMILY.children.forEach(function(child) {
+    content.textContent = '';
+
+    var familyBookings = BOOKINGS.filter(function(b) { return b.family_id === currentFamily.family_id; });
+
+    currentFamily.children.forEach(function(child) {
       var card = document.createElement('div');
       card.className = 'child-card';
 
@@ -1158,132 +1508,73 @@
       header.className = 'child-header';
       var cn = document.createElement('div'); cn.className = 'child-name'; cn.textContent = child.name;
       var cg = document.createElement('div'); cg.className = 'child-grade'; cg.textContent = 'Grade ' + child.grade;
-      header.appendChild(cn); header.appendChild(cg);
+      header.appendChild(cn);
+      header.appendChild(cg);
       card.appendChild(header);
 
       child.teachers.forEach(function(teacher) {
-        var bk = BOOKINGS.find(function(b) { return b.teacher_name === teacher && b.student_name === child.name; });
-        var row = document.createElement('div'); row.className = 'teacher-row';
-        var info = document.createElement('div'); info.className = 'teacher-info';
-        var tn = document.createElement('div'); tn.className = 'teacher-name'; tn.textContent = teacher;
+        var bk = familyBookings.find(function(b) {
+          return b.teacher_name === teacher && b.student_name === child.name;
+        });
+
+        var row = document.createElement('div');
+        row.className = 'teacher-row';
+
+        var info = document.createElement('div');
+        info.className = 'teacher-info';
+        var tn = document.createElement('div');
+        tn.className = 'teacher-name';
+        tn.textContent = teacher;
         info.appendChild(tn);
 
         if (bk) {
-          var badge = document.createElement('div'); badge.className = 'booked-badge';
+          var badge = document.createElement('div');
+          badge.className = 'booked-badge';
           badge.textContent = formatDate(bk.date) + ' at ' + bk.start_time;
           info.appendChild(badge);
-          var acts = document.createElement('div'); acts.className = 'booking-actions';
 
-          var rb = document.createElement('button'); rb.className = 'btn btn-resched'; rb.textContent = 'Reschedule';
-          rb.addEventListener('click', (function(id, t, s) { return function() { handleReschedule(id, t, s); }; })(bk.booking_id, teacher, child.name));
+          var acts = document.createElement('div');
+          acts.className = 'booking-actions';
 
-          var cb = document.createElement('button'); cb.className = 'btn btn-cancel'; cb.textContent = 'Cancel';
-          cb.addEventListener('click', (function(id, t, st, dt) { return function() { handleCancel(id, t, st, dt); }; })(bk.booking_id, teacher, bk.start_time, bk.date));
+          var rb = document.createElement('button');
+          rb.className = 'btn btn-resched';
+          rb.textContent = 'Reschedule';
+          rb.addEventListener('click', (function(id, t, s) {
+            return function() { openSlotPicker(t, s, id); };
+          })(bk.booking_id, teacher, child.name));
 
-          acts.appendChild(rb); acts.appendChild(cb);
+          var cb = document.createElement('button');
+          cb.className = 'btn btn-cancel';
+          cb.textContent = 'Cancel';
+          cb.addEventListener('click', (function(id, t, st, dt) {
+            return function() { handleCancel(id, t, st, dt); };
+          })(bk.booking_id, teacher, bk.start_time, bk.date));
+
+          acts.appendChild(rb);
+          acts.appendChild(cb);
           info.appendChild(acts);
           row.appendChild(info);
         } else {
           row.appendChild(info);
-          var bb = document.createElement('button'); bb.className = 'btn btn-book'; bb.textContent = 'Book';
-          bb.addEventListener('click', (function(t, s) { return function() { openSlotPicker(t, s); }; })(teacher, child.name));
+          var bb = document.createElement('button');
+          bb.className = 'btn btn-book';
+          bb.textContent = 'Book';
+          bb.addEventListener('click', (function(t, s) {
+            return function() { openSlotPicker(t, s, null); };
+          })(teacher, child.name));
           row.appendChild(bb);
         }
         card.appendChild(row);
       });
+
       content.appendChild(card);
     });
   }
 
-  function renderAdminSection(bookings) {
-    var container = el('admin-section');
-    container.textContent = '';
-
-    var byDay = {};
-    var inPersonCount = 0;
-    bookings.forEach(function(b) {
-      byDay[b.date] = (byDay[b.date] || 0) + 1;
-      if (b.conference_format === 'In-Person Requested') inPersonCount++;
-    });
-    var days = Object.keys(byDay).sort();
-
-    var stats = document.createElement('div');
-    stats.className = 'admin-stats';
-    [
-      { num: bookings.length, label: 'Total' },
-      { num: days.length, label: 'Days' },
-      { num: inPersonCount, label: 'In-Person Req' }
-    ].forEach(function(s) {
-      var card = document.createElement('div');
-      card.className = 'admin-stat-card';
-      var n = document.createElement('div'); n.className = 'admin-stat-num'; n.textContent = s.num;
-      var l = document.createElement('div'); l.className = 'admin-stat-label'; l.textContent = s.label;
-      card.appendChild(n); card.appendChild(l);
-      stats.appendChild(card);
-    });
-    container.appendChild(stats);
-
-    if (!bookings.length) {
-      var empty = document.createElement('div');
-      empty.className = 'empty-teacher';
-      empty.textContent = 'No bookings yet.';
-      container.appendChild(empty);
-      return;
-    }
-
-    days.forEach(function(date) {
-      var header = document.createElement('div');
-      header.className = 'admin-day-header';
-      var dayBookings = bookings.filter(function(b) { return b.date === date; })
-        .sort(function(a, b) { return a.start_time < b.start_time ? -1 : 1; });
-      header.textContent = formatDateLong(date) + '  \u00b7  ' + dayBookings.length + ' booking' + (dayBookings.length === 1 ? '' : 's');
-      container.appendChild(header);
-
-      dayBookings.forEach(function(bk) {
-        var card = document.createElement('div');
-        card.className = 'admin-booking';
-
-        var row1 = document.createElement('div');
-        row1.className = 'row1';
-        var time = document.createElement('span'); time.className = 'time'; time.textContent = bk.start_time;
-        var teacher = document.createElement('span'); teacher.className = 'teacher'; teacher.textContent = bk.teacher_name;
-        row1.appendChild(time);
-        row1.appendChild(teacher);
-        if (bk.conference_format === 'In-Person Requested') {
-          var badge = document.createElement('span');
-          badge.className = 'tb-format-inperson';
-          badge.textContent = 'IN-PERSON';
-          row1.appendChild(badge);
-        }
-        card.appendChild(row1);
-
-        var details = document.createElement('div');
-        details.className = 'details';
-        details.textContent = bk.student_name + ' \u2014 ' + bk.family_name;
-        card.appendChild(details);
-
-        if (bk.parent_phone) {
-          var phone = document.createElement('div');
-          phone.className = 'details';
-          var lbl = document.createElement('span'); lbl.className = 'label'; lbl.textContent = 'Parent phone: ';
-          phone.appendChild(lbl);
-          phone.appendChild(document.createTextNode(bk.parent_phone));
-          card.appendChild(phone);
-        }
-
-        if (bk.parent_note) {
-          var note = document.createElement('div');
-          note.className = 'admin-note';
-          note.textContent = bk.parent_note;
-          card.appendChild(note);
-        }
-
-        container.appendChild(card);
-      });
-    });
-  }
-
-  function renderTeacherSection(teacherName, bookings) {
+  /* ────────────────────────────────────────────────────────────────────
+     TEACHER DASHBOARD
+     ──────────────────────────────────────────────────────────────────── */
+  function renderTeacherSection(teacherName) {
     var container = el('teacher-section');
     container.textContent = '';
 
@@ -1292,7 +1583,14 @@
     title.textContent = 'My conferences (' + teacherName + ')';
     container.appendChild(title);
 
-    if (!bookings.length) {
+    var bookings = BOOKINGS
+      .filter(function(b) { return b.teacher_name === teacherName; })
+      .sort(function(a, b) {
+        if (a.date !== b.date) return a.date < b.date ? -1 : 1;
+        return a.start_time < b.start_time ? -1 : 1;
+      });
+
+    if (bookings.length === 0) {
       var empty = document.createElement('div');
       empty.className = 'empty-teacher';
       empty.textContent = 'No bookings yet. They will appear here as families book.';
@@ -1349,84 +1647,208 @@
     });
   }
 
-  /* =========================================================
-     Slot picker
-     ========================================================= */
+  /* ────────────────────────────────────────────────────────────────────
+     ADMIN DASHBOARD
+     ──────────────────────────────────────────────────────────────────── */
+  function renderAdminSection() {
+    var container = el('admin-section');
+    container.textContent = '';
+
+    var bookings = BOOKINGS.slice().sort(function(a, b) {
+      if (a.date !== b.date) return a.date < b.date ? -1 : 1;
+      return a.start_time < b.start_time ? -1 : 1;
+    });
+
+    var byDay = {};
+    var inPersonCount = 0;
+    bookings.forEach(function(b) {
+      byDay[b.date] = (byDay[b.date] || 0) + 1;
+      if (b.conference_format === 'In-Person Requested') inPersonCount++;
+    });
+    var days = Object.keys(byDay).sort();
+
+    // Stats row
+    var stats = document.createElement('div');
+    stats.className = 'admin-stats';
+    [
+      { num: bookings.length,   label: 'Total' },
+      { num: days.length,        label: 'Days' },
+      { num: inPersonCount,      label: 'In-Person Req' }
+    ].forEach(function(s) {
+      var card = document.createElement('div');
+      card.className = 'admin-stat-card';
+      var n = document.createElement('div'); n.className = 'admin-stat-num'; n.textContent = s.num;
+      var l = document.createElement('div'); l.className = 'admin-stat-label'; l.textContent = s.label;
+      card.appendChild(n);
+      card.appendChild(l);
+      stats.appendChild(card);
+    });
+    container.appendChild(stats);
+
+    // Action buttons (Export disabled, Print Slot Sheet active)
+    var actions = document.createElement('div');
+    actions.className = 'admin-actions';
+    var exportBtn = document.createElement('button');
+    exportBtn.className = 'btn btn-outline';
+    exportBtn.textContent = 'Export';
+    exportBtn.disabled = true;
+    exportBtn.title = 'Demo only';
+    actions.appendChild(exportBtn);
+
+    var printBtn = document.createElement('button');
+    printBtn.className = 'btn btn-outline';
+    printBtn.textContent = 'Print slot sheet';
+    printBtn.addEventListener('click', openPrintModal);
+    actions.appendChild(printBtn);
+    container.appendChild(actions);
+
+    if (!bookings.length) {
+      var empty = document.createElement('div');
+      empty.className = 'empty-teacher';
+      empty.textContent = 'No bookings yet.';
+      container.appendChild(empty);
+      return;
+    }
+
+    days.forEach(function(date) {
+      var header = document.createElement('div');
+      header.className = 'admin-day-header';
+      var dayBookings = bookings.filter(function(b) { return b.date === date; });
+      header.textContent = formatDateLong(date) + '  \u00b7  ' + dayBookings.length + ' booking' + (dayBookings.length === 1 ? '' : 's');
+      container.appendChild(header);
+
+      dayBookings.forEach(function(bk) {
+        var card = document.createElement('div');
+        card.className = 'admin-booking';
+
+        var row1 = document.createElement('div');
+        row1.className = 'row1';
+        var time = document.createElement('span'); time.className = 'time'; time.textContent = bk.start_time;
+        var teacher = document.createElement('span'); teacher.className = 'teacher'; teacher.textContent = bk.teacher_name;
+        row1.appendChild(time);
+        row1.appendChild(teacher);
+        if (bk.conference_format === 'In-Person Requested') {
+          var badge = document.createElement('span');
+          badge.className = 'tb-format-inperson';
+          badge.textContent = 'IN-PERSON';
+          row1.appendChild(badge);
+        }
+        card.appendChild(row1);
+
+        var details = document.createElement('div');
+        details.className = 'details';
+        details.textContent = bk.student_name + ' \u2014 ' + bk.family_name;
+        card.appendChild(details);
+
+        if (bk.parent_phone) {
+          var phone = document.createElement('div');
+          phone.className = 'details';
+          var lbl = document.createElement('span'); lbl.className = 'label'; lbl.textContent = 'Parent phone: ';
+          phone.appendChild(lbl);
+          phone.appendChild(document.createTextNode(bk.parent_phone));
+          card.appendChild(phone);
+        }
+
+        if (bk.parent_note) {
+          var note = document.createElement('div');
+          note.className = 'admin-note';
+          note.textContent = bk.parent_note;
+          card.appendChild(note);
+        }
+
+        container.appendChild(card);
+      });
+    });
+  }
+
+  /* ────────────────────────────────────────────────────────────────────
+     SLOT PICKER
+     ──────────────────────────────────────────────────────────────────── */
   function openSlotPicker(teacher, student, rescheduleId) {
     currentPickerTeacher = teacher;
     currentPickerStudent = student;
     currentPickerBookingId = rescheduleId || null;
     selectedSlotId = null;
+
     var cb = el('inperson-checkbox');
     if (cb) cb.checked = false;
+
     showScreen('slots');
     el('picker-teacher').textContent = teacher;
     el('picker-student').textContent = (currentPickerBookingId ? 'Reschedule for ' : 'Select a time for ') + student;
     el('confirm-panel').style.display = 'none';
-    renderSlots(SLOT_GRID[teacher] || []);
+
+    renderSlotsForTeacher(teacher);
   }
 
-  function renderSlots(slots) {
+  function renderSlotsForTeacher(teacher) {
     var content = el('slots-content');
     content.textContent = '';
-    if (!slots || slots.length === 0) {
-      var ns = document.createElement('div');
-      ns.style.cssText = 'color:#999;font-size:15px;padding:32px 20px;text-align:center;background:white;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06);';
-      ns.textContent = 'No available times for this teacher.';
-      content.appendChild(ns);
-      return;
-    }
 
-    var grouped = {};
-    slots.forEach(function(s) {
-      if (!grouped[s.date]) grouped[s.date] = [];
-      grouped[s.date].push(s);
-    });
-
-    Object.keys(grouped).sort().forEach(function(date) {
-      var g = document.createElement('div'); g.className = 'date-group';
-      var lbl = document.createElement('div'); lbl.className = 'date-label';
-      lbl.textContent = formatDateLong(date);
+    // Build the slot grid: every (date, time) is open unless a booking already covers it
+    DATES.forEach(function(d) {
+      var g = document.createElement('div');
+      g.className = 'date-group';
+      var lbl = document.createElement('div');
+      lbl.className = 'date-label';
+      lbl.textContent = d.long;
       g.appendChild(lbl);
-      var grid = document.createElement('div'); grid.className = 'slots-grid';
-      grouped[date].forEach(function(slot) {
+
+      var grid = document.createElement('div');
+      grid.className = 'slots-grid';
+
+      TIME_GRID.forEach(function(time) {
+        var slotId = teacher + '|' + d.iso + '|' + time;
+        var taken = isSlotTaken(teacher, d.iso, time);
         var btn = document.createElement('button');
-        btn.className = 'slot-btn';
-        btn.textContent = slot.start_time;
-        btn.setAttribute('data-slot-id', slot.slot_id);
-        if (slot.taken) {
+        btn.className = 'slot-btn' + (taken ? ' taken' : '');
+        btn.textContent = time;
+        btn.setAttribute('data-slot-id', slotId);
+        if (taken) {
           btn.disabled = true;
           btn.title = 'Taken';
         } else {
-          btn.addEventListener('click', (function(sid, d, st, et) {
-            return function() { handleBookSlot(sid, d, st, et); };
-          })(slot.slot_id, slot.date, slot.start_time, slot.end_time));
+          btn.addEventListener('click', (function(sid, di, st) {
+            return function() { handleBookSlot(sid, di, st, endTime(st)); };
+          })(slotId, d.iso, time));
         }
         grid.appendChild(btn);
       });
-      g.appendChild(grid); content.appendChild(g);
+
+      g.appendChild(grid);
+      content.appendChild(g);
     });
   }
 
-  function handleBookSlot(slotId, date, time, endTime) {
+  function isSlotTaken(teacher, dateIso, time) {
+    return BOOKINGS.some(function(b) {
+      // The current booking we are rescheduling is NOT considered taken by us
+      if (currentPickerBookingId && b.booking_id === currentPickerBookingId) return false;
+      return b.teacher_name === teacher && b.date === dateIso && b.start_time === time;
+    });
+  }
+
+  function handleBookSlot(slotId, dateIso, time, endT) {
     selectedSlotId = slotId;
-    selectedSlotDate = date;
+    selectedSlotDate = dateIso;
     selectedSlotTime = time;
-    selectedSlotEnd = endTime;
+    selectedSlotEnd = endT;
 
     document.querySelectorAll('.slot-btn').forEach(function(b) { b.classList.remove('selected'); });
-    var selected = document.querySelector('[data-slot-id="' + slotId + '"]');
-    if (selected) selected.classList.add('selected');
+    var sel = document.querySelector('[data-slot-id="' + slotId.replace(/"/g, '\\"') + '"]');
+    if (sel) sel.classList.add('selected');
 
+    // Build confirmation details
     var details = el('confirm-details');
     details.textContent = '';
 
+    var loc = (TEACHERS[currentPickerTeacher] && TEACHERS[currentPickerTeacher].location) || 'TBD';
     var lines = [
-      ['Teacher', currentPickerTeacher],
-      ['Student', currentPickerStudent],
-      ['Date', formatDateLong(date)],
-      ['Time', time + ' \u2013 ' + endTime],
-      ['Location', roomFor(currentPickerTeacher)]
+      ['Teacher',  currentPickerTeacher],
+      ['Student',  currentPickerStudent],
+      ['Date',     formatDateLong(dateIso)],
+      ['Time',     time + ' \u2013 ' + endT],
+      ['Location', loc]
     ];
     lines.forEach(function(pair) {
       var d = document.createElement('div');
@@ -1454,53 +1876,54 @@
 
   function confirmBooking() {
     if (!selectedSlotId) return;
-    var inPerson = el('inperson-checkbox').checked;
-    var note = el('confirm-note').value.trim();
-    var formatLabel = inPerson ? 'In-Person Requested' : 'Phone Call';
 
-    if (currentPickerBookingId) {
-      // Reschedule: remove old booking, free old slot
-      var old = BOOKINGS.find(function(b) { return b.booking_id === currentPickerBookingId; });
-      if (old) {
-        freeSlot(old.teacher_name, old.date, old.start_time);
-        BOOKINGS = BOOKINGS.filter(function(b) { return b.booking_id !== currentPickerBookingId; });
+    el('btn-confirm-book').disabled = true;
+    el('btn-confirm-book').textContent = currentPickerBookingId ? 'Rescheduling...' : 'Booking...';
+
+    var inPersonRequested = el('inperson-checkbox').checked;
+    var formatLabel = inPersonRequested ? 'In-Person Requested' : 'Phone Call';
+    var noteValue = el('confirm-note').value.trim();
+
+    setTimeout(function() {
+      if (currentPickerBookingId) {
+        // Reschedule: update existing booking
+        var idx = BOOKINGS.findIndex(function(b) { return b.booking_id === currentPickerBookingId; });
+        if (idx >= 0) {
+          BOOKINGS[idx].date = selectedSlotDate;
+          BOOKINGS[idx].start_time = selectedSlotTime;
+          BOOKINGS[idx].end_time = selectedSlotEnd;
+          BOOKINGS[idx].conference_format = formatLabel;
+          BOOKINGS[idx].parent_note = noteValue;
+        }
+        showToast('Reschedule successful.', 'success');
+      } else {
+        // New booking
+        BOOKINGS.push({
+          booking_id: 'bk-' + Date.now(),
+          family_id: currentFamily.family_id,
+          family_name: currentFamily.family_name,
+          student_name: currentPickerStudent,
+          teacher_name: currentPickerTeacher,
+          date: selectedSlotDate,
+          start_time: selectedSlotTime,
+          end_time: selectedSlotEnd,
+          conference_format: formatLabel,
+          parent_phone: currentFamily.parent_phone,
+          parent_note: noteValue
+        });
+        showToast('Booking confirmed.', 'success');
       }
-    }
-
-    // Mark slot as taken
-    var slot = (SLOT_GRID[currentPickerTeacher] || []).find(function(s) { return s.slot_id === selectedSlotId; });
-    if (slot) slot.taken = true;
-
-    BOOKINGS.push({
-      booking_id: 'bk-' + Date.now(),
-      teacher_name: currentPickerTeacher,
-      student_name: currentPickerStudent,
-      date: selectedSlotDate,
-      start_time: selectedSlotTime,
-      end_time: selectedSlotEnd,
-      family_name: FAMILY.family_name,
-      parent_phone: '(216) 555-0411',
-      parent_note: note,
-      conference_format: formatLabel
-    });
-
-    showToast(currentPickerBookingId ? 'Conference rescheduled' : 'Conference booked');
-    showDashboard();
+      currentPickerBookingId = null;
+      showDashboard();
+    }, 400);
   }
 
-  function freeSlot(teacher, date, time) {
-    var list = SLOT_GRID[teacher] || [];
-    list.forEach(function(s) {
-      if (s.date === date && s.start_time === time) s.taken = false;
-    });
-  }
-
-  /* =========================================================
-     Cancel
-     ========================================================= */
-  function handleCancel(id, teacher, time, date) {
+  /* ────────────────────────────────────────────────────────────────────
+     CANCEL
+     ──────────────────────────────────────────────────────────────────── */
+  function handleCancel(id, teacher, time, dateIso) {
     pendingCancelId = id;
-    el('cancel-modal-text').textContent = 'Cancel your conference with ' + teacher + ' on ' + formatDateLong(date) + ' at ' + time + '?';
+    el('cancel-modal-text').textContent = 'Cancel your conference with ' + teacher + ' on ' + formatDateLong(dateIso) + ' at ' + time + '?';
     el('cancel-modal').classList.add('visible');
   }
 
@@ -1511,27 +1934,139 @@
 
   function confirmCancel() {
     if (!pendingCancelId) return;
-    var bk = BOOKINGS.find(function(b) { return b.booking_id === pendingCancelId; });
-    if (bk) {
-      freeSlot(bk.teacher_name, bk.date, bk.start_time);
-      BOOKINGS = BOOKINGS.filter(function(b) { return b.booking_id !== pendingCancelId; });
+    el('btn-confirm-cancel').disabled = true;
+
+    setTimeout(function() {
+      var idx = BOOKINGS.findIndex(function(b) { return b.booking_id === pendingCancelId; });
+      if (idx >= 0) BOOKINGS.splice(idx, 1);
+      pendingCancelId = null;
+      el('btn-confirm-cancel').disabled = false;
+      el('cancel-modal').classList.remove('visible');
+      showToast('Cancellation confirmed.', 'warn');
+      showDashboard();
+    }, 300);
+  }
+
+  /* ────────────────────────────────────────────────────────────────────
+     PRINT SLOTS MODAL (admin)
+     ──────────────────────────────────────────────────────────────────── */
+  function openPrintModal() {
+    var content = el('print-modal-content');
+    content.textContent = '';
+
+    var teacher = 'Mrs. Levi';
+    var teacherBookings = BOOKINGS.filter(function(b) { return b.teacher_name === teacher; });
+    var openCount = 0;
+    var bookedCount = teacherBookings.length;
+
+    var card = document.createElement('div');
+    card.className = 'print-teacher-card';
+
+    var head = document.createElement('div');
+    head.className = 'print-teacher-header';
+    var nm = document.createElement('div'); nm.className = 'print-teacher-name'; nm.textContent = teacher;
+    head.appendChild(nm);
+    var stats = document.createElement('div');
+    stats.className = 'print-teacher-stats';
+    head.appendChild(stats);
+    card.appendChild(head);
+
+    DATES.forEach(function(d) {
+      var dayDiv = document.createElement('div');
+      dayDiv.className = 'print-day';
+      var lbl = document.createElement('div');
+      lbl.className = 'print-day-label';
+      lbl.textContent = d.long;
+      dayDiv.appendChild(lbl);
+
+      var grid = document.createElement('div');
+      grid.className = 'print-slots-grid';
+
+      TIME_GRID.forEach(function(time) {
+        var bk = teacherBookings.find(function(b) { return b.date === d.iso && b.start_time === time; });
+        var slot = document.createElement('div');
+        if (bk) {
+          slot.className = 'print-slot booked';
+          slot.appendChild(document.createTextNode(time));
+          var sub = document.createElement('span');
+          sub.className = 'slot-label';
+          sub.textContent = bk.student_name;
+          slot.appendChild(sub);
+        } else {
+          openCount++;
+          slot.className = 'print-slot open';
+          slot.textContent = time;
+        }
+        grid.appendChild(slot);
+      });
+
+      dayDiv.appendChild(grid);
+      card.appendChild(dayDiv);
+    });
+
+    stats.innerHTML = '<strong>' + openCount + '</strong> open \u00b7 ' +
+                     '<strong>' + bookedCount + '</strong> booked \u00b7 ' +
+                     '<strong>' + (openCount + bookedCount) + '</strong> total';
+
+    content.appendChild(card);
+
+    el('print-modal').classList.add('visible');
+  }
+
+  function closePrintModal() {
+    el('print-modal').classList.remove('visible');
+  }
+
+  /* ────────────────────────────────────────────────────────────────────
+     SESSION EXPIRED — demo trigger after 10 min idle (kept for parity)
+     ──────────────────────────────────────────────────────────────────── */
+  // (No real timer — function exists for parity with real app's session toast)
+  function simulateSessionExpired() {
+    showToast('Session expired. Please sign in again.', 'error');
+    handleLogout();
+  }
+  // expose for console testing
+  window.simulateSessionExpired = simulateSessionExpired;
+
+  /* ────────────────────────────────────────────────────────────────────
+     KEYBOARD HANDLERS
+     ──────────────────────────────────────────────────────────────────── */
+  el('input-lastname').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') el('input-phone4').focus();
+  });
+  el('input-phone4').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') handleLogin();
+  });
+  el('input-phone4').addEventListener('input', function(e) {
+    e.target.value = e.target.value.replace(/\D/g, '');
+  });
+  el('input-fullphone').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') handleFullPhoneLogin();
+  });
+
+  /* ────────────────────────────────────────────────────────────────────
+     BACK TO PORTFOLIO (history.back with fallback)
+     ──────────────────────────────────────────────────────────────────── */
+  el('back-to-portfolio').addEventListener('click', function(e) {
+    e.preventDefault();
+    if (window.history.length > 1) {
+      window.history.back();
+      // Fallback if history.back() doesn't navigate (e.g., direct entry)
+      setTimeout(function() {
+        window.location.href = '../../index.html';
+      }, 250);
+    } else {
+      window.location.href = '../../index.html';
     }
-    closeCancelModal();
-    showToast('Conference cancelled');
-    showDashboard();
-  }
+  });
 
-  function handleReschedule(id, teacher, student) {
-    openSlotPicker(teacher, student, id);
-  }
-
-  /* =========================================================
-     Keyboard niceties
-     ========================================================= */
-  el('input-lastname').addEventListener('keydown', function(e) { if (e.key === 'Enter') el('input-phone4').focus(); });
-  el('input-phone4').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleLogin(); });
-  el('input-phone4').addEventListener('input', function(e) { e.target.value = e.target.value.replace(/\D/g, ''); });
-  el('input-fullphone').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleFullPhoneLogin(); });
+  // Click outside modals to close
+  el('cancel-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeCancelModal();
+  });
+  el('print-modal').addEventListener('click', function(e) {
+    if (e.target === this) closePrintModal();
+  });
 </script>
 </body>
 </html>
