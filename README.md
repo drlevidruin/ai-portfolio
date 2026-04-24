@@ -21,7 +21,6 @@ ai-portfolio/
 │   ├── ptc-scheduling/     Parent-teacher conference booking flow
 │   ├── whatsapp-bot/       Simulated school WhatsApp bot with Claude routing
 │   └── kriah-coach/        Hebrew reading tracker prototype
-├── artifacts/              Reference PDFs (kept locally, not linked from site)
 └── assets/
     ├── pardes-logo.png     School logo used across the demos
     ├── css/deck.css        Landing page stylesheet
