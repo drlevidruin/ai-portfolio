@@ -51,6 +51,12 @@ strong { color: var(--forest); font-weight: 700; }
   text-align: center;
   border-bottom: 1px solid var(--line);
 }
+.header-logo {
+  display: block;
+  height: 64px;
+  width: auto;
+  margin: 0 auto 14px;
+}
 .header .kicker {
   font-family: 'Caveat', cursive;
   color: var(--forest);
