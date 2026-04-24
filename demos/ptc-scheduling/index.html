@@ -18,11 +18,14 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── Back-to-portfolio pill (canonical, matches every demo) ── */
+    /* ── Back-to-portfolio pill (canonical) ──
+       PTC content is max-width 500px centered, so we anchor the pill to the
+       LEFT EDGE of that content column (instead of the viewport edge) so it
+       doesn't float orphaned in the gray gutter on wide screens. */
     .back-pill {
       position: fixed;
       top: 18px;
-      left: 18px;
+      left: max(18px, calc(50vw - 250px));
       z-index: 1000;
       background: #ffffff;
       color: #0a4a2b;
