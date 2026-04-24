@@ -96,18 +96,29 @@
     align-items: center;
     gap: 20px;
   }
-  .back-link {
+  /* Back-to-portfolio pill (canonical, matches every demo) */
+  .back-pill {
+    position: fixed;
+    top: 18px;
+    left: 18px;
+    z-index: 1000;
+    background: #ffffff;
+    color: #0a4a2b;
+    padding: 8px 14px 8px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border: 1px solid rgba(10,74,43,0.08);
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: var(--gray-500);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
     text-decoration: none;
-    font-size: 13px;
-    font-weight: 500;
-    transition: color .15s;
+    font-family: inherit;
   }
-  .back-link:hover { color: var(--navy); }
-  .back-link svg { width: 14px; height: 14px; }
+  .back-pill:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+  .back-pill .arrow { display: inline-block; transform: translateY(-1px); }
 
   .topbar-title {
     display: inline-flex;
@@ -1148,18 +1159,18 @@
 </head>
 <body>
 
+<!-- Back to portfolio pill (canonical) -->
+<a class="back-pill" href="../../index.html" aria-label="Back to portfolio"
+   onclick="if(window.history.length>1){event.preventDefault();window.history.back();}">
+  <span class="arrow">&larr;</span> Back to portfolio
+</a>
+
 <!-- =========================================================
      Topbar
      ========================================================= -->
 <header class="topbar">
   <div class="topbar-inner">
-    <div>
-      <a class="back-link" href="../../index.html"
-         onclick="if(window.history.length>1){event.preventDefault();window.history.back();}">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-        Back to portfolio
-      </a>
-    </div>
+    <div></div>
     <div class="topbar-title">
       <h1>Kriah Coach</h1>
       <span class="badge badge-yellow">Prototype · Concept</span>
