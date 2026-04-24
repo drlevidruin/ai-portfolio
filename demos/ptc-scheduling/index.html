@@ -148,6 +148,7 @@
   /* System note */
   .system-note { margin-top: 30px; padding: 16px 18px; background: rgba(16,101,60,0.05); border-left: 3px solid var(--forest); border-radius: 8px; font-size: 13px; color: var(--text-body); line-height: 1.55; }
   .system-note b { color: var(--forest-dark); font-weight: 700; }
+  .system-note code { background: #1d1d1f; color: #b7e2c6; padding: 1px 6px; border-radius: 3px; font-size: 11.5px; font-family: 'SF Mono', Menlo, monospace; }
 
   @media (max-width: 720px) {
     .signin { padding: 28px 24px; }
@@ -171,7 +172,7 @@
   <div id="screen"></div>
 
   <div class="system-note">
-    <b>What you are demoing:</b> Parents sign in with last name plus last 4 of phone, see every one of their kids' teachers on one dashboard, and book 15-minute slots. The real version handles script locking so two parents cannot grab the same slot, and sends branded confirmation emails with Google Calendar invites. This demo uses a fake family with 3 kids to show the full flow.
+    <b>What you are demoing:</b> Parents sign in with last name plus last 4 of phone, see every one of their kids' teachers on one dashboard, and book 15-minute slots. The real web app has three views behind the same URL (parent, teacher, admin) controlled by a <code>?view=</code> query parameter plus session auth. It handles script locking so two parents cannot grab the same slot, brute-force rate limiting on sign-in, and sends branded confirmation emails with Google Calendar invites. This demo walks through the parent flow with a fake family of 3 kids.
   </div>
 </div>
 
