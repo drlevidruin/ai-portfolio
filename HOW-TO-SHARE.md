@@ -6,7 +6,7 @@ Three options, from easiest to most polished. Pick the one that fits how your vi
 
 ## Option 1 (recommended): Put it online with a real URL
 
-This gives your viewer a link like `https://drlevidruin.github.io/ai-portfolio/` that they can text, email, or share with anyone. It is free, takes about 5 minutes, and looks serious.
+This gives your viewer a link like `https://drlevidruin.github.io/ai-portfolio/` that they can text, email, or share with anyone. It is free, takes about 5 minutes, and looks serious. (This is already set up for the current repo.)
 
 ### Step-by-step
 
@@ -23,9 +23,9 @@ This gives your viewer a link like `https://drlevidruin.github.io/ai-portfolio/`
 
 3. **Upload the folder.** On the empty repository page, click the "uploading an existing file" link near the middle. Then:
    - Open Finder on your Mac.
-   - Open `~/Desktop/pardes-ai-portfolio/`.
+   - Open `~/ai-portfolio/`.
    - Select ALL the contents of that folder (command + A). Drag them into the GitHub browser window.
-   - Wait for the upload to finish (a minute or two for the three PDFs).
+   - Wait for the upload to finish (a minute or two).
    - Scroll down. Commit message: "Initial portfolio upload."
    - Click **Commit changes**.
 
@@ -36,7 +36,7 @@ This gives your viewer a link like `https://drlevidruin.github.io/ai-portfolio/`
 
 5. **Wait 1-2 minutes**, then refresh the Pages settings screen. You will see: "Your site is live at `https://drlevidruin.github.io/ai-portfolio/`." That is your URL.
 
-6. **Test it.** Open the URL in a new tab or text it to yourself. Click through the slides. Open a demo. Confirm it all works.
+6. **Test it.** Open the URL in a new tab or text it to yourself. Scroll through the landing page. Open every demo. Confirm it all works.
 
 7. **Share the URL.** That one link is everything you need to text, email, or post.
 
@@ -56,15 +56,13 @@ Less polished than a URL, but works if your viewer cannot click a public URL.
 
 ### Step-by-step
 
-1. **Zip the portfolio folder.** In Finder, right-click `pardes-ai-portfolio`, pick "Compress 'pardes-ai-portfolio'." You get a `pardes-ai-portfolio.zip` file.
+1. **Zip the portfolio folder.** In Finder, right-click `ai-portfolio`, pick "Compress 'ai-portfolio'." You get a `ai-portfolio.zip` file.
 
 2. **Upload to Google Drive.** Go to [drive.google.com](https://drive.google.com), drag the zip in. Wait for the upload.
 
 3. **Share the folder.** Right-click the zip, click **Share**, set to "Anyone with the link can view," copy the link.
 
 4. **Tell your viewer how to use it.** They download the zip, unzip it on their laptop, and double-click `index.html`. The demos will work locally. Some file-to-file links may be blocked on certain browsers opened from a zip.
-
-**Watch out:** The Haggadah PDFs open in a new browser tab, which works when the portfolio is hosted at a URL but can behave differently when opened straight from a zip. Safari is the most reliable browser for the local-file case.
 
 ---
 
@@ -73,7 +71,7 @@ Less polished than a URL, but works if your viewer cannot click a public URL.
 Simplest for one-off sharing.
 
 1. Zip the folder as in Option 2.
-2. The zip is about 5-10 MB, fine for email.
+2. The zip is small (a few MB), fine for email.
 3. Attach to an email. Subject line idea: "What AI looks like in a small school."
 4. In the body, tell them: "Unzip this and double-click index.html. Works in Safari or Chrome. No login needed."
 
@@ -83,23 +81,24 @@ Simplest for one-off sharing.
 
 Run through this once so nothing embarrassing goes out.
 
-- [ ] Open `index.html` locally. Page loads, scrolls, arrow keys work.
-- [ ] Slide 3 has 5 demo cards. Click each one. Each demo opens and is clickable.
-- [ ] On the SIS demo, click a student. AI summary and charts show. Ask a sample question.
-- [ ] On the PTC demo, sign in, book a slot, confirm.
-- [ ] On the Reflect demo, answer 5 questions, see the report.
-- [ ] On the Kriah demo, click any student.
-- [ ] On the WhatsApp demo, type a message and watch it get routed.
-- [ ] The artifacts cards in the gallery slide open the PDFs.
-- [ ] The "Back to portfolio" link in each demo works.
+- [ ] Open `index.html` locally (or the live URL). Compact header, then a 3-by-2 grid of demo cards above the fold.
+- [ ] Click each of the six tiles. Five open a demo, the sixth opens the website.
+- [ ] On the SIS demo, sign in as Admin, Teacher, then HR Admin (the demo shortcut buttons on the login screen). Each role's sidebar is different. Click a student to open the profile tabs.
+- [ ] On the PTC demo, use a demo shortcut to sign in as the Cohen family, click a teacher Book button, pick a slot, confirm.
+- [ ] On the Reflect demo, pick a stakeholder, answer the questions, watch the processing screen, see the sample report. The "View Sample Report" button on the landing should also jump straight to the report.
+- [ ] On the WhatsApp demo, click each scenario button (PTO happy, PTO follow-up, Supply, multi-day PTO, off-topic) and watch the JSON console + routing log fill in.
+- [ ] On the Kriah demo, click around the 10 students. Click a letter tile to see its detail popover.
+- [ ] The "Back to portfolio" pill in the top-left of every demo returns to the landing.
 
-If any of the above breaks, text me or open the file in a different browser. Safari and Chrome are both tested; older versions of Firefox sometimes have CSS quirks.
+The artifact cards in the "Soul of the school" section are intentionally non-interactive ("On request") and the "Visit pardesdayschool.org" tile points to the GitHub Pages rebuild, not the live site. Both are by design — leave them alone unless you want to wire up real PDF or live-site links.
+
+If any demo misbehaves, reload the page or try a different browser. Safari and Chrome are tested.
 
 ---
 
 ## Changing the title or copy
 
-The main title "AI Inside a Small School" is set in `index.html` near the top. You can change it by opening that file in any text editor (TextEdit works) and searching for `AI Inside a Small School`. Replace it with whatever you want. Same for the hero subtitle.
+The main title "AI Inside a Small School" is in the page metadata. The visible kicker, headline, and sub on the header are set in `index.html` near the top. You can change them by opening that file in any text editor (TextEdit works) and searching for the text. Replace it with whatever you want.
 
 If you want me to change any copy or reorder anything, just ask.
 
@@ -107,6 +106,6 @@ If you want me to change any copy or reorder anything, just ask.
 
 ## If something goes wrong
 
-The whole portfolio is static HTML, CSS, and JavaScript. Nothing is running on a server, no database, no API keys. If a demo misbehaves, reload the page. If the main page misbehaves, make sure `assets/css/deck.css` and `assets/deck.js` are in their folders.
+The whole portfolio is static HTML, CSS, and JavaScript. Nothing is running on a server, no database, no API keys. If a demo misbehaves, reload the page. If a demo icon does not load, check that `assets/pardes-logo.png` is in place.
 
 You can also always ask me to rebuild it.

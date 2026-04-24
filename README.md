@@ -1,32 +1,31 @@
 # AI Inside a Small School
 
-A portfolio of everything I have built at Pardes with AI this year. Designed to be shared with other principals, founders, and leaders who want to see what is possible.
+A portfolio of the AI tools built at Pardes Day School this year. Designed to be shared with other principals, founders, and leaders who want to see what is possible.
 
-**The demos use fake data only.** No real student records, no real teacher observation notes, no real grades pulled from our actual systems. Student names are Hebrew-letter placeholders (Alef, Bet, Gimmel, etc). The only real names you will see in this portfolio are mine and the school's public contact info. You can hand this folder to anyone with zero privacy risk to students or staff.
+**Everything in here is synthetic.** Every student, parent, family, teacher, staff member, schedule, payroll line, incident, observation note, PTO request, dispute, and account in any of the demos is invented for the demo. No real Pardes records, names, contact info, or systems are connected. The only real names you will see are mine and the public school contact email. The student roster uses Hebrew-letter first names (Alef, Bet, Gimmel...) to make this obvious. Staff names are placeholder names invented to make the UI feel real and may share a surname with real people by coincidence; they are not real records. You can hand the link to anyone with zero privacy risk.
+
+The five demos do not call any external APIs and do not write back to any real Pardes system. Anything a viewer types, books, approves, denies, or edits lives in the page's memory only and resets when the page is closed.
 
 ---
 
 ## What is in this folder
 
 ```
-pardes-ai-portfolio/
-├── index.html              Main landing page, open this first
+ai-portfolio/
+├── index.html              Single-page landing with the demo grid
 ├── README.md               This file
-├── HOW-TO-SHARE.md         Step-by-step guide for putting this online
+├── HOW-TO-SHARE.md         How to put this online or hand it to someone
 ├── demos/                  5 working demos anyone can click through
-│   ├── whatsapp-bot/       Simulated school WhatsApp bot with Claude routing
-│   ├── sis-dashboard/      Student information system with 10 fake students
+│   ├── sis-dashboard/      K-5 student information system
+│   ├── reflect-survey/     Leadership 360 survey + sample report
 │   ├── ptc-scheduling/     Parent-teacher conference booking flow
-│   ├── reflect-survey/     Working leadership feedback survey + sample report
-│   └── kriah-coach/        Hebrew reading tracker with 10 fake students
-├── artifacts/              Safe-to-share PDFs
-│   ├── 2nd-grade-haggadah-sample.pdf
-│   ├── 5th-grade-haggadah-cheat-sheet.pdf
-│   └── rosh-chodesh-dad-jokes.pdf
+│   ├── whatsapp-bot/       Simulated school WhatsApp bot with Claude routing
+│   └── kriah-coach/        Hebrew reading tracker prototype
+├── artifacts/              Reference PDFs (kept locally, not linked from site)
 └── assets/
-    ├── css/deck.css        Main stylesheet
-    ├── deck.js             Keyboard + button navigation
-    ├── og-image.svg        Social link preview card (1200x630)
+    ├── pardes-logo.png     School logo used across the demos
+    ├── css/deck.css        Landing page stylesheet
+    ├── og-image.png/svg    Social link preview card
     └── favicon.svg         Browser tab icon
 ```
 
@@ -34,64 +33,50 @@ pardes-ai-portfolio/
 
 ## How to preview it on your laptop
 
-Just double-click `index.html`. It opens in your browser. Use the arrow keys or the buttons at the bottom to move through the 13 slides. Click any card on the page to open the demo or the real project.
+Double-click `index.html`. The landing page opens in your browser with a 3-by-2 grid of demo cards above the fold. Click any card to open that demo in a new page. Each demo has a "Back to portfolio" pill in the top-left corner.
 
-Every demo has a "Back to portfolio" link in its top-left corner so your viewer never gets lost.
+Below the demo grid, the landing page also has: the math story that started everything, an architecture diagram, a list of classroom modules inside the SIS, a Reflect feature panel, an artifact gallery (currently all marked "On request"), and a "what's next" section.
 
 ---
 
 ## What each demo shows
 
-**1. WhatsApp Bot** (`demos/whatsapp-bot/`)
-The user types a message or taps a suggestion. The simulation shows Claude classifying the intent (time-off, supplies, absence, general question) and routing it to the right place. Running cost meter increments at $0.0017 per message, which is the real-life cost.
+**1. Pardes SIS** (`demos/sis-dashboard/`)
+A fake K-5 student information system. Sign in as Admin, Teacher, or HR Admin (the role switcher lives on the login screen). Each role sees a different sidebar. Routes include: Dashboard with stat cards and Ask-the-SIS, Students directory with profile tabs, Staff Directory (HR only), Staff Clock with edit override, My Clock with disputes (teacher), Attendance with editable grade rows, Payroll (HR only) with sortable table and CSV stub, PTO with calendar grid and approve/deny, Incidents with file/resolve flow, Accounts (admin) with create/reset/toggle, Academics, Resources, Settings.
 
-**2. SIS Dashboard** (`demos/sis-dashboard/`)
-A fake 2nd grade class with 10 students. First names are the first ten Hebrew letters (Alef, Bet, Gimmel, Dalet, Hei, Vav, Zayin, Chet, Tet, Yud) paired with common placeholder last names (Cohen, Levi, Friedman, Goldberg, Shapiro, Stein, Rosen, Klein, Katz, Berg). Click any student and see a full record: AI-generated weekly summary, subject grades, kriah progress, attendance heatmap, Waggle math level, teacher observations, and the five "connected systems" that feed into the view. There is also an "Ask the SIS" box where visitors can type natural-language questions.
+**2. Reflect** (`demos/reflect-survey/`)
+The leadership 360 survey app. Pick a stakeholder (Teacher / Parent / Supervisor / Self), take the full question set with the real wording from the Reflect item bank, and at the end land on a sample report with overall score, domain table, Johari gap analysis, and Keep / Start / Stop action plan. There is also an admin dashboard with Overview, Tokens, Results, and Export tabs.
 
-**3. PTC Scheduling** (`demos/ptc-scheduling/`)
-A fake family with three kids across three grades. Seven teachers in total. Visitor signs in with any values, sees every teacher on one screen, books time slots, and gets a confirmation with calendar invites.
+**3. Parent-Teacher Conferences** (`demos/ptc-scheduling/`)
+The PTC booking flow with three views accessible from demo shortcuts on the login screen: parent (the Cohen family with three kids across grades 1, 3, 5), teacher (Mrs. Levi's MY CONFERENCES list), and admin (stats grid + grouped bookings). Slot picker offers five days of availability with greyed-out taken slots; confirmation panel includes the optional in-person request and note.
 
-**4. Reflect Survey** (`demos/reflect-survey/`)
-The full Reflect flow. Intro, five questions (three scale, two text), a "Claude is analyzing" processing screen, then an aggregated sample report with overall score, strength and growth areas, a radar chart across five leadership dimensions, and a theme cloud.
+**4. WhatsApp Bot** (`demos/whatsapp-bot/`)
+A phone mockup showing the staff WhatsApp flow. Type a request or click one of five canned scenarios (PTO happy path, PTO with follow-up, supply request, multi-day PTO, off-topic). The page runs a JavaScript keyword classifier that mirrors the real Claude prompt's output schema and shows the JSON in a side console. A routing log shows how the request would flow through Cloudflare Worker, Apps Script, Claude Haiku, and either the SIS API or the supply sheet plus office email.
 
 **5. Kriah Coach** (`demos/kriah-coach/`)
-The same 10 students from the SIS, viewed through a Hebrew-reading lens. Click a student: see their current workbook level, letter-by-letter mastery grid (22 Hebrew letters with three statuses), weekly fluency chart, AI insight on what to do next, and teacher activity log.
+A prototype concept for tracking Hebrew reading fluency per child. Pick from 10 students, see their progression milestones, fluency line chart, 22-letter mastery grid with click-to-expand letter detail, AI insight, teacher log, draft parent communication, and a class-wide letter heatmap. Clearly labeled as a prototype.
 
 ---
 
-## What is on the main landing page
+## What is on the landing page
 
-13 slides, in order:
-
-1. Hero with top-line stats
-2. The Waggle math story that saved a teaching line
-3. "Try the 5 demos" grid
-4. Act 1 intro: Running the school smarter
-5. The daily ops stack (5 apps)
-6. Data architecture: how everything connects
-7. Website showcase: pardesdayschool.org
-8. Act 2 intro: Helping kids actually learn
-9. Six classroom modules
-10. Act 3 intro: The soul of the school
-11. Artifact gallery
-12. Reflect (standalone)
-13. Closing with what is coming next
+A single vertical scroll. Above the fold: a compact header and a 3-by-2 grid of clickable demo tiles (the five apps plus the school website rebuild). Below the fold, in order: the budget-wisdom math story, the architecture diagram, the classroom modules grid, the Reflect feature panel, the artifact gallery (six cards, all marked "On request" by design), the "what's next" cards, and the footer.
 
 ---
 
 ## Three things worth knowing
 
-1. **Nothing in the portfolio makes real API calls.** Classification, AI summaries, and the Reflect report are all pattern-matched or pre-written. There is no API key anywhere in the source code. Safe to host publicly.
+1. **Nothing in the portfolio talks to a real system.** Classification, AI summaries, the Reflect report, and every form action are pattern-matched or pre-written in the page. There is no API key anywhere in the source. Safe to host publicly.
 
-2. **Every link is real and stays within the portfolio.** The five main app cards on slide 5 open the interactive demos in this folder. The website card opens the GitHub Pages URL for the Pardes site rebuild. The artifact cards in the gallery open the PDFs in `artifacts/`. The classroom modules in Act 2 are informational cards (not all of them have demos yet).
+2. **Every link stays inside the portfolio.** The demo tiles open the interactive demos in this folder. The website tile links to the GitHub Pages copy of the school website (`drlevidruin.github.io/pardes-website`), not the live site. The artifact cards are intentionally non-interactive ("On request") so nothing on the site has to host or version-control PDFs.
 
-3. **The design uses Pardes brand colors.** Forest green, navy, cream, dark forest. Montserrat for body, Caveat for handwritten section labels. Matches `pardesdayschool.org`.
+3. **The design uses Pardes brand colors.** Forest green, navy, cream. Montserrat for body, Caveat for handwritten section labels, with each demo also pulling in whatever its real-app fonts are (DM Sans for the SIS, DM Serif Display + Source Sans for Reflect, Frank Ruhl Libre for Hebrew in Kriah Coach).
 
 ---
 
 ## Sharing it
 
-See `HOW-TO-SHARE.md` for three ways to get this into other people's hands, in increasing order of polish.
+See `HOW-TO-SHARE.md`.
 
 ---
 
