@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIS Dashboard Demo &middot; AI Inside a Small School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #10653c;
+    --forest-dark: #0a4a2b;
+    --forest-soft: #b7e2c6;
+    --navy: #343e85;
+    --cream: #f8f4ed;
+    --sage-light: #f0f4ee;
+    --white: #ffffff;
+    --text-dark: #1d1d1f;
+    --text-body: #424245;
+    --text-light: #86868b;
+    --line: rgba(16, 101, 60, 0.14);
+    --line-soft: rgba(0, 0, 0, 0.06);
+    --amber: #d4940a;
+    --warn: #b8620a;
+    --danger: #8b2c1a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Montserrat', system-ui, -apple-system, sans-serif; background: #f7f7f5; color: var(--text-body); -webkit-font-smoothing: antialiased; min-height: 100vh; }
+  h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; color: var(--text-dark); margin: 0; letter-spacing: -0.02em; }
+  a { color: var(--forest); text-decoration: none; }
+  button { font-family: inherit; }
+
+  .topbar { background: var(--white); border-bottom: 1px solid var(--line-soft); padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+  .topbar .back { font-size: 13px; font-weight: 600; color: var(--forest); display: inline-flex; align-items: center; gap: 6px; }
+  .topbar .back::before { content: "\2190"; }
+  .topbar .logo { font-family: 'Caveat', cursive; color: var(--forest); font-size: 22px; font-weight: 600; }
+  .topbar .demo-label { font-size: 11px; font-weight: 700; color: var(--forest); letter-spacing: 0.14em; text-transform: uppercase; padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; }
+
+  .app { display: grid; grid-template-columns: 300px 1fr; height: calc(100vh - 49px); }
+
+  /* Sidebar */
+  .sidebar { background: var(--white); border-right: 1px solid var(--line-soft); overflow-y: auto; }
+  .class-picker { padding: 18px 20px 14px; border-bottom: 1px solid var(--line-soft); }
+  .class-picker .label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-light); margin-bottom: 6px; }
+  .class-picker .class-name { font-size: 16px; color: var(--text-dark); font-weight: 700; }
+  .class-picker .teacher { font-size: 12.5px; color: var(--text-body); margin-top: 2px; }
+  .student-search { padding: 12px 20px; border-bottom: 1px solid var(--line-soft); }
+  .student-search input { width: 100%; border: 1px solid var(--line-soft); border-radius: 10px; padding: 9px 12px; font-family: inherit; font-size: 13px; outline: none; background: #fafafa; }
+  .student-search input:focus { border-color: var(--forest); background: white; }
+  .student-list { padding: 8px; }
+  .student-item { display: grid; grid-template-columns: 36px 1fr auto; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; cursor: pointer; transition: background 0.12s ease; text-align: left; border: none; background: transparent; width: 100%; font-family: inherit; }
+  .student-item:hover { background: var(--sage-light); }
+  .student-item.active { background: var(--sage-light); }
+  .student-item.active .name { color: var(--forest); }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #10653c, #343e85); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 13px; font-family: 'Montserrat', sans-serif; flex-shrink: 0; }
+  .avatar.v1 { background: linear-gradient(135deg, #10653c, #343e85); }
+  .avatar.v2 { background: linear-gradient(135deg, #0a4a2b, #10653c); }
+  .avatar.v3 { background: linear-gradient(135deg, #343e85, #0a4a2b); }
+  .avatar.v4 { background: linear-gradient(135deg, #d4940a, #10653c); }
+  .avatar.v5 { background: linear-gradient(135deg, #8b2c1a, #343e85); }
+  .student-item .name { font-size: 13.5px; font-weight: 600; color: var(--text-dark); }
+  .student-item .sub { font-size: 11px; color: var(--text-light); margin-top: 1px; }
+  .flag { font-size: 10px; font-weight: 700; padding: 3px 6px; border-radius: 5px; letter-spacing: 0.06em; }
+  .flag.good { background: #e7f4ec; color: var(--forest); }
+  .flag.watch { background: #fdf3e1; color: var(--warn); }
+
+  /* Main */
+  .main { overflow-y: auto; padding: 20px 28px 60px; }
+
+  .student-header { display: flex; align-items: center; gap: 18px; padding: 18px 22px; background: white; border: 1px solid var(--line-soft); border-radius: 16px; margin-bottom: 16px; }
+  .student-header .avatar { width: 52px; height: 52px; font-size: 18px; }
+  .student-header .name { font-size: 22px; font-weight: 800; color: var(--text-dark); letter-spacing: -0.02em; }
+  .student-header .meta { font-size: 13px; color: var(--text-light); margin-top: 2px; }
+  .quick-stats { margin-left: auto; display: flex; gap: 24px; }
+  .quick-stats .q .n { font-size: 20px; font-weight: 800; color: var(--forest); line-height: 1; letter-spacing: -0.02em; }
+  .quick-stats .q .l { font-size: 10.5px; color: var(--text-light); margin-top: 4px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  /* AI Summary */
+  .ai-card { background: linear-gradient(180deg, #ffffff 0%, #f5faf2 100%); border: 1px solid rgba(16, 101, 60, 0.3); border-radius: 16px; padding: 20px 22px; margin-bottom: 16px; position: relative; }
+  .ai-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--forest); border-radius: 4px 0 0 4px; }
+  .ai-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  .ai-head .title { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: var(--forest-dark); letter-spacing: 0.04em; text-transform: uppercase; }
+  .ai-badge { background: var(--forest); color: white; padding: 3px 8px; border-radius: 999px; font-size: 10px; font-weight: 800; letter-spacing: 0.08em; }
+  .ai-date { font-size: 11px; color: var(--text-light); font-weight: 600; }
+  .ai-body { font-size: 15px; color: var(--text-dark); line-height: 1.55; }
+
+  /* Card grid */
+  .grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .grid.three { grid-template-columns: repeat(3, 1fr); }
+  .panel { background: white; border: 1px solid var(--line-soft); border-radius: 14px; padding: 18px 20px; }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .panel-head h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-light); }
+  .panel-head .src { font-size: 10.5px; font-weight: 600; color: var(--forest); display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; background: var(--sage-light); border-radius: 999px; }
+  .panel-head .src::before { content: "\2192"; }
+
+  /* Subject grades */
+  .subject-row { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line-soft); font-size: 14px; }
+  .subject-row:last-child { border-bottom: none; }
+  .subject-row .sub-name { color: var(--text-dark); font-weight: 500; }
+  .subject-row .trend { font-size: 11px; color: var(--text-light); font-weight: 600; }
+  .subject-row .trend.up { color: var(--forest); }
+  .subject-row .trend.down { color: var(--danger); }
+  .grade-pill { font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: 8px; letter-spacing: 0.02em; min-width: 40px; text-align: center; font-family: 'Montserrat', sans-serif; }
+  .g-a { background: #e7f4ec; color: var(--forest-dark); }
+  .g-b { background: #e8edf5; color: var(--navy); }
+  .g-c { background: #fdf3e1; color: var(--warn); }
+  .g-d { background: #f5e1dd; color: var(--danger); }
+
+  /* Kriah progress */
+  .kriah-level { font-size: 15px; color: var(--text-dark); font-weight: 600; margin-bottom: 2px; }
+  .kriah-sub { font-size: 12px; color: var(--text-light); margin-bottom: 14px; }
+  .progress-bar { height: 8px; background: var(--sage-light); border-radius: 999px; overflow: hidden; margin-bottom: 6px; }
+  .progress-bar .fill { height: 100%; background: var(--forest); border-radius: 999px; transition: width 0.6s ease; }
+  .progress-row { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--text-light); font-weight: 600; }
+  .progress-group { margin-bottom: 14px; }
+  .progress-group:last-child { margin-bottom: 0; }
+  .progress-group .label { font-size: 11px; color: var(--text-body); font-weight: 600; margin-bottom: 6px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .kriah-chart { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line-soft); }
+  .kriah-chart .mini-label { font-size: 10.5px; color: var(--text-light); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+  .spark { width: 100%; height: 50px; display: block; }
+
+  /* Observations */
+  .obs-item { padding: 12px 0; border-bottom: 1px solid var(--line-soft); }
+  .obs-item:last-child { border-bottom: none; }
+  .obs-head { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-light); font-weight: 600; margin-bottom: 4px; }
+  .obs-head .teacher { color: var(--forest-dark); font-weight: 700; }
+  .obs-text { font-size: 13.5px; color: var(--text-dark); line-height: 1.5; }
+
+  /* Attendance */
+  .attend-big { font-size: 36px; font-weight: 800; color: var(--forest); letter-spacing: -0.03em; line-height: 1; }
+  .attend-sub { font-size: 12px; color: var(--text-light); font-weight: 600; margin-top: 4px; letter-spacing: 0.04em; }
+  .attend-dots { display: grid; grid-template-columns: repeat(20, 1fr); gap: 3px; margin-top: 16px; }
+  .attend-dots .d { aspect-ratio: 1; border-radius: 3px; background: var(--sage-light); }
+  .attend-dots .d.here { background: var(--forest); }
+  .attend-dots .d.absent { background: var(--danger); opacity: 0.55; }
+  .attend-dots .d.late { background: var(--amber); opacity: 0.75; }
+  .legend { display: flex; gap: 14px; margin-top: 10px; font-size: 10.5px; color: var(--text-light); font-weight: 600; }
+  .legend .chip { display: inline-flex; align-items: center; gap: 5px; }
+  .legend .dot { width: 8px; height: 8px; border-radius: 2px; }
+
+  /* Math (Waggle) */
+  .waggle-top { display: flex; align-items: flex-end; gap: 12px; margin-bottom: 10px; }
+  .waggle-num { font-size: 30px; font-weight: 800; color: var(--forest); letter-spacing: -0.02em; line-height: 1; }
+  .waggle-sub { font-size: 12px; color: var(--text-light); font-weight: 600; padding-bottom: 4px; }
+  .waggle-gain { display: inline-flex; align-items: center; gap: 5px; background: #e7f4ec; color: var(--forest-dark); padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 700; margin-bottom: 12px; }
+  .waggle-gain::before { content: "\2191"; font-weight: 800; }
+  .waggle-detail { font-size: 12.5px; color: var(--text-body); line-height: 1.55; }
+
+  /* Connected systems */
+  .systems-card { background: white; border: 1px solid var(--line-soft); border-radius: 14px; padding: 18px 20px; margin-top: 4px; }
+  .systems-card h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-light); margin-bottom: 14px; }
+  .systems-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .sys { text-align: center; padding: 14px 10px; border: 1px solid var(--line-soft); border-radius: 10px; background: #fafbfa; }
+  .sys-icon { width: 36px; height: 36px; margin: 0 auto 8px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; font-size: 12px; }
+  .sys-1 { background: linear-gradient(135deg, #10653c, #343e85); }
+  .sys-2 { background: linear-gradient(135deg, #d4940a, #10653c); }
+  .sys-3 { background: linear-gradient(135deg, #343e85, #10653c); }
+  .sys-4 { background: linear-gradient(135deg, #0a4a2b, #343e85); }
+  .sys-5 { background: linear-gradient(135deg, #343e85, #d4940a); }
+  .sys-name { font-size: 12px; font-weight: 700; color: var(--text-dark); }
+  .sys-role { font-size: 10.5px; color: var(--text-light); margin-top: 2px; font-weight: 500; }
+
+  /* Ask SIS */
+  .ask-card { background: linear-gradient(135deg, #0a4a2b 0%, #10653c 100%); color: white; border-radius: 16px; padding: 20px 22px; margin-bottom: 16px; }
+  .ask-card h3 { color: white; font-size: 16px; margin-bottom: 4px; }
+  .ask-card .sub { font-size: 12.5px; color: rgba(255,255,255,0.8); margin-bottom: 14px; }
+  .ask-input-wrap { display: flex; gap: 8px; }
+  .ask-input-wrap input { flex: 1; border: none; border-radius: 10px; padding: 10px 14px; font-family: inherit; font-size: 14px; outline: none; background: rgba(255,255,255,0.95); color: var(--text-dark); }
+  .ask-input-wrap button { background: white; color: var(--forest-dark); border: none; border-radius: 10px; padding: 10px 18px; font-weight: 700; cursor: pointer; font-size: 13.5px; }
+  .ask-input-wrap button:hover { background: var(--forest-soft); }
+  .ask-suggestions { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .ask-sugg { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: white; padding: 5px 10px; border-radius: 999px; font-size: 11.5px; cursor: pointer; font-family: inherit; font-weight: 500; }
+  .ask-sugg:hover { background: rgba(255,255,255,0.25); }
+  .ask-answer { margin-top: 14px; padding: 14px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; font-size: 13.5px; line-height: 1.55; display: none; }
+  .ask-answer.show { display: block; animation: slideDown 0.3s ease; }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+  .ask-answer strong { color: var(--forest-soft); font-weight: 700; }
+
+  @media (max-width: 900px) {
+    .app { grid-template-columns: 1fr; height: auto; }
+    .sidebar { max-height: 260px; }
+    .grid, .grid.three { grid-template-columns: 1fr; }
+    .systems-grid { grid-template-columns: repeat(2, 1fr); }
+    .student-header { flex-wrap: wrap; }
+    .quick-stats { margin-left: 0; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back" href="../../index.html">Back to portfolio</a>
+  <div class="logo">The Pardes SIS</div>
+  <span class="demo-label">Live demo &middot; Safe data</span>
+</div>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="class-picker">
+      <div class="label">Viewing</div>
+      <div class="class-name">2nd Grade &middot; Sapphires</div>
+      <div class="teacher">Morah Demo &amp; Morah Sample</div>
+    </div>
+    <div class="student-search">
+      <input type="text" id="searchInput" placeholder="Search students">
+    </div>
+    <div class="student-list" id="studentList"></div>
+  </aside>
+
+  <main class="main" id="mainPanel"></main>
+</div>
+
+<script>
+(function(){
+
+  const STUDENTS = [
+    { id: 'alef', initials: 'AC', avatarVariant: 1, name: 'Alef Cohen', grade: '2nd Grade', pronouns: 'he/him', attendance: 96, avgGrade: 'A-', flag: 'good', kriahLevel: 'Lashon HaTorah Aleph, Unit 2', lettersMastered: 20, nekudosMastered: 8, fluency: 92, fluencyWeekly: [82, 86, 88, 92], lastAbsences: [], mathLevel: 'Grade 2.8', mathGain: '+0.9 grade levels', mathDetail: 'Strong with multi-digit addition. Moving into place value (hundreds) this week.', subjects: [
+      { name: 'Tefillah', grade: 'A', trend: 'steady', trendLabel: 'Steady' },
+      { name: 'Chumash', grade: 'A-', trend: 'up', trendLabel: '+0.3 this term' },
+      { name: 'Kriah', grade: 'B+', trend: 'up', trendLabel: 'Improving' },
+      { name: 'Math (Waggle)', grade: 'A', trend: 'up', trendLabel: '+0.9 levels' },
+      { name: 'ELA', grade: 'A-', trend: 'steady', trendLabel: 'Steady' }
+    ], observations: [
+      { date: 'Apr 18', teacher: 'Morah Demo', text: 'Led a Chumash discussion on Lech Lecha with confidence. Raised a thoughtful question about why Avraham listened immediately.' },
+      { date: 'Apr 11', teacher: 'Morah Sample', text: 'Math intervention is paying off. Completed 15-minute Waggle session independently and chose a second one during free time.' }
+    ], aiSummary: 'Alef had a strong week. Chumash participation is up and kriah fluency just crossed 92 percent. Math growth continues on the Waggle side, now tracking at grade level 2.8. Recommend: pair with a kriah partner for Wednesday reading time.', attendanceData: generateAttendance(96, 0) },
+
+    { id: 'bet', initials: 'BL', avatarVariant: 2, name: 'Bet Levi', grade: '2nd Grade', pronouns: 'she/her', attendance: 91, avgGrade: 'B+', flag: 'good', kriahLevel: 'Lashon HaTorah Aleph, Unit 1', lettersMastered: 17, nekudosMastered: 6, fluency: 78, fluencyWeekly: [70, 72, 75, 78], lastAbsences: ['Apr 14'], mathLevel: 'Grade 2.4', mathGain: '+0.6 grade levels', mathDetail: 'Solid subtraction skills. Word problems are her edge right now. Teacher has flagged for small-group support.', subjects: [
+      { name: 'Tefillah', grade: 'A-', trend: 'steady', trendLabel: 'Steady' },
+      { name: 'Chumash', grade: 'B', trend: 'up', trendLabel: 'Improving' },
+      { name: 'Kriah', grade: 'B', trend: 'up', trendLabel: '+0.4 this term' },
+      { name: 'Math (Waggle)', grade: 'B+', trend: 'up', trendLabel: '+0.6 levels' },
+      { name: 'ELA', grade: 'A', trend: 'steady', trendLabel: 'Consistent' }
+    ], observations: [
+      { date: 'Apr 17', teacher: 'Morah Demo', text: 'Beautiful creative writing piece about Shabbos at her grandparents. Asked to share it with the class.' }
+    ], aiSummary: 'Bet is on a gentle upward trend. Kriah went from 70 to 78 percent fluency in four weeks. Math word problems are the only area to watch. Recommend: pair her with Alef for reading partners this week; both would benefit.', attendanceData: generateAttendance(91, 1) },
+
+    { id: 'gimmel', initials: 'GF', avatarVariant: 3, name: 'Gimmel Friedman', grade: '2nd Grade', pronouns: 'he/him', attendance: 88, avgGrade: 'C+', flag: 'watch', kriahLevel: 'Pre-Aleph, Letter Review', lettersMastered: 12, nekudosMastered: 3, fluency: 58, fluencyWeekly: [48, 52, 54, 58], lastAbsences: ['Apr 12', 'Apr 5'], mathLevel: 'Grade 1.9', mathGain: '+0.3 grade levels', mathDetail: 'Gimmel is behind on kriah and that is now slowing down Chumash. Waggle math is steady at 1.9. Intervention conference scheduled with parents.', subjects: [
+      { name: 'Tefillah', grade: 'B', trend: 'steady', trendLabel: 'Steady' },
+      { name: 'Chumash', grade: 'C+', trend: 'down', trendLabel: 'Watch' },
+      { name: 'Kriah', grade: 'C', trend: 'up', trendLabel: 'Slow gains' },
+      { name: 'Math (Waggle)', grade: 'C+', trend: 'up', trendLabel: '+0.3 levels' },
+      { name: 'ELA', grade: 'B-', trend: 'steady', trendLabel: 'Steady' }
+    ], observations: [
+      { date: 'Apr 16', teacher: 'Morah Sample', text: 'Had a better day today. Stayed with his small kriah group for the full 15 minutes and knocked out the Patach page.' },
+      { date: 'Apr 9', teacher: 'Morah Demo', text: 'Flagging for review. Kriah is limiting his ability to engage with Chumash. Parent meeting needed.' }
+    ], aiSummary: 'Gimmel needs attention. Kriah is the root issue. Every other subject downstream is being held back. The small-group pull-outs this week are helping. Recommend: schedule a parent meeting, increase Kriah Coach sessions to daily, celebrate small wins loudly.', attendanceData: generateAttendance(88, 2) },
+
+    { id: 'dalet', initials: 'DG', avatarVariant: 4, name: 'Dalet Goldberg', grade: '2nd Grade', pronouns: 'she/her', attendance: 99, avgGrade: 'A', flag: 'good', kriahLevel: 'Lashon HaTorah Aleph, Unit 3', lettersMastered: 22, nekudosMastered: 11, fluency: 97, fluencyWeekly: [92, 94, 96, 97], lastAbsences: [], mathLevel: 'Grade 3.2', mathGain: '+1.4 grade levels', mathDetail: 'Dalet is working above grade level. Waggle has her in 3rd grade content. Consider enrichment in math and advanced kriah.', subjects: [
+      { name: 'Tefillah', grade: 'A', trend: 'steady', trendLabel: 'Excellent' },
+      { name: 'Chumash', grade: 'A', trend: 'steady', trendLabel: 'Leading peers' },
+      { name: 'Kriah', grade: 'A', trend: 'up', trendLabel: 'At top of class' },
+      { name: 'Math (Waggle)', grade: 'A', trend: 'up', trendLabel: '+1.4 levels' },
+      { name: 'ELA', grade: 'A', trend: 'steady', trendLabel: 'Excellent' }
+    ], observations: [
+      { date: 'Apr 18', teacher: 'Morah Demo', text: 'Helping Gimmel with his kriah during partner time. Patient and encouraging. A natural leader.' }
+    ], aiSummary: 'Dalet is ready for more challenge. Math is at grade 3.2, kriah fluency hit 97. Consider: pull her into the 3rd grade math block, offer her a leadership role tutoring kriah partners. She will rise to it.', attendanceData: generateAttendance(99, 0) },
+
+    { id: 'hei', initials: 'HS', avatarVariant: 5, name: 'Hei Shapiro', grade: '2nd Grade', pronouns: 'he/him', attendance: 93, avgGrade: 'B', flag: 'good', kriahLevel: 'Lashon HaTorah Aleph, Unit 1', lettersMastered: 18, nekudosMastered: 7, fluency: 74, fluencyWeekly: [68, 70, 72, 74], lastAbsences: [], mathLevel: 'Grade 2.3', mathGain: '+0.5 grade levels', mathDetail: 'Steady improvement across the board. Kriah coming along. Math word problems are strong; computation is where to push next.', subjects: [
+      { name: 'Tefillah', grade: 'B+', trend: 'steady', trendLabel: 'Steady' },
+      { name: 'Chumash', grade: 'B', trend: 'steady', trendLabel: 'Steady' },
+      { name: 'Kriah', grade: 'B-', trend: 'up', trendLabel: 'Improving' },
+      { name: 'Math (Waggle)', grade: 'B', trend: 'up', trendLabel: '+0.5 levels' },
+      { name: 'ELA', grade: 'B+', trend: 'up', trendLabel: 'Improving' }
+    ], observations: [
+      { date: 'Apr 15', teacher: 'Morah Demo', text: 'Quiet but steady. His Chumash notebook is one of the neatest in the class.' }
+    ], aiSummary: 'Hei is a steady grower. Nothing dramatic, just one or two percentage points of kriah fluency each week. That adds up. Keep doing what is working.', attendanceData: generateAttendance(93, 1) },
+
+    { id: 'vav', initials: 'VS', avatarVariant: 1, name: 'Vav Stein', grade: '2nd Grade', pronouns: 'she/her', attendance: 85, avgGrade: 'B-', flag: 'watch', kriahLevel: 'Pre-Aleph, Nekudos Intro', lettersMastered: 16, nekudosMastered: 4, fluency: 64, fluencyWeekly: [58, 60, 62, 64], lastAbsences: ['Apr 15', 'Apr 8', 'Mar 27'], mathLevel: 'Grade 2.0', mathGain: '+0.2 grade levels', mathDetail: 'Attendance is the main driver. When Vav is here, she engages well. Missed days are compounding the kriah gap.', subjects: [
+      { name: 'Tefillah', grade: 'B', trend: 'steady', trendLabel: 'Steady' },
+      { name: 'Chumash', grade: 'C+', trend: 'down', trendLabel: 'Watch' },
+      { name: 'Kriah', grade: 'C', trend: 'up', trendLabel: 'Slow' },
+      { name: 'Math (Waggle)', grade: 'B-', trend: 'steady', trendLabel: 'At grade level' },
+      { name: 'ELA', grade: 'B', trend: 'steady', trendLabel: 'Steady' }
+    ], observations: [
+      { date: 'Apr 16', teacher: 'Morah Demo', text: 'Came back from absence ready to catch up. Sat with Morah Sample for a 10-minute kriah review during snack.' }
+    ], aiSummary: 'Vav is held back by attendance, not ability. Every day she is here she makes gains. Recommend: reach out to the family about the pattern, explore whether there are barriers we can help with. Schedule a makeup kriah session per absence.', attendanceData: generateAttendance(85, 3) },
+
+    { id: 'zayin', initials: 'ZR', avatarVariant: 2, name: 'Zayin Rosen', grade: '2nd Grade', pronouns: 'he/him', attendance: 97, avgGrade: 'A-', flag: 'good', kriahLevel: 'Lashon HaTorah Aleph, Unit 2', lettersMastered: 21, nekudosMastered: 9, fluency: 89, fluencyWeekly: [82, 85, 87, 89], lastAbsences: [], mathLevel: 'Grade 2.7', mathGain: '+0.8 grade levels', mathDetail: 'Strong in every area. Not the fastest, but the most consistent. Puts in the full practice time without being asked.', subjects: [
+      { name: 'Tefillah', grade: 'A', trend: 'steady', trendLabel: 'Excellent' },
+      { name: 'Chumash', grade: 'A-', trend: 'up', trendLabel: 'Improving' },
+      { name: 'Kriah', grade: 'B+', trend: 'up', trendLabel: '+0.5 this term' },
+      { name: 'Math (Waggle)', grade: 'A-', trend: 'up', trendLabel: '+0.8 levels' },
+      { name: 'ELA', grade: 'A-', trend: 'steady', trendLabel: 'Steady' }
+    ], observations: [
+      { date: 'Apr 14', teacher: 'Morah Sample', text: 'Finished his kriah goal a week early. Asked to start the next unit now.' }
+    ], aiSummary: 'Zayin is quietly crushing it. 89 percent kriah fluency, strong Chumash participation, Waggle math up nearly a full grade level. Recommend: start him on Unit 3 kriah now, ahead of the class, so he is not bored.', attendanceData: generateAttendance(97, 0) },
+
+    { id: 'chet', initials: 'CK', avatarVariant: 3, name: 'Chet Klein', grade: '2nd Grade', pronouns: 'she/her', attendance: 92, avgGrade: 'B', flag: 'good', kriahLevel: 'Lashon HaTorah Aleph, Unit 1', lettersMastered: 18, nekudosMastered: 6, fluency: 71, fluencyWeekly: [63, 66, 69, 71], lastAbsences: ['Apr 10'], mathLevel: 'Grade 2.2', mathGain: '+0.4 grade levels', mathDetail: 'Loves math. Engages with the Waggle games enthusiastically. Writing fluency in ELA is the growth area.', subjects: [
+      { name: 'Tefillah', grade: 'B+', trend: 'steady', trendLabel: 'Steady' },
+      { name: 'Chumash', grade: 'B', trend: 'up', trendLabel: 'Improving' },
+      { name: 'Kriah', grade: 'B-', trend: 'up', trendLabel: 'Improving' },
+      { name: 'Math (Waggle)', grade: 'B+', trend: 'up', trendLabel: '+0.4 levels' },
+      { name: 'ELA', grade: 'B', trend: 'steady', trendLabel: 'Steady' }
+    ], observations: [
+      { date: 'Apr 17', teacher: 'Morah Sample', text: 'Hit 70 percent kriah fluency this week, a real milestone. She was so proud.' }
+    ], aiSummary: 'Chet just crossed the 70 percent kriah fluency mark. Big moment. Math is going well. Next push: start building ELA writing stamina with a daily 5-minute journal.', attendanceData: generateAttendance(92, 1) },
+
+    { id: 'tet', initials: 'TK', avatarVariant: 4, name: 'Tet Katz', grade: '2nd Grade', pronouns: 'he/him', attendance: 94, avgGrade: 'A-', flag: 'good', kriahLevel: 'Lashon HaTorah Aleph, Unit 2', lettersMastered: 22, nekudosMastered: 10, fluency: 94, fluencyWeekly: [88, 90, 92, 94], lastAbsences: ['Apr 7'], mathLevel: 'Grade 2.9', mathGain: '+1.1 grade levels', mathDetail: 'Waggle has Tet nearly at 3rd grade level. One of the two biggest math gainers in the class alongside Dalet.', subjects: [
+      { name: 'Tefillah', grade: 'A-', trend: 'steady', trendLabel: 'Steady' },
+      { name: 'Chumash', grade: 'A-', trend: 'up', trendLabel: 'Improving' },
+      { name: 'Kriah', grade: 'A-', trend: 'up', trendLabel: 'Excellent' },
+      { name: 'Math (Waggle)', grade: 'A', trend: 'up', trendLabel: '+1.1 levels' },
+      { name: 'ELA', grade: 'B+', trend: 'up', trendLabel: 'Improving' }
+    ], observations: [
+      { date: 'Apr 13', teacher: 'Morah Demo', text: 'Asked me to explain why the mem sofit looks different. Great curiosity.' }
+    ], aiSummary: 'Tet is one of the strongest kriah students in the class at 94 percent fluency. Waggle math is almost a full grade above level. Recommend: partner him with Gimmel or Vav for peer tutoring. He is patient and they will benefit.', attendanceData: generateAttendance(94, 1) },
+
+    { id: 'yud', initials: 'YB', avatarVariant: 5, name: 'Yud Berg', grade: '2nd Grade', pronouns: 'she/her', attendance: 90, avgGrade: 'B+', flag: 'good', kriahLevel: 'Lashon HaTorah Aleph, Unit 1', lettersMastered: 19, nekudosMastered: 7, fluency: 81, fluencyWeekly: [74, 76, 79, 81], lastAbsences: ['Apr 16'], mathLevel: 'Grade 2.5', mathGain: '+0.7 grade levels', mathDetail: 'Chumash comprehension is excellent. Computation speed is where to focus next on Waggle.', subjects: [
+      { name: 'Tefillah', grade: 'A-', trend: 'steady', trendLabel: 'Steady' },
+      { name: 'Chumash', grade: 'A', trend: 'up', trendLabel: 'Excellent' },
+      { name: 'Kriah', grade: 'B+', trend: 'up', trendLabel: 'Improving' },
+      { name: 'Math (Waggle)', grade: 'B+', trend: 'up', trendLabel: '+0.7 levels' },
+      { name: 'ELA', grade: 'A-', trend: 'steady', trendLabel: 'Steady' }
+    ], observations: [
+      { date: 'Apr 11', teacher: 'Morah Demo', text: 'Remembered a detail from last week\'s Parsha unprompted. Connected it to the new one perfectly.' }
+    ], aiSummary: 'Yud is a deep thinker. Chumash comprehension is ahead of most peers. Kriah fluency climbing nicely. Recommend: lean into her love for stories; give her Tanach context reading in English alongside Chumash.', attendanceData: generateAttendance(90, 1) }
+  ];
+
+  function generateAttendance(pct, absenceClusters) {
+    // Generate 60-day attendance grid
+    const days = 60;
+    const targetAbsences = Math.round(days * (1 - pct / 100));
+    const arr = new Array(days).fill('here');
+    let placed = 0;
+    while (placed < targetAbsences) {
+      const i = Math.floor(Math.random() * days);
+      if (arr[i] === 'here') { arr[i] = Math.random() < 0.15 ? 'late' : 'absent'; placed++; }
+    }
+    return arr;
+  }
+
+  const mainPanel = document.getElementById('mainPanel');
+  const studentList = document.getElementById('studentList');
+  const searchInput = document.getElementById('searchInput');
+  let currentId = STUDENTS[0].id;
+  let filter = '';
+
+  function renderStudentList() {
+    while (studentList.firstChild) studentList.removeChild(studentList.firstChild);
+    const matches = STUDENTS.filter(s => s.name.toLowerCase().includes(filter.toLowerCase()));
+    if (!matches.length) {
+      const empty = document.createElement('div');
+      empty.style.cssText = 'padding: 20px; text-align: center; color: #86868b; font-size: 13px;';
+      empty.textContent = 'No students match.';
+      studentList.appendChild(empty);
+      return;
+    }
+    matches.forEach(s => {
+      const item = document.createElement('button');
+      item.className = 'student-item' + (s.id === currentId ? ' active' : '');
+      item.addEventListener('click', () => { currentId = s.id; renderStudentList(); renderMain(); });
+      const av = document.createElement('div');
+      av.className = 'avatar v' + s.avatarVariant;
+      av.textContent = s.initials;
+      const info = document.createElement('div');
+      const name = document.createElement('div');
+      name.className = 'name';
+      name.textContent = s.name;
+      const sub = document.createElement('div');
+      sub.className = 'sub';
+      sub.textContent = 'Kriah ' + s.fluency + '% \u00B7 Math ' + s.mathLevel;
+      info.appendChild(name);
+      info.appendChild(sub);
+      const flag = document.createElement('div');
+      flag.className = 'flag ' + s.flag;
+      flag.textContent = s.flag === 'good' ? 'On track' : 'Watch';
+      item.appendChild(av);
+      item.appendChild(info);
+      item.appendChild(flag);
+      studentList.appendChild(item);
+    });
+  }
+
+  function getStudent() { return STUDENTS.find(s => s.id === currentId); }
+
+  function gradeClass(g) {
+    const l = g.charAt(0).toUpperCase();
+    if (l === 'A') return 'g-a';
+    if (l === 'B') return 'g-b';
+    if (l === 'C') return 'g-c';
+    return 'g-d';
+  }
+
+  function renderMain() {
+    const s = getStudent();
+    while (mainPanel.firstChild) mainPanel.removeChild(mainPanel.firstChild);
+
+    // Student header
+    const header = document.createElement('div');
+    header.className = 'student-header';
+    const av = document.createElement('div');
+    av.className = 'avatar v' + s.avatarVariant;
+    av.textContent = s.initials;
+    header.appendChild(av);
+    const info = document.createElement('div');
+    const name = document.createElement('div'); name.className = 'name'; name.textContent = s.name;
+    const meta = document.createElement('div'); meta.className = 'meta'; meta.textContent = s.grade + ' \u00B7 ' + s.pronouns + ' \u00B7 Sapphires group';
+    info.appendChild(name); info.appendChild(meta);
+    header.appendChild(info);
+    const qs = document.createElement('div'); qs.className = 'quick-stats';
+    [
+      { n: s.attendance + '%', l: 'Attendance' },
+      { n: s.avgGrade, l: 'Avg grade' },
+      { n: s.fluency + '%', l: 'Kriah fluency' },
+      { n: s.mathLevel, l: 'Math level' }
+    ].forEach(q => {
+      const qd = document.createElement('div'); qd.className = 'q';
+      const n = document.createElement('div'); n.className = 'n'; n.textContent = q.n;
+      const l = document.createElement('div'); l.className = 'l'; l.textContent = q.l;
+      qd.appendChild(n); qd.appendChild(l);
+      qs.appendChild(qd);
+    });
+    header.appendChild(qs);
+    mainPanel.appendChild(header);
+
+    // Ask SIS card (stays global but positioned near top)
+    const askCard = buildAskCard();
+    mainPanel.appendChild(askCard);
+
+    // AI Summary
+    const ai = document.createElement('div');
+    ai.className = 'ai-card';
+    const aiHead = document.createElement('div'); aiHead.className = 'ai-head';
+    const aiTitle = document.createElement('div'); aiTitle.className = 'title';
+    const aiBadge = document.createElement('span'); aiBadge.className = 'ai-badge'; aiBadge.textContent = 'AI';
+    aiTitle.appendChild(aiBadge);
+    aiTitle.appendChild(document.createTextNode(' Weekly summary for ' + s.name));
+    const aiDate = document.createElement('div'); aiDate.className = 'ai-date'; aiDate.textContent = 'Generated this morning \u00B7 Week of Apr 14';
+    aiHead.appendChild(aiTitle); aiHead.appendChild(aiDate);
+    const aiBody = document.createElement('div'); aiBody.className = 'ai-body'; aiBody.textContent = s.aiSummary;
+    ai.appendChild(aiHead); ai.appendChild(aiBody);
+    mainPanel.appendChild(ai);
+
+    // Grid row 1: Subjects + Kriah
+    const row1 = document.createElement('div'); row1.className = 'grid';
+
+    const subjPanel = document.createElement('div'); subjPanel.className = 'panel';
+    const subjHead = panelHead('Academic performance', 'Report Card');
+    subjPanel.appendChild(subjHead);
+    s.subjects.forEach(sub => {
+      const r = document.createElement('div'); r.className = 'subject-row';
+      const nm = document.createElement('div'); nm.className = 'sub-name'; nm.textContent = sub.name;
+      const tr = document.createElement('div'); tr.className = 'trend ' + (sub.trend === 'up' ? 'up' : sub.trend === 'down' ? 'down' : ''); tr.textContent = sub.trendLabel;
+      const g = document.createElement('div'); g.className = 'grade-pill ' + gradeClass(sub.grade); g.textContent = sub.grade;
+      r.appendChild(nm); r.appendChild(tr); r.appendChild(g);
+      subjPanel.appendChild(r);
+    });
+    row1.appendChild(subjPanel);
+
+    const kriahPanel = document.createElement('div'); kriahPanel.className = 'panel';
+    const kriahHead = panelHead('Kriah progress', 'Kriah Coach');
+    kriahPanel.appendChild(kriahHead);
+    const kl = document.createElement('div'); kl.className = 'kriah-level'; kl.textContent = s.kriahLevel;
+    const ks = document.createElement('div'); ks.className = 'kriah-sub'; ks.textContent = 'Tracked weekly by the classroom teacher';
+    kriahPanel.appendChild(kl); kriahPanel.appendChild(ks);
+    kriahPanel.appendChild(progressGroup('Letters mastered', s.lettersMastered, 22));
+    kriahPanel.appendChild(progressGroup('Nekudos mastered', s.nekudosMastered, 12));
+    kriahPanel.appendChild(progressGroup('Reading fluency', s.fluency, 100));
+    const chartWrap = document.createElement('div'); chartWrap.className = 'kriah-chart';
+    const chLabel = document.createElement('div'); chLabel.className = 'mini-label'; chLabel.textContent = 'Fluency last 4 weeks';
+    chartWrap.appendChild(chLabel);
+    chartWrap.appendChild(sparkline(s.fluencyWeekly));
+    kriahPanel.appendChild(chartWrap);
+    row1.appendChild(kriahPanel);
+    mainPanel.appendChild(row1);
+
+    // Row 2: Attendance + Math + Observations
+    const row2 = document.createElement('div'); row2.className = 'grid three';
+
+    const atPanel = document.createElement('div'); atPanel.className = 'panel';
+    const atHead = panelHead('Attendance', 'Time Clock');
+    atPanel.appendChild(atHead);
+    const atBig = document.createElement('div'); atBig.className = 'attend-big'; atBig.textContent = s.attendance + '%';
+    const atSub = document.createElement('div'); atSub.className = 'attend-sub'; atSub.textContent = 'Last 60 school days';
+    atPanel.appendChild(atBig); atPanel.appendChild(atSub);
+    const dots = document.createElement('div'); dots.className = 'attend-dots';
+    s.attendanceData.forEach(status => {
+      const d = document.createElement('div'); d.className = 'd ' + status; dots.appendChild(d);
+    });
+    atPanel.appendChild(dots);
+    const legend = document.createElement('div'); legend.className = 'legend';
+    [['here', 'Present'], ['absent', 'Absent'], ['late', 'Late']].forEach(([cls, lbl]) => {
+      const c = document.createElement('span'); c.className = 'chip';
+      const dot = document.createElement('span'); dot.className = 'dot';
+      if (cls === 'here') dot.style.background = 'var(--forest)';
+      if (cls === 'absent') dot.style.background = 'var(--danger)'; dot.style.opacity = cls === 'absent' ? '0.55' : '';
+      if (cls === 'late') { dot.style.background = 'var(--amber)'; dot.style.opacity = '0.75'; }
+      c.appendChild(dot); c.appendChild(document.createTextNode(' ' + lbl));
+      legend.appendChild(c);
+    });
+    atPanel.appendChild(legend);
+    row2.appendChild(atPanel);
+
+    const mathPanel = document.createElement('div'); mathPanel.className = 'panel';
+    const mathHead = panelHead('Math (Waggle)', 'Waggle');
+    mathPanel.appendChild(mathHead);
+    const wt = document.createElement('div'); wt.className = 'waggle-top';
+    const wn = document.createElement('div'); wn.className = 'waggle-num'; wn.textContent = s.mathLevel;
+    const ws = document.createElement('div'); ws.className = 'waggle-sub'; ws.textContent = 'Current level';
+    wt.appendChild(wn); wt.appendChild(ws);
+    mathPanel.appendChild(wt);
+    const wg = document.createElement('div'); wg.className = 'waggle-gain'; wg.textContent = s.mathGain;
+    mathPanel.appendChild(wg);
+    const wd = document.createElement('div'); wd.className = 'waggle-detail'; wd.textContent = s.mathDetail;
+    mathPanel.appendChild(wd);
+    row2.appendChild(mathPanel);
+
+    const obsPanel = document.createElement('div'); obsPanel.className = 'panel';
+    const obsHead = panelHead('Teacher observations', 'Observation');
+    obsPanel.appendChild(obsHead);
+    s.observations.forEach(o => {
+      const it = document.createElement('div'); it.className = 'obs-item';
+      const head = document.createElement('div'); head.className = 'obs-head';
+      const t = document.createElement('span'); t.className = 'teacher'; t.textContent = o.teacher;
+      const d = document.createElement('span'); d.textContent = o.date;
+      head.appendChild(t); head.appendChild(d);
+      const tx = document.createElement('div'); tx.className = 'obs-text'; tx.textContent = o.text;
+      it.appendChild(head); it.appendChild(tx);
+      obsPanel.appendChild(it);
+    });
+    row2.appendChild(obsPanel);
+    mainPanel.appendChild(row2);
+
+    // Systems
+    const sysCard = document.createElement('div'); sysCard.className = 'systems-card';
+    const sysH3 = document.createElement('h3'); sysH3.textContent = 'Data sources connected to this student'; sysCard.appendChild(sysH3);
+    const sysGrid = document.createElement('div'); sysGrid.className = 'systems-grid';
+    [
+      { icon: 'KC', name: 'Kriah Coach', role: 'Hebrew reading' },
+      { icon: 'WG', name: 'Waggle', role: 'Adaptive math' },
+      { icon: 'TC', name: 'Time Clock', role: 'Attendance' },
+      { icon: 'OB', name: 'Observation', role: 'Teacher notes' },
+      { icon: 'AI', name: 'Claude', role: 'Weekly summary' }
+    ].forEach((sys, i) => {
+      const w = document.createElement('div'); w.className = 'sys';
+      const icon = document.createElement('div'); icon.className = 'sys-icon sys-' + (i + 1); icon.textContent = sys.icon;
+      const nm = document.createElement('div'); nm.className = 'sys-name'; nm.textContent = sys.name;
+      const rl = document.createElement('div'); rl.className = 'sys-role'; rl.textContent = sys.role;
+      w.appendChild(icon); w.appendChild(nm); w.appendChild(rl);
+      sysGrid.appendChild(w);
+    });
+    sysCard.appendChild(sysGrid);
+    mainPanel.appendChild(sysCard);
+  }
+
+  function panelHead(title, source) {
+    const h = document.createElement('div'); h.className = 'panel-head';
+    const h3 = document.createElement('h3'); h3.textContent = title;
+    const src = document.createElement('div'); src.className = 'src'; src.textContent = source;
+    h.appendChild(h3); h.appendChild(src);
+    return h;
+  }
+
+  function progressGroup(label, value, max) {
+    const g = document.createElement('div'); g.className = 'progress-group';
+    const lb = document.createElement('div'); lb.className = 'label'; lb.textContent = label;
+    const bar = document.createElement('div'); bar.className = 'progress-bar';
+    const fill = document.createElement('div'); fill.className = 'fill';
+    fill.style.width = Math.min(100, (value / max) * 100) + '%';
+    bar.appendChild(fill);
+    const row = document.createElement('div'); row.className = 'progress-row';
+    const a = document.createElement('span'); a.textContent = value + ' / ' + max;
+    const b = document.createElement('span'); b.textContent = Math.round((value / max) * 100) + '%';
+    row.appendChild(a); row.appendChild(b);
+    g.appendChild(lb); g.appendChild(bar); g.appendChild(row);
+    return g;
+  }
+
+  function sparkline(data) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('class', 'spark');
+    svg.setAttribute('viewBox', '0 0 200 50');
+    svg.setAttribute('preserveAspectRatio', 'none');
+    const min = Math.min.apply(null, data) - 5;
+    const max = Math.max.apply(null, data) + 2;
+    const range = Math.max(1, max - min);
+    const step = 200 / (data.length - 1);
+    let d = '';
+    data.forEach((v, i) => {
+      const x = i * step;
+      const y = 50 - ((v - min) / range) * 45 - 2;
+      d += (i === 0 ? 'M' : ' L') + x + ',' + y;
+    });
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', d);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', '#10653c');
+    path.setAttribute('stroke-width', '2.5');
+    path.setAttribute('stroke-linecap', 'round');
+    path.setAttribute('stroke-linejoin', 'round');
+    // Last point dot
+    const last = data[data.length - 1];
+    const lx = (data.length - 1) * step;
+    const ly = 50 - ((last - min) / range) * 45 - 2;
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', lx); circle.setAttribute('cy', ly); circle.setAttribute('r', '3.5'); circle.setAttribute('fill', '#10653c');
+    svg.appendChild(path); svg.appendChild(circle);
+    return svg;
+  }
+
+  function buildAskCard() {
+    const c = document.createElement('div'); c.className = 'ask-card';
+    const h = document.createElement('h3'); h.textContent = 'Ask the SIS';
+    const s = document.createElement('div'); s.className = 'sub'; s.textContent = 'A Claude-powered natural language layer over every connected system.';
+    const wrap = document.createElement('div'); wrap.className = 'ask-input-wrap';
+    const inp = document.createElement('input'); inp.type = 'text'; inp.placeholder = 'Ask in plain English. Who is struggling with kriah? Who is ready for more challenge?';
+    const btn = document.createElement('button'); btn.textContent = 'Ask';
+    wrap.appendChild(inp); wrap.appendChild(btn);
+    const sugg = document.createElement('div'); sugg.className = 'ask-suggestions';
+    const questions = [
+      'Who is struggling with kriah?',
+      'Who is ready for enrichment?',
+      'Which students missed the most days this month?',
+      'How did the class do this week overall?'
+    ];
+    const answerBox = document.createElement('div'); answerBox.className = 'ask-answer';
+    questions.forEach(q => {
+      const b = document.createElement('button'); b.className = 'ask-sugg'; b.textContent = q;
+      b.addEventListener('click', () => { inp.value = q; runQuery(q); });
+      sugg.appendChild(b);
+    });
+    function runQuery(q) {
+      const ql = q.toLowerCase();
+      let answer = '';
+      if (/struggl|behind|low/.test(ql) && /kriah|reading/.test(ql)) {
+        const list = STUDENTS.filter(x => x.fluency < 70).map(x => x.name + ' (' + x.fluency + '%)').join(', ');
+        answer = 'Two students are below 70 percent kriah fluency: ' + list + '. Gimmel is the highest priority. Recommend daily Kriah Coach pull-outs for both and a parent conversation for Gimmel this week.';
+      } else if (/enrich|challenge|ahead|advanced|top/.test(ql)) {
+        const enrichmentIds = ['dalet', 'tet', 'zayin'];
+        const top = STUDENTS.filter(x => enrichmentIds.includes(x.id)).map(x => x.name).join(', ');
+        answer = 'Three students are ready for more challenge: ' + top + '. Dalet and Tet are nearly a full grade level above on Waggle math. Consider enrichment groupings this week.';
+      } else if (/absent|absence|missed|attendance/.test(ql)) {
+        const low = STUDENTS.filter(x => x.attendance < 92).sort((a,b) => a.attendance - b.attendance).map(x => x.name + ' (' + x.attendance + '%)').join(', ');
+        answer = 'Students below 92 percent attendance: ' + low + '. Vav has been out three times in the last month, all on Fridays. Worth a parent outreach.';
+      } else if (/class|overall|this week|summary|week/.test(ql)) {
+        answer = 'Class of 10. Average kriah fluency is 80 percent, up 5 points since last month. Math average on Waggle is grade 2.5, with a +0.7 grade-level gain across the class. Two students flagged for intervention (Gimmel, Vav). Three students ready for enrichment (Dalet, Tet, Zayin). Chumash discussions were especially strong on Tuesday.';
+      } else {
+        answer = 'I searched the connected systems. The class looks healthy overall, 80 percent average kriah fluency and grade 2.5 on Waggle. Try one of the suggested questions for a more specific answer.';
+      }
+      answerBox.textContent = '';
+      const prefix = document.createElement('strong');
+      prefix.textContent = 'Answer: ';
+      answerBox.appendChild(prefix);
+      answerBox.appendChild(document.createTextNode(answer));
+      answerBox.classList.add('show');
+    }
+    btn.addEventListener('click', () => runQuery(inp.value || questions[0]));
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') runQuery(inp.value || questions[0]); });
+    c.appendChild(h); c.appendChild(s); c.appendChild(wrap); c.appendChild(sugg); c.appendChild(answerBox);
+    return c;
+  }
+
+  searchInput.addEventListener('input', e => { filter = e.target.value; renderStudentList(); });
+
+  renderStudentList();
+  renderMain();
+})();
+</script>
+
+</body>
+</html>

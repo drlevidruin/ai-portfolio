@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kriah Coach Demo &middot; AI Inside a Small School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Frank+Ruhl+Libre:wght@500;700;900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #10653c;
+    --forest-dark: #0a4a2b;
+    --forest-soft: #b7e2c6;
+    --navy: #343e85;
+    --cream: #f8f4ed;
+    --sage-light: #f0f4ee;
+    --white: #ffffff;
+    --text-dark: #1d1d1f;
+    --text-body: #424245;
+    --text-light: #86868b;
+    --line: rgba(16, 101, 60, 0.14);
+    --line-soft: rgba(0, 0, 0, 0.06);
+    --amber: #d4940a;
+    --warn: #b8620a;
+    --danger: #8b2c1a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Montserrat', system-ui, -apple-system, sans-serif; background: #f7f7f5; color: var(--text-body); -webkit-font-smoothing: antialiased; min-height: 100vh; }
+  h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; color: var(--text-dark); margin: 0; letter-spacing: -0.02em; }
+  a { color: var(--forest); text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; }
+  .heb { font-family: 'Frank Ruhl Libre', 'Times New Roman', serif; }
+
+  .topbar { background: var(--white); border-bottom: 1px solid var(--line-soft); padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+  .topbar .back { font-size: 13px; font-weight: 600; color: var(--forest); display: inline-flex; align-items: center; gap: 6px; }
+  .topbar .back::before { content: "\2190"; }
+  .topbar .logo { font-family: 'Caveat', cursive; color: var(--forest); font-size: 22px; font-weight: 600; }
+  .topbar .demo-label { font-size: 11px; font-weight: 700; color: var(--forest); letter-spacing: 0.14em; text-transform: uppercase; padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; }
+
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 24px 24px 60px; }
+
+  /* Header */
+  .head-block { margin-bottom: 22px; }
+  .head-block .eyebrow { font-family: 'Caveat', cursive; color: var(--forest); font-size: 22px; font-weight: 600; }
+  .head-block h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; margin-top: 2px; }
+  .head-block .sub { font-size: 14px; color: var(--text-body); margin-top: 6px; max-width: 72ch; line-height: 1.55; }
+
+  /* Class summary strip */
+  .class-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 22px; }
+  .cs { background: white; border: 1px solid var(--line-soft); border-radius: 12px; padding: 14px 16px; }
+  .cs .n { font-size: 22px; font-weight: 800; color: var(--forest); letter-spacing: -0.02em; line-height: 1; }
+  .cs .l { font-size: 11.5px; color: var(--text-light); font-weight: 600; margin-top: 4px; letter-spacing: 0.04em; text-transform: uppercase; }
+
+  .layout { display: grid; grid-template-columns: 300px 1fr; gap: 20px; }
+
+  /* Student list */
+  .students { background: white; border: 1px solid var(--line-soft); border-radius: 14px; overflow: hidden; height: fit-content; }
+  .students .sh { padding: 14px 18px; font-size: 11.5px; font-weight: 700; color: var(--text-light); letter-spacing: 0.08em; text-transform: uppercase; background: #fafbfa; border-bottom: 1px solid var(--line-soft); }
+  .s-item { display: grid; grid-template-columns: 34px 1fr auto; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; text-align: left; border: none; background: transparent; width: 100%; font-family: inherit; border-bottom: 1px solid var(--line-soft); }
+  .s-item:last-child { border-bottom: none; }
+  .s-item:hover { background: var(--sage-light); }
+  .s-item.active { background: var(--sage-light); }
+  .s-item.active .name { color: var(--forest); }
+  .s-ava { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 12px; font-family: 'Montserrat', sans-serif; }
+  .s-ava.v1 { background: linear-gradient(135deg, #10653c, #343e85); }
+  .s-ava.v2 { background: linear-gradient(135deg, #0a4a2b, #10653c); }
+  .s-ava.v3 { background: linear-gradient(135deg, #343e85, #0a4a2b); }
+  .s-ava.v4 { background: linear-gradient(135deg, #d4940a, #10653c); }
+  .s-item .name { font-size: 13.5px; font-weight: 700; color: var(--text-dark); }
+  .s-item .sub { font-size: 11px; color: var(--text-light); margin-top: 1px; }
+  .mini-bar { width: 56px; }
+  .mini-bar .track { width: 100%; height: 6px; background: #eeefe9; border-radius: 99px; overflow: hidden; }
+  .mini-bar .fill { height: 100%; background: var(--forest); border-radius: 99px; transition: width 0.5s ease; }
+  .mini-bar .pct { font-size: 10.5px; color: var(--text-light); font-weight: 700; margin-top: 3px; text-align: right; }
+
+  /* Detail */
+  .detail-card { background: white; border: 1px solid var(--line-soft); border-radius: 14px; padding: 22px 24px; margin-bottom: 18px; }
+  .detail-head { display: flex; align-items: center; gap: 14px; margin-bottom: 4px; }
+  .detail-head .ava { width: 46px; height: 46px; border-radius: 50%; font-size: 15px; color: white; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .detail-head h2 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+  .detail-head .meta { font-size: 12.5px; color: var(--text-light); font-weight: 500; margin-top: 1px; }
+
+  /* Level track */
+  .level { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line-soft); }
+  .level-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .level-head .title { font-size: 13px; font-weight: 700; color: var(--text-light); letter-spacing: 0.08em; text-transform: uppercase; }
+  .level-head .badge { background: var(--sage-light); color: var(--forest-dark); font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--forest-soft); }
+  .milestones { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .milestone { padding: 10px 8px; text-align: center; border-radius: 10px; background: #fafbfa; border: 1px solid var(--line-soft); font-size: 11px; color: var(--text-light); font-weight: 600; line-height: 1.3; }
+  .milestone.done { background: var(--sage-light); border-color: var(--forest-soft); color: var(--forest-dark); }
+  .milestone.current { background: var(--forest); border-color: var(--forest); color: white; }
+  .milestone .ms-label { font-size: 10.5px; opacity: 0.75; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .milestone .ms-name { font-size: 12.5px; font-weight: 700; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+  .panel { background: white; border: 1px solid var(--line-soft); border-radius: 14px; padding: 20px 22px; }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .panel-head h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-light); }
+  .panel-head .src { font-size: 10.5px; font-weight: 700; color: var(--forest); padding: 3px 9px; background: var(--sage-light); border-radius: 999px; letter-spacing: 0.04em; text-transform: uppercase; }
+
+  .metric-row { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; margin-bottom: 14px; }
+  .metric-big { font-size: 34px; font-weight: 800; color: var(--forest); letter-spacing: -0.03em; line-height: 1; }
+  .metric-sub { font-size: 12px; color: var(--text-light); font-weight: 600; letter-spacing: 0.04em; }
+  .metric-gain { display: inline-flex; align-items: center; gap: 5px; background: #e7f4ec; color: var(--forest-dark); padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 700; margin-top: 6px; }
+  .metric-gain::before { content: "\2191"; font-weight: 800; }
+
+  /* Letters grid */
+  .letters-grid { display: grid; grid-template-columns: repeat(11, 1fr); gap: 5px; margin-top: 4px; }
+  .letter {
+    aspect-ratio: 1; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-family: 'Frank Ruhl Libre', serif; font-weight: 700; font-size: 20px;
+    background: #f2f3ee; color: var(--text-light);
+    border: 1px solid var(--line-soft);
+    position: relative;
+  }
+  .letter.mastered { background: var(--forest); color: white; border-color: var(--forest); }
+  .letter.practicing { background: var(--sage-light); color: var(--forest-dark); border-color: var(--forest-soft); }
+  .letter.working { background: #fdf3e1; color: var(--warn); border-color: #f2d58b; }
+  .letter-legend { display: flex; gap: 14px; margin-top: 12px; font-size: 11px; color: var(--text-light); font-weight: 600; }
+  .letter-legend .chip { display: inline-flex; align-items: center; gap: 6px; }
+  .letter-legend .dot { width: 10px; height: 10px; border-radius: 3px; }
+
+  /* Chart */
+  .chart { margin-top: 4px; }
+  .chart-head { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-light); font-weight: 600; margin-bottom: 8px; letter-spacing: 0.04em; text-transform: uppercase; }
+  svg.wchart { width: 100%; height: 160px; display: block; }
+
+  /* AI */
+  .ai-card { background: linear-gradient(180deg, #ffffff 0%, #f5faf2 100%); border: 1px solid rgba(16, 101, 60, 0.3); border-radius: 14px; padding: 18px 20px; position: relative; }
+  .ai-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--forest); border-radius: 4px 0 0 4px; }
+  .ai-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  .ai-title { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: var(--forest-dark); letter-spacing: 0.04em; text-transform: uppercase; }
+  .ai-badge { background: var(--forest); color: white; padding: 3px 8px; border-radius: 999px; font-size: 10px; font-weight: 800; letter-spacing: 0.08em; }
+  .ai-body { font-size: 14.5px; color: var(--text-dark); line-height: 1.55; }
+  .ai-body p { margin: 0 0 10px; }
+  .ai-body p:last-child { margin: 0; }
+
+  /* Activity */
+  .log-item { padding: 10px 0; border-bottom: 1px solid var(--line-soft); font-size: 13px; }
+  .log-item:last-child { border-bottom: none; }
+  .log-item .d { font-size: 11px; color: var(--text-light); font-weight: 700; margin-bottom: 2px; letter-spacing: 0.04em; }
+  .log-item .t { color: var(--text-dark); line-height: 1.5; }
+
+  @media (max-width: 960px) {
+    .layout { grid-template-columns: 1fr; }
+    .class-summary { grid-template-columns: repeat(2, 1fr); }
+    .grid2 { grid-template-columns: 1fr; }
+    .letters-grid { grid-template-columns: repeat(6, 1fr); }
+    .milestones { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back" href="../../index.html">Back to portfolio</a>
+  <div class="logo">Kriah Coach</div>
+  <span class="demo-label">Live demo &middot; Safe data</span>
+</div>
+
+<div class="wrap">
+
+  <div class="head-block">
+    <div class="eyebrow">Hebrew reading tracker</div>
+    <h1>One view per child. One teacher. One class.</h1>
+    <p class="sub">Kriah is the foundation of a Jewish education. Every teacher used to track it differently. Now every child's Hebrew reading growth, letter by letter and week by week, lives in one place. Click a student to see their full record.</p>
+  </div>
+
+  <div class="class-summary" id="classSummary"></div>
+
+  <div class="layout">
+    <div class="students" id="students">
+      <div class="sh">2nd Grade &middot; 10 students</div>
+    </div>
+    <div id="detail"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+
+  // Hebrew letters (22)
+  const LETTERS = ['א','ב','ג','ד','ה','ו','ז','ח','ט','י','כ','ל','מ','נ','ס','ע','פ','צ','ק','ר','ש','ת'];
+
+  // Students: slight variations on the SIS demo
+  const STUDENTS = [
+    { id: 'alef', initials: 'AC', v: 1, name: 'Alef Cohen', level: 'Lashon HaTorah Aleph, Unit 2', fluency: 92, letters: 22, nekudos: 8, weekly: [82, 86, 88, 92], mastery: repeat(20, ['mastered']).concat(['practicing', 'practicing']), current: 'Practicing cholam + shuruk nekudos', ai: ['Alef hit 92 percent fluency this week, his highest ever. The last two letter-practicing points were kof and shin, which are giving him trouble.', 'Next focus: pair him with a partner for cholam and shuruk practice. Estimated to hit Aleph Unit 3 in 2 weeks.'], log: [
+      { d: 'Apr 18', t: 'Read the Patach page in Lashon HaTorah Aleph at 92 percent accuracy. Improved from 88 last week.' },
+      { d: 'Apr 15', t: 'Partner session with Zayin. Worked on silent letters.' },
+      { d: 'Apr 12', t: 'Mastered the tav. Moved one letter forward.' }
+    ]},
+    { id: 'bet', initials: 'BL', v: 2, name: 'Bet Levi', level: 'Lashon HaTorah Aleph, Unit 1', fluency: 78, letters: 19, nekudos: 6, weekly: [70, 72, 75, 78], mastery: repeat(17, ['mastered']).concat(['practicing', 'practicing', 'working', 'working', 'working']), current: 'Working on samech, ayin, tsadi', ai: ['Bet is on a gentle upward trend. 8 percentage points in 4 weeks. Samech is her sticking letter.', 'Next focus: 10 minutes per day on samech and ayin drills. Pair with Alef who just mastered both.'], log: [
+      { d: 'Apr 17', t: 'Clean read of the Shva page. First time fully unassisted.' },
+      { d: 'Apr 10', t: 'Reviewed samech vs mem. Still mixes them occasionally.' }
+    ]},
+    { id: 'gimmel', initials: 'GF', v: 3, name: 'Gimmel Friedman', level: 'Pre-Aleph, Letter Review', fluency: 58, letters: 14, nekudos: 3, weekly: [48, 52, 54, 58], mastery: repeat(12, ['mastered']).concat(['practicing', 'practicing', 'working', 'working', 'working', 'working', 'working', 'working'], ['working', 'working']).slice(0, 22), current: 'Pre-Aleph letter review', ai: ['Gimmel is our highest priority. Kriah is the limiting factor on his Chumash comprehension. But he went from 48 to 58 percent in 4 weeks, which is real.', 'Next focus: daily 10-minute pull-outs. Parent meeting scheduled. Celebrate the letter milestones loudly.'], log: [
+      { d: 'Apr 16', t: 'Finished the Patach page in full. Slow but accurate.' },
+      { d: 'Apr 9', t: 'Intervention conference scheduled with parents.' },
+      { d: 'Apr 2', t: 'Mastered the vav. That is letter 14 of 22.' }
+    ]},
+    { id: 'dalet', initials: 'DG', v: 4, name: 'Dalet Goldberg', level: 'Lashon HaTorah Aleph, Unit 3', fluency: 97, letters: 22, nekudos: 11, weekly: [92, 94, 96, 97], mastery: repeat(22, ['mastered']), current: 'Ready for Unit 3 + early Bet workbook', ai: ['Dalet is at 97 percent and has mastered all 22 letters plus 11 of 12 nekudos. She is ready for the next workbook.', 'Next focus: move her to Aleph Unit 3 now. Consider starting her on Bet workbook content as enrichment.'], log: [
+      { d: 'Apr 18', t: 'Helped Gimmel with his kriah during partner time. Patient and generous.' },
+      { d: 'Apr 14', t: 'Mastered sof pasuk and all sof letters.' }
+    ]},
+    { id: 'hei', initials: 'HS', v: 1, name: 'Hei Shapiro', level: 'Lashon HaTorah Aleph, Unit 1', fluency: 74, letters: 20, nekudos: 7, weekly: [68, 70, 72, 74], mastery: repeat(18, ['mastered']).concat(['practicing', 'practicing', 'working', 'working']), current: 'Practicing kof and shin', ai: ['Hei is steady. Small gains every week. Kof and shin are his current stuck points.', 'Next focus: extra practice on the kof-shin page. Otherwise the current approach is working.'], log: [
+      { d: 'Apr 15', t: 'Clean read on the Segol page.' }
+    ]},
+    { id: 'vav', initials: 'VS', v: 2, name: 'Vav Stein', level: 'Pre-Aleph, Nekudos Intro', fluency: 64, letters: 18, nekudos: 4, weekly: [58, 60, 62, 64], mastery: repeat(16, ['mastered']).concat(['practicing', 'practicing', 'working', 'working', 'working', 'working']), current: 'Catching up after absences', ai: ['Vav is held back by attendance, not ability. Every day she is here she makes gains.', 'Next focus: schedule a 10-minute makeup session the day after each absence. Low-key but consistent.'], log: [
+      { d: 'Apr 16', t: 'Back after 2 days out. Sat with Morah during snack for a makeup session.' }
+    ]},
+    { id: 'zayin', initials: 'ZR', v: 3, name: 'Zayin Rosen', level: 'Lashon HaTorah Aleph, Unit 2', fluency: 89, letters: 22, nekudos: 9, weekly: [82, 85, 87, 89], mastery: repeat(21, ['mastered']).concat(['practicing']), current: 'Finishing Unit 2 early', ai: ['Zayin is quiet but relentless. 21 of 22 letters mastered, 89 percent fluency.', 'Next focus: move to Unit 3. He finished Unit 2 a week ahead. He is ready.'], log: [
+      { d: 'Apr 14', t: 'Asked to start the next unit now.' }
+    ]},
+    { id: 'chet', initials: 'CK', v: 4, name: 'Chet Klein', level: 'Lashon HaTorah Aleph, Unit 1', fluency: 71, letters: 20, nekudos: 6, weekly: [63, 66, 69, 71], mastery: repeat(18, ['mastered']).concat(['practicing', 'practicing', 'working', 'working']), current: 'Crossed 70 percent, real milestone', ai: ['Chet just hit 70 percent fluency. That is a psychological as much as a practical milestone.', 'Next focus: name this milestone aloud. Her confidence will rise and carry her forward.'], log: [
+      { d: 'Apr 17', t: 'Hit 70 percent kriah fluency. Celebrated in class.' }
+    ]},
+    { id: 'tet', initials: 'TK', v: 1, name: 'Tet Katz', level: 'Lashon HaTorah Aleph, Unit 2', fluency: 94, letters: 22, nekudos: 10, weekly: [88, 90, 92, 94], mastery: repeat(22, ['mastered']), current: 'At top of class', ai: ['Tet is one of the top kriah readers in the class at 94 percent fluency.', 'Next focus: start peer-tutoring role. He is patient and Gimmel could use a peer tutor.'], log: [
+      { d: 'Apr 13', t: 'Asked a thoughtful question about mem sofit.' }
+    ]},
+    { id: 'yud', initials: 'YB', v: 2, name: 'Yud Berg', level: 'Lashon HaTorah Aleph, Unit 1', fluency: 81, letters: 21, nekudos: 7, weekly: [74, 76, 79, 81], mastery: repeat(19, ['mastered']).concat(['practicing', 'practicing', 'working']), current: 'Mastering remaining letters', ai: ['Yud is a strong comprehender. Her kriah climb is steady.', 'Next focus: pair Tanach context reading in English with her Chumash work to feed her love of stories.'], log: [
+      { d: 'Apr 11', t: 'Made a connection between last week\u2019s Parsha and this week\u2019s unprompted.' }
+    ]}
+  ];
+
+  function repeat(n, arr) {
+    const out = [];
+    for (let i = 0; i < n; i++) out.push(arr[i % arr.length]);
+    return out;
+  }
+
+  // Normalize mastery arrays to length 22
+  STUDENTS.forEach(s => { s.mastery = (s.mastery.concat(new Array(22).fill('working'))).slice(0, 22); });
+
+  let currentId = STUDENTS[0].id;
+  const detail = document.getElementById('detail');
+  const studentsEl = document.getElementById('students');
+  const summaryEl = document.getElementById('classSummary');
+
+  function renderSummary() {
+    while (summaryEl.firstChild) summaryEl.removeChild(summaryEl.firstChild);
+    const avgFlu = Math.round(STUDENTS.reduce((a, s) => a + s.fluency, 0) / STUDENTS.length);
+    const prevAvgFlu = Math.round(STUDENTS.reduce((a, s) => a + s.weekly[0], 0) / STUDENTS.length);
+    const gain = avgFlu - prevAvgFlu;
+    const top = [...STUDENTS].sort((a, b) => b.fluency - a.fluency)[0];
+    const flagged = STUDENTS.filter(s => s.fluency < 70).length;
+    [
+      { n: avgFlu + '%', l: 'Class avg fluency' },
+      { n: '+' + gain + ' pts', l: 'Gain this month' },
+      { n: top.name.split(' ')[0], l: 'Top reader (' + top.fluency + '%)' },
+      { n: flagged, l: 'Needs extra support' }
+    ].forEach(it => {
+      const d = document.createElement('div'); d.className = 'cs';
+      const n = document.createElement('div'); n.className = 'n'; n.textContent = it.n;
+      const l = document.createElement('div'); l.className = 'l'; l.textContent = it.l;
+      d.appendChild(n); d.appendChild(l);
+      summaryEl.appendChild(d);
+    });
+  }
+
+  function renderStudents() {
+    while (studentsEl.childNodes.length > 1) studentsEl.removeChild(studentsEl.lastChild);
+    STUDENTS.forEach(s => {
+      const b = document.createElement('button'); b.className = 's-item' + (s.id === currentId ? ' active' : '');
+      b.addEventListener('click', () => { currentId = s.id; renderStudents(); renderDetail(); });
+      const av = document.createElement('div'); av.className = 's-ava v' + s.v; av.textContent = s.initials;
+      const info = document.createElement('div');
+      const nm = document.createElement('div'); nm.className = 'name'; nm.textContent = s.name;
+      const sub = document.createElement('div'); sub.className = 'sub'; sub.textContent = s.level.replace('Lashon HaTorah ', 'LH ').replace('Aleph', 'א');
+      info.appendChild(nm); info.appendChild(sub);
+      const bar = document.createElement('div'); bar.className = 'mini-bar';
+      const track = document.createElement('div'); track.className = 'track';
+      const fill = document.createElement('div'); fill.className = 'fill'; fill.style.width = s.fluency + '%';
+      track.appendChild(fill);
+      const pct = document.createElement('div'); pct.className = 'pct'; pct.textContent = s.fluency + '%';
+      bar.appendChild(track); bar.appendChild(pct);
+      b.appendChild(av); b.appendChild(info); b.appendChild(bar);
+      studentsEl.appendChild(b);
+    });
+  }
+
+  function renderDetail() {
+    const s = STUDENTS.find(x => x.id === currentId);
+    while (detail.firstChild) detail.removeChild(detail.firstChild);
+
+    const top = document.createElement('div'); top.className = 'detail-card';
+    const head = document.createElement('div'); head.className = 'detail-head';
+    const av = document.createElement('div'); av.className = 's-ava v' + s.v + ' ava'; av.textContent = s.initials; av.style.width = '46px'; av.style.height = '46px'; av.style.fontSize = '15px';
+    const info = document.createElement('div');
+    const h2 = document.createElement('h2'); h2.textContent = s.name;
+    const meta = document.createElement('div'); meta.className = 'meta'; meta.textContent = s.level + ' \u00B7 2nd Grade Sapphires';
+    info.appendChild(h2); info.appendChild(meta);
+    head.appendChild(av); head.appendChild(info);
+    top.appendChild(head);
+
+    // Milestones track
+    const level = document.createElement('div'); level.className = 'level';
+    const lhead = document.createElement('div'); lhead.className = 'level-head';
+    const lt = document.createElement('div'); lt.className = 'title'; lt.textContent = 'Progression';
+    const badge = document.createElement('div'); badge.className = 'badge'; badge.textContent = s.current;
+    lhead.appendChild(lt); lhead.appendChild(badge);
+    level.appendChild(lhead);
+    const milestones = document.createElement('div'); milestones.className = 'milestones';
+    const stages = [
+      { label: 'Step 1', name: 'Pre-Aleph' },
+      { label: 'Step 2', name: 'Nekudos Intro' },
+      { label: 'Step 3', name: 'Aleph Unit 1' },
+      { label: 'Step 4', name: 'Aleph Unit 2' },
+      { label: 'Step 5', name: 'Aleph Unit 3' }
+    ];
+    let currentIdx = 0;
+    const lvl = s.level.toLowerCase();
+    if (lvl.includes('pre-aleph')) currentIdx = lvl.includes('nekudos') ? 1 : 0;
+    else if (lvl.includes('unit 1')) currentIdx = 2;
+    else if (lvl.includes('unit 2')) currentIdx = 3;
+    else if (lvl.includes('unit 3')) currentIdx = 4;
+    stages.forEach((st, i) => {
+      const m = document.createElement('div');
+      m.className = 'milestone' + (i < currentIdx ? ' done' : i === currentIdx ? ' current' : '');
+      const lbl = document.createElement('div'); lbl.className = 'ms-label'; lbl.textContent = st.label;
+      const nm = document.createElement('div'); nm.className = 'ms-name'; nm.textContent = st.name;
+      m.appendChild(lbl); m.appendChild(nm);
+      milestones.appendChild(m);
+    });
+    level.appendChild(milestones);
+    top.appendChild(level);
+
+    detail.appendChild(top);
+
+    // Grid: fluency chart + letters mastery
+    const grid = document.createElement('div'); grid.className = 'grid2';
+
+    // Fluency chart panel
+    const chartPanel = document.createElement('div'); chartPanel.className = 'panel';
+    chartPanel.appendChild(panelHead('Fluency over the last 4 weeks', 'Weekly check'));
+    const mrow = document.createElement('div'); mrow.className = 'metric-row';
+    const big = document.createElement('div'); big.className = 'metric-big'; big.textContent = s.fluency + '%';
+    const sRight = document.createElement('div');
+    const sub = document.createElement('div'); sub.className = 'metric-sub'; sub.textContent = 'Current reading fluency';
+    const gain = s.fluency - s.weekly[0];
+    const gainBadge = document.createElement('div'); gainBadge.className = 'metric-gain'; gainBadge.textContent = gain + ' points in 4 weeks';
+    sRight.appendChild(sub); sRight.appendChild(gainBadge);
+    mrow.appendChild(big); mrow.appendChild(sRight);
+    chartPanel.appendChild(mrow);
+    const chart = document.createElement('div'); chart.className = 'chart';
+    const chartHead = document.createElement('div'); chartHead.className = 'chart-head';
+    const c1 = document.createElement('span'); c1.textContent = 'Week 1';
+    const c2 = document.createElement('span'); c2.textContent = 'This week';
+    chartHead.appendChild(c1); chartHead.appendChild(c2);
+    chart.appendChild(chartHead);
+    chart.appendChild(buildChart(s.weekly));
+    chartPanel.appendChild(chart);
+    grid.appendChild(chartPanel);
+
+    // Letters panel - count mastered letters directly from the mastery array so
+    // the label and the visual grid always agree.
+    const lettersPanel = document.createElement('div'); lettersPanel.className = 'panel';
+    const masteredCount = s.mastery.filter(m => m === 'mastered').length;
+    lettersPanel.appendChild(panelHead('Letters mastered', masteredCount + ' / 22'));
+    const lg = document.createElement('div'); lg.className = 'letters-grid';
+    LETTERS.forEach((ltr, i) => {
+      const cell = document.createElement('div');
+      cell.className = 'letter ' + (s.mastery[i] || 'working');
+      cell.textContent = ltr;
+      cell.classList.add('heb');
+      lg.appendChild(cell);
+    });
+    lettersPanel.appendChild(lg);
+    const legend = document.createElement('div'); legend.className = 'letter-legend';
+    [
+      ['Mastered', 'var(--forest)'],
+      ['Practicing', 'var(--forest-soft)'],
+      ['Working', '#f2d58b']
+    ].forEach(([lbl, col]) => {
+      const c = document.createElement('span'); c.className = 'chip';
+      const dot = document.createElement('span'); dot.className = 'dot'; dot.style.background = col;
+      c.appendChild(dot); c.appendChild(document.createTextNode(' ' + lbl));
+      legend.appendChild(c);
+    });
+    lettersPanel.appendChild(legend);
+    grid.appendChild(lettersPanel);
+
+    detail.appendChild(grid);
+
+    // AI insight + log
+    const grid2 = document.createElement('div'); grid2.className = 'grid2';
+
+    const ai = document.createElement('div'); ai.className = 'ai-card';
+    const ahead = document.createElement('div'); ahead.className = 'ai-head';
+    const title = document.createElement('div'); title.className = 'ai-title';
+    const badge2 = document.createElement('span'); badge2.className = 'ai-badge'; badge2.textContent = 'AI';
+    title.appendChild(badge2); title.appendChild(document.createTextNode(' Kriah insight for ' + s.name));
+    ahead.appendChild(title);
+    const body = document.createElement('div'); body.className = 'ai-body';
+    s.ai.forEach(p => { const el = document.createElement('p'); el.textContent = p; body.appendChild(el); });
+    ai.appendChild(ahead); ai.appendChild(body);
+    grid2.appendChild(ai);
+
+    const logPanel = document.createElement('div'); logPanel.className = 'panel';
+    logPanel.appendChild(panelHead('Recent activity', 'Teacher log'));
+    s.log.forEach(l => {
+      const item = document.createElement('div'); item.className = 'log-item';
+      const d = document.createElement('div'); d.className = 'd'; d.textContent = l.d;
+      const t = document.createElement('div'); t.className = 't'; t.textContent = l.t;
+      item.appendChild(d); item.appendChild(t);
+      logPanel.appendChild(item);
+    });
+    grid2.appendChild(logPanel);
+
+    detail.appendChild(grid2);
+  }
+
+  function panelHead(title, source) {
+    const h = document.createElement('div'); h.className = 'panel-head';
+    const h3 = document.createElement('h3'); h3.textContent = title;
+    const src = document.createElement('div'); src.className = 'src'; src.textContent = source;
+    h.appendChild(h3); h.appendChild(src);
+    return h;
+  }
+
+  function buildChart(data) {
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('class', 'wchart');
+    svg.setAttribute('viewBox', '0 0 400 160');
+    svg.setAttribute('preserveAspectRatio', 'none');
+    const padding = { l: 30, r: 20, t: 20, b: 30 };
+    const W = 400 - padding.l - padding.r;
+    const H = 160 - padding.t - padding.b;
+    const min = Math.max(0, Math.min.apply(null, data) - 5);
+    const max = Math.min(100, Math.max.apply(null, data) + 5);
+    const range = Math.max(1, max - min);
+
+    // Grid lines
+    [0, 0.25, 0.5, 0.75, 1].forEach(f => {
+      const y = padding.t + H * (1 - f);
+      const line = document.createElementNS(svgNS, 'line');
+      line.setAttribute('x1', padding.l); line.setAttribute('y1', y);
+      line.setAttribute('x2', padding.l + W); line.setAttribute('y2', y);
+      line.setAttribute('stroke', '#eeefe9'); line.setAttribute('stroke-width', '1');
+      svg.appendChild(line);
+      const label = document.createElementNS(svgNS, 'text');
+      label.setAttribute('x', padding.l - 6); label.setAttribute('y', y + 4);
+      label.setAttribute('text-anchor', 'end');
+      label.setAttribute('font-size', '10'); label.setAttribute('font-family', 'Montserrat, sans-serif');
+      label.setAttribute('fill', '#86868b'); label.setAttribute('font-weight', '600');
+      label.textContent = Math.round(min + range * f) + '%';
+      svg.appendChild(label);
+    });
+
+    // Area + line
+    const step = W / (data.length - 1);
+    let linePath = '';
+    let areaPath = '';
+    data.forEach((v, i) => {
+      const x = padding.l + i * step;
+      const y = padding.t + H * (1 - (v - min) / range);
+      linePath += (i === 0 ? 'M' : ' L') + x + ',' + y;
+      if (i === 0) areaPath = 'M' + x + ',' + (padding.t + H) + ' L' + x + ',' + y;
+      else areaPath += ' L' + x + ',' + y;
+    });
+    areaPath += ' L' + (padding.l + W) + ',' + (padding.t + H) + ' Z';
+
+    const area = document.createElementNS(svgNS, 'path');
+    area.setAttribute('d', areaPath);
+    area.setAttribute('fill', 'rgba(16, 101, 60, 0.12)');
+    svg.appendChild(area);
+
+    const line = document.createElementNS(svgNS, 'path');
+    line.setAttribute('d', linePath);
+    line.setAttribute('fill', 'none');
+    line.setAttribute('stroke', '#10653c');
+    line.setAttribute('stroke-width', '3');
+    line.setAttribute('stroke-linecap', 'round');
+    line.setAttribute('stroke-linejoin', 'round');
+    svg.appendChild(line);
+
+    // Points + labels
+    data.forEach((v, i) => {
+      const x = padding.l + i * step;
+      const y = padding.t + H * (1 - (v - min) / range);
+      const dot = document.createElementNS(svgNS, 'circle');
+      dot.setAttribute('cx', x); dot.setAttribute('cy', y); dot.setAttribute('r', 4);
+      dot.setAttribute('fill', 'white');
+      dot.setAttribute('stroke', '#10653c');
+      dot.setAttribute('stroke-width', '2.5');
+      svg.appendChild(dot);
+      const txt = document.createElementNS(svgNS, 'text');
+      txt.setAttribute('x', x); txt.setAttribute('y', y - 10);
+      txt.setAttribute('text-anchor', 'middle');
+      txt.setAttribute('font-size', '11'); txt.setAttribute('font-family', 'Montserrat, sans-serif');
+      txt.setAttribute('fill', '#10653c'); txt.setAttribute('font-weight', '700');
+      txt.textContent = v + '%';
+      svg.appendChild(txt);
+    });
+
+    return svg;
+  }
+
+  renderSummary();
+  renderStudents();
+  renderDetail();
+})();
+</script>
+
+</body>
+</html>

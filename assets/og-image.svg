@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8f4ed"/>
+      <stop offset="100%" stop-color="#ffffff"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="18%" cy="0%" r="55%">
+      <stop offset="0%" stop-color="#10653c" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#10653c" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="85%" cy="100%" r="55%">
+      <stop offset="0%" stop-color="#343e85" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#343e85" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow1)"/>
+  <rect width="1200" height="630" fill="url(#glow2)"/>
+
+  <g font-family="Montserrat, sans-serif">
+    <!-- Caveat eyebrow -->
+    <text x="80" y="120" font-family="Caveat, cursive" font-size="40" fill="#10653c" font-weight="600">The Pardes Way &#183; 2025&#8211;2026</text>
+
+    <!-- Main title -->
+    <text x="80" y="230" font-size="96" font-weight="800" fill="#1d1d1f" letter-spacing="-3">AI is quietly running</text>
+    <text x="80" y="340" font-size="96" font-weight="800" fill="#10653c" letter-spacing="-3">our school.</text>
+
+    <!-- Subtitle -->
+    <text x="80" y="410" font-size="24" fill="#424245" font-weight="500">How one principal rebuilt a 220-student school with Claude.</text>
+    <text x="80" y="444" font-size="24" fill="#424245" font-weight="500">Five live demos inside.</text>
+
+    <!-- Stats strip -->
+    <line x1="80" y1="500" x2="1120" y2="500" stroke="#10653c" stroke-opacity="0.14" stroke-width="1"/>
+
+    <g transform="translate(80, 520)">
+      <text font-size="48" font-weight="800" fill="#10653c" letter-spacing="-2">14</text>
+      <text y="62" font-size="14" fill="#424245" font-weight="500">AI TOOLS IN DAILY USE</text>
+    </g>
+    <g transform="translate(340, 520)">
+      <text font-size="48" font-weight="800" fill="#10653c" letter-spacing="-2">2+</text>
+      <text y="62" font-size="14" fill="#424245" font-weight="500">TEACHERS PER CLASSROOM</text>
+    </g>
+    <g transform="translate(620, 520)">
+      <text font-size="48" font-weight="800" fill="#10653c" letter-spacing="-2">1+</text>
+      <text y="62" font-size="14" fill="#424245" font-weight="500">GRADE-LEVEL MATH JUMP</text>
+    </g>
+    <g transform="translate(900, 520)">
+      <text font-size="48" font-weight="800" fill="#10653c" letter-spacing="-2">5</text>
+      <text y="62" font-size="14" fill="#424245" font-weight="500">LIVE DEMOS TO TRY</text>
+    </g>
+  </g>
+</svg>

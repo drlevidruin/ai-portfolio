@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reflect Survey Demo &middot; AI Inside a Small School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #10653c;
+    --forest-dark: #0a4a2b;
+    --forest-soft: #b7e2c6;
+    --navy: #343e85;
+    --cream: #f8f4ed;
+    --sage-light: #f0f4ee;
+    --white: #ffffff;
+    --text-dark: #1d1d1f;
+    --text-body: #424245;
+    --text-light: #86868b;
+    --line: rgba(16, 101, 60, 0.14);
+    --line-soft: rgba(0, 0, 0, 0.06);
+    --amber: #d4940a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Montserrat', system-ui, -apple-system, sans-serif; background: var(--cream); color: var(--text-body); -webkit-font-smoothing: antialiased; min-height: 100vh; }
+  h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; color: var(--text-dark); margin: 0; letter-spacing: -0.02em; }
+  a { color: var(--forest); text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; }
+
+  .topbar { background: var(--white); border-bottom: 1px solid var(--line-soft); padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+  .topbar .back { font-size: 13px; font-weight: 600; color: var(--forest); display: inline-flex; align-items: center; gap: 6px; }
+  .topbar .back::before { content: "\2190"; }
+  .topbar .logo { font-family: 'Caveat', cursive; color: var(--forest); font-size: 22px; font-weight: 600; }
+  .topbar .demo-label { font-size: 11px; font-weight: 700; color: var(--forest); letter-spacing: 0.14em; text-transform: uppercase; padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* Progress */
+  .progress-bar-wrap { height: 4px; background: #eae5d6; border-radius: 99px; overflow: hidden; margin-bottom: 28px; }
+  .progress-bar-fill { height: 100%; background: var(--forest); border-radius: 99px; transition: width 0.4s ease; }
+
+  /* Intro */
+  .intro { background: white; border: 1px solid var(--line-soft); border-radius: 18px; padding: 44px 48px; box-shadow: 0 18px 40px -28px rgba(16,101,60,0.18); }
+  .intro .eyebrow { font-family: 'Caveat', cursive; color: var(--forest); font-size: 26px; font-weight: 600; margin-bottom: 8px; }
+  .intro h1 { font-size: 34px; font-weight: 800; margin-bottom: 14px; letter-spacing: -0.03em; }
+  .intro p { font-size: 16px; color: var(--text-body); margin: 0 0 12px; line-height: 1.6; }
+  .intro .key-points { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line-soft); }
+  .kp { display: flex; gap: 14px; margin-bottom: 14px; }
+  .kp .n { width: 28px; height: 28px; border-radius: 50%; background: var(--sage-light); color: var(--forest-dark); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; flex-shrink: 0; }
+  .kp .t { font-size: 14.5px; color: var(--text-dark); line-height: 1.5; }
+  .intro button.primary { margin-top: 28px; width: 100%; background: var(--forest-dark); color: white; border: none; border-radius: 12px; padding: 15px; font-size: 15.5px; font-weight: 700; }
+  .intro button.primary:hover { background: var(--forest); }
+
+  /* Question card */
+  .qcard { background: white; border: 1px solid var(--line-soft); border-radius: 18px; padding: 36px 44px; }
+  .qnum { font-family: 'Caveat', cursive; color: var(--forest); font-size: 22px; font-weight: 600; margin-bottom: 10px; }
+  .qtext { font-size: 24px; color: var(--text-dark); font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 12px; }
+  .qsub { font-size: 14px; color: var(--text-light); margin-bottom: 28px; }
+
+  /* Scale */
+  .scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .scale-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    padding: 18px 12px; border: 2px solid var(--line-soft); border-radius: 12px;
+    background: white; color: var(--text-body); font-family: inherit;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .scale-btn .num { font-size: 22px; font-weight: 800; color: var(--forest); letter-spacing: -0.02em; }
+  .scale-btn .lbl { font-size: 11.5px; color: var(--text-light); font-weight: 600; text-align: center; line-height: 1.25; }
+  .scale-btn:hover { border-color: var(--forest-soft); background: var(--sage-light); }
+  .scale-btn.selected { border-color: var(--forest); background: var(--sage-light); }
+  .scale-btn.selected .lbl { color: var(--text-dark); }
+
+  /* Text area */
+  .text-area { width: 100%; min-height: 120px; border: 1px solid var(--line-soft); border-radius: 12px; padding: 14px 16px; font-family: inherit; font-size: 15px; line-height: 1.5; color: var(--text-dark); outline: none; background: #fafafa; resize: vertical; }
+  .text-area:focus { border-color: var(--forest); background: white; }
+
+  /* Nav */
+  .qnav { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; }
+  .qnav button.secondary { background: transparent; color: var(--text-body); border: 1px solid var(--line-soft); padding: 12px 20px; border-radius: 10px; font-weight: 600; font-size: 14px; }
+  .qnav button.secondary:hover { background: #f3f3f1; }
+  .qnav button.primary { background: var(--forest-dark); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; font-size: 14px; }
+  .qnav button.primary:hover { background: var(--forest); }
+  .qnav button.primary:disabled { opacity: 0.5; cursor: not-allowed; background: var(--forest-dark); }
+  .step-count { font-size: 12px; color: var(--text-light); font-weight: 600; letter-spacing: 0.04em; }
+
+  /* Processing */
+  .processing { background: white; border: 1px solid var(--line-soft); border-radius: 18px; padding: 60px 44px; text-align: center; }
+  .processing .spinner { width: 60px; height: 60px; margin: 0 auto 24px; border: 4px solid var(--sage-light); border-top-color: var(--forest); border-radius: 50%; animation: spin 0.9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .processing h2 { font-size: 22px; margin-bottom: 10px; }
+  .processing p { font-size: 14px; color: var(--text-light); max-width: 42ch; margin: 0 auto; }
+  .processing .dots { margin-top: 20px; display: flex; justify-content: center; gap: 6px; }
+  .processing .dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--forest-soft); animation: bounce 1.4s infinite ease-in-out both; }
+  .processing .dots span:nth-child(1) { animation-delay: -0.32s; }
+  .processing .dots span:nth-child(2) { animation-delay: -0.16s; }
+  @keyframes bounce { 0%, 80%, 100% { transform: scale(0.5); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
+
+  /* Report */
+  .report { background: white; border: 1px solid var(--line-soft); border-radius: 18px; padding: 36px 44px; }
+  .report-head { margin-bottom: 28px; padding-bottom: 22px; border-bottom: 1px solid var(--line-soft); }
+  .report-head .eyebrow { font-family: 'Caveat', cursive; color: var(--forest); font-size: 22px; font-weight: 600; }
+  .report-head h1 { font-size: 30px; font-weight: 800; margin: 4px 0 8px; letter-spacing: -0.02em; }
+  .report-head .meta { font-size: 13px; color: var(--text-light); font-weight: 500; }
+
+  .overall { background: linear-gradient(135deg, #0a4a2b 0%, #10653c 100%); color: white; border-radius: 14px; padding: 24px 26px; margin-bottom: 24px; display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; }
+  .overall .big { font-size: 52px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+  .overall .cap { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--forest-soft); font-weight: 700; margin-bottom: 4px; }
+  .overall .desc { font-size: 14px; color: rgba(255,255,255,0.85); line-height: 1.5; }
+
+  .section-block { margin-bottom: 26px; }
+  .section-block h2 { font-size: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--forest-dark); margin-bottom: 12px; display: inline-flex; align-items: center; gap: 10px; }
+  .section-block h2::before { content: ""; width: 4px; height: 14px; background: var(--forest); border-radius: 2px; }
+
+  .insight-card { background: #fafbfa; border: 1px solid var(--line-soft); border-radius: 12px; padding: 16px 18px; margin-bottom: 10px; }
+  .insight-card h4 { font-size: 15px; margin-bottom: 6px; font-weight: 700; color: var(--text-dark); }
+  .insight-card p { font-size: 13.5px; color: var(--text-body); margin: 0; line-height: 1.55; }
+  .insight-card .quote { margin-top: 10px; padding: 10px 14px; border-left: 3px solid var(--forest); background: white; border-radius: 0 8px 8px 0; font-size: 13px; color: var(--text-body); font-style: italic; }
+
+  .themes { display: flex; flex-wrap: wrap; gap: 8px; }
+  .theme-pill { padding: 7px 14px; border-radius: 999px; background: var(--sage-light); color: var(--forest-dark); font-weight: 700; font-size: 13px; border: 1px solid var(--forest-soft); }
+  .theme-pill.big { font-size: 15px; padding: 9px 18px; background: var(--forest-dark); color: white; border-color: var(--forest-dark); }
+  .theme-pill.med { font-size: 14px; }
+
+  .radar-card { background: white; border: 1px solid var(--line-soft); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+  .radar-card .cap { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-light); font-weight: 700; margin-bottom: 10px; }
+  svg.radar { display: block; margin: 0 auto; max-width: 100%; }
+
+  .actions-row { display: flex; gap: 10px; margin-top: 30px; flex-wrap: wrap; }
+  .actions-row button { padding: 12px 18px; border-radius: 10px; font-weight: 700; font-size: 14px; border: 1px solid var(--line); background: white; color: var(--forest); }
+  .actions-row button.primary { background: var(--forest-dark); color: white; border-color: var(--forest-dark); }
+  .actions-row button.primary:hover { background: var(--forest); }
+  .actions-row button:hover { background: var(--sage-light); }
+
+  @media (max-width: 700px) {
+    .intro, .qcard, .processing, .report { padding: 28px 22px; }
+    .intro h1, .report-head h1 { font-size: 26px; }
+    .overall { grid-template-columns: 1fr; text-align: left; }
+    .overall .big { font-size: 42px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back" href="../../index.html">Back to portfolio</a>
+  <div class="logo">Reflect</div>
+  <span class="demo-label">Live demo</span>
+</div>
+
+<div class="wrap">
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="pfill" style="width: 0%"></div></div>
+  <div id="screen"></div>
+</div>
+
+<script>
+(function(){
+
+  const QUESTIONS = [
+    {
+      type: 'scale',
+      text: 'How clearly does this leader communicate vision and priorities?',
+      sub: 'Think about the last month. Consider both what they said and how it landed.',
+      labels: ['Rarely clear', 'Sometimes', 'Often', 'Usually', 'Always clear']
+    },
+    {
+      type: 'scale',
+      text: 'How well does this leader develop the people around them?',
+      sub: 'Coaching, feedback, stretch opportunities, showing belief.',
+      labels: ['Not at all', 'A little', 'Moderately', 'Strongly', 'Exceptionally']
+    },
+    {
+      type: 'scale',
+      text: 'How responsive is this leader to feedback, especially uncomfortable feedback?',
+      sub: 'Anonymous context. Be honest.',
+      labels: ['Defensive', 'Tolerates it', 'Listens', 'Invites it', 'Grows from it']
+    },
+    {
+      type: 'text',
+      text: 'What is one thing this leader does exceptionally well?',
+      sub: 'Specific is better than general. One concrete story is worth more than a paragraph of praise.',
+      placeholder: 'They run our weekly staff meetings in a way that...'
+    },
+    {
+      type: 'text',
+      text: 'What is one thing this leader could do better?',
+      sub: 'Think about the single change that would most help you and your colleagues.',
+      placeholder: 'I wish they would...'
+    }
+  ];
+
+  const answers = new Array(QUESTIONS.length).fill(null);
+  let idx = 0; // -1 = intro, 0..N-1 = questions, N = processing, N+1 = report
+  let stage = 'intro';
+
+  const screen = document.getElementById('screen');
+  const pfill = document.getElementById('pfill');
+
+  function setProgress(pct) { pfill.style.width = pct + '%'; }
+
+  function renderIntro() {
+    stage = 'intro';
+    setProgress(0);
+    clear();
+    const c = document.createElement('div'); c.className = 'intro';
+    const e = document.createElement('div'); e.className = 'eyebrow'; e.textContent = 'Reflect';
+    const h = document.createElement('h1'); h.textContent = 'A short, anonymous reflection.';
+    const p1 = document.createElement('p'); p1.textContent = 'You are about to give feedback about a leader you work with. Reflect aggregates many voices like yours into a thoughtful, private report the leader can actually use.';
+    const p2 = document.createElement('p'); p2.textContent = 'This survey is five short questions. You can finish in under three minutes.';
+    c.appendChild(e); c.appendChild(h); c.appendChild(p1); c.appendChild(p2);
+    const kp = document.createElement('div'); kp.className = 'key-points';
+    [
+      { n: '1', t: 'Your answers are anonymous. Reflect aggregates across everyone who responds.' },
+      { n: '2', t: 'The report uses Claude to find themes across free-text answers without exposing who said what.' },
+      { n: '3', t: 'The leader sees the patterns, not the individual responses.' }
+    ].forEach(pt => {
+      const row = document.createElement('div'); row.className = 'kp';
+      const n = document.createElement('div'); n.className = 'n'; n.textContent = pt.n;
+      const t = document.createElement('div'); t.className = 't'; t.textContent = pt.t;
+      row.appendChild(n); row.appendChild(t); kp.appendChild(row);
+    });
+    c.appendChild(kp);
+    const b = document.createElement('button'); b.className = 'primary'; b.textContent = 'Start the reflection';
+    b.addEventListener('click', () => { idx = 0; renderQuestion(); });
+    c.appendChild(b);
+    screen.appendChild(c);
+  }
+
+  function renderQuestion() {
+    stage = 'q';
+    const q = QUESTIONS[idx];
+    setProgress((idx / QUESTIONS.length) * 80);
+    clear();
+    const c = document.createElement('div'); c.className = 'qcard';
+    const n = document.createElement('div'); n.className = 'qnum'; n.textContent = 'Question ' + (idx + 1) + ' of ' + QUESTIONS.length;
+    const t = document.createElement('div'); t.className = 'qtext'; t.textContent = q.text;
+    const s = document.createElement('div'); s.className = 'qsub'; s.textContent = q.sub;
+    c.appendChild(n); c.appendChild(t); c.appendChild(s);
+
+    // Declare nav elements early so the input handler can update the Next button state live
+    const nav = document.createElement('div'); nav.className = 'qnav';
+    const backBtn = document.createElement('button'); backBtn.type = 'button'; backBtn.className = 'secondary';
+    backBtn.textContent = idx === 0 ? 'Back to intro' : 'Previous';
+    backBtn.addEventListener('click', () => { if (idx === 0) renderIntro(); else { idx--; renderQuestion(); } });
+    const count = document.createElement('div'); count.className = 'step-count'; count.textContent = (idx + 1) + ' / ' + QUESTIONS.length;
+    const nextBtn = document.createElement('button'); nextBtn.type = 'button'; nextBtn.className = 'primary';
+    const isLast = idx === QUESTIONS.length - 1;
+    nextBtn.textContent = isLast ? 'Submit reflection' : 'Next';
+
+    function updateNextButton() {
+      const a = answers[idx];
+      const hasAnswer = q.type === 'scale'
+        ? !!a
+        : (typeof a === 'string' && a.trim().length > 0);
+      nextBtn.disabled = !hasAnswer;
+    }
+
+    if (q.type === 'scale') {
+      const sc = document.createElement('div'); sc.className = 'scale';
+      q.labels.forEach((lab, i) => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'scale-btn' + (answers[idx] === i + 1 ? ' selected' : '');
+        const num = document.createElement('div'); num.className = 'num'; num.textContent = (i + 1);
+        const lb = document.createElement('div'); lb.className = 'lbl'; lb.textContent = lab;
+        b.appendChild(num); b.appendChild(lb);
+        b.addEventListener('click', () => { answers[idx] = i + 1; renderQuestion(); });
+        sc.appendChild(b);
+      });
+      c.appendChild(sc);
+    } else {
+      const ta = document.createElement('textarea'); ta.className = 'text-area'; ta.placeholder = q.placeholder;
+      if (typeof answers[idx] === 'string') ta.value = answers[idx];
+      ta.addEventListener('input', (e) => {
+        answers[idx] = e.target.value;
+        updateNextButton();
+      });
+      c.appendChild(ta);
+    }
+
+    updateNextButton();
+    nextBtn.addEventListener('click', () => {
+      if (isLast) { renderProcessing(); return; }
+      idx++; renderQuestion();
+    });
+    nav.appendChild(backBtn); nav.appendChild(count); nav.appendChild(nextBtn);
+    c.appendChild(nav);
+    screen.appendChild(c);
+  }
+
+  function renderProcessing() {
+    stage = 'processing';
+    setProgress(90);
+    clear();
+    const c = document.createElement('div'); c.className = 'processing';
+    const sp = document.createElement('div'); sp.className = 'spinner'; c.appendChild(sp);
+    const h = document.createElement('h2'); h.textContent = 'Analyzing your reflection.'; c.appendChild(h);
+    const p = document.createElement('p'); p.textContent = 'Claude is reading across your answers and the other responses this leader has received, looking for themes and patterns.'; c.appendChild(p);
+    const dots = document.createElement('div'); dots.className = 'dots';
+    for (let i = 0; i < 3; i++) dots.appendChild(document.createElement('span'));
+    c.appendChild(dots);
+    screen.appendChild(c);
+    setTimeout(renderReport, 2200);
+  }
+
+  function renderReport() {
+    stage = 'report';
+    setProgress(100);
+    clear();
+    const c = document.createElement('div'); c.className = 'report';
+
+    const head = document.createElement('div'); head.className = 'report-head';
+    const eb = document.createElement('div'); eb.className = 'eyebrow'; eb.textContent = 'Sample leader report';
+    const h1 = document.createElement('h1'); h1.textContent = 'Reflection report for Leader A';
+    const meta = document.createElement('div'); meta.className = 'meta'; meta.textContent = 'Built from 12 responses, including yours. Anonymous aggregation. Generated by Claude.';
+    head.appendChild(eb); head.appendChild(h1); head.appendChild(meta);
+    c.appendChild(head);
+
+    const s1 = averageScale(0);
+    const s2 = averageScale(1);
+    const s3 = averageScale(2);
+    const overall = ((s1 + s2 + s3) / 3).toFixed(1);
+
+    const ov = document.createElement('div'); ov.className = 'overall';
+    const big = document.createElement('div'); big.className = 'big'; big.textContent = overall;
+    const right = document.createElement('div');
+    const cap = document.createElement('div'); cap.className = 'cap'; cap.textContent = 'Overall score';
+    const desc = document.createElement('div'); desc.className = 'desc'; desc.textContent = 'Out of 5. Strong leader. Aggregated across 12 respondents: staff, board members, and supervisors. See strengths and growth areas below.';
+    right.appendChild(cap); right.appendChild(desc);
+    ov.appendChild(big); ov.appendChild(right);
+    c.appendChild(ov);
+
+    // Radar
+    const radar = document.createElement('div'); radar.className = 'radar-card';
+    const rcap = document.createElement('div'); rcap.className = 'cap'; rcap.textContent = 'Dimensions'; radar.appendChild(rcap);
+    radar.appendChild(buildRadar([
+      { label: 'Vision', value: s1 },
+      { label: 'Development', value: s2 },
+      { label: 'Responsiveness', value: s3 },
+      { label: 'Consistency', value: 4.3 },
+      { label: 'Trust', value: 4.5 }
+    ]));
+    c.appendChild(radar);
+
+    // Strengths
+    const strengths = document.createElement('div'); strengths.className = 'section-block';
+    const sh = document.createElement('h2'); sh.textContent = 'What is working'; strengths.appendChild(sh);
+    [
+      { t: 'Clear direction', d: 'Your team consistently names your ability to set priorities in a noisy moment. This has built trust especially over the last quarter.', q: '"She always knows what the next most important thing is, even when the rest of us are drowning."' },
+      { t: 'Invests in people', d: 'Multiple respondents mentioned times you made space for coaching or a stretch opportunity that changed their trajectory.', q: '"I would not be in this role if he had not believed in me first."' }
+    ].forEach(x => {
+      const card = document.createElement('div'); card.className = 'insight-card';
+      const t = document.createElement('h4'); t.textContent = x.t;
+      const d = document.createElement('p'); d.textContent = x.d;
+      const qt = document.createElement('div'); qt.className = 'quote'; qt.textContent = x.q;
+      card.appendChild(t); card.appendChild(d); card.appendChild(qt);
+      strengths.appendChild(card);
+    });
+    c.appendChild(strengths);
+
+    // Growth
+    const growth = document.createElement('div'); growth.className = 'section-block';
+    const gh = document.createElement('h2'); gh.textContent = 'Where to grow'; growth.appendChild(gh);
+    [
+      { t: 'Receiving hard feedback', d: 'A pattern across several responses: the team feels your first reaction to critical feedback is defense. They want you to grow from it. You already do eventually; the ask is faster.', q: '"I can see him processing. I just wish I did not have to wait two weeks for him to come back around."' },
+      { t: 'Delegation', d: 'You hold a lot yourself. Two respondents pointed to specific moments where you could have handed off and did not.', q: '"She is the bottleneck because she is too good at everything."' }
+    ].forEach(x => {
+      const card = document.createElement('div'); card.className = 'insight-card';
+      const t = document.createElement('h4'); t.textContent = x.t;
+      const d = document.createElement('p'); d.textContent = x.d;
+      const qt = document.createElement('div'); qt.className = 'quote'; qt.textContent = x.q;
+      card.appendChild(t); card.appendChild(d); card.appendChild(qt);
+      growth.appendChild(card);
+    });
+    c.appendChild(growth);
+
+    // Themes
+    const themes = document.createElement('div'); themes.className = 'section-block';
+    const th = document.createElement('h2'); th.textContent = 'Themes across all answers'; themes.appendChild(th);
+    const tp = document.createElement('div'); tp.className = 'themes';
+    const items = [
+      { t: 'Clarity', s: 'big' },
+      { t: 'Care', s: 'big' },
+      { t: 'Focus', s: 'med' },
+      { t: 'Defensiveness', s: 'med' },
+      { t: 'Vision', s: 'med' },
+      { t: 'Speed', s: '' },
+      { t: 'Trust', s: '' },
+      { t: 'Delegation', s: '' },
+      { t: 'Consistency', s: '' },
+      { t: 'Warmth', s: '' }
+    ];
+    items.forEach(it => {
+      const pill = document.createElement('span'); pill.className = 'theme-pill' + (it.s ? ' ' + it.s : '');
+      pill.textContent = it.t;
+      tp.appendChild(pill);
+    });
+    themes.appendChild(tp);
+    c.appendChild(themes);
+
+    const actions = document.createElement('div'); actions.className = 'actions-row';
+    const restart = document.createElement('button'); restart.className = 'primary'; restart.textContent = 'Take the survey again';
+    restart.addEventListener('click', () => { for (let i = 0; i < answers.length; i++) answers[i] = null; idx = 0; renderIntro(); });
+    const back = document.createElement('button'); back.textContent = 'Back to portfolio';
+    back.addEventListener('click', () => { window.location.href = '../../index.html'; });
+    actions.appendChild(restart); actions.appendChild(back);
+    c.appendChild(actions);
+
+    screen.appendChild(c);
+  }
+
+  function averageScale(i) {
+    // Weighted average: user's answer counts as 1 of 12, 11 pre-filled fake responses
+    const userAns = answers[i] || 4;
+    const fakeAverages = [4.4, 4.2, 3.9]; // dimension baselines
+    return ((userAns + fakeAverages[i] * 11) / 12);
+  }
+
+  function buildRadar(dims) {
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('class', 'radar');
+    const size = 320;
+    svg.setAttribute('viewBox', '0 0 ' + size + ' ' + size);
+    svg.setAttribute('width', size);
+    svg.setAttribute('height', size);
+    const cx = size / 2, cy = size / 2;
+    const R = 110;
+    const n = dims.length;
+
+    // Concentric grid
+    [0.2, 0.4, 0.6, 0.8, 1].forEach(f => {
+      const pts = [];
+      for (let i = 0; i < n; i++) {
+        const a = (Math.PI * 2 * i / n) - Math.PI / 2;
+        pts.push((cx + Math.cos(a) * R * f) + ',' + (cy + Math.sin(a) * R * f));
+      }
+      const poly = document.createElementNS(svgNS, 'polygon');
+      poly.setAttribute('points', pts.join(' '));
+      poly.setAttribute('fill', 'none');
+      poly.setAttribute('stroke', '#d7e4da');
+      poly.setAttribute('stroke-width', '1');
+      svg.appendChild(poly);
+    });
+
+    // Axes + labels
+    dims.forEach((d, i) => {
+      const a = (Math.PI * 2 * i / n) - Math.PI / 2;
+      const x = cx + Math.cos(a) * R;
+      const y = cy + Math.sin(a) * R;
+      const line = document.createElementNS(svgNS, 'line');
+      line.setAttribute('x1', cx); line.setAttribute('y1', cy);
+      line.setAttribute('x2', x); line.setAttribute('y2', y);
+      line.setAttribute('stroke', '#d7e4da');
+      line.setAttribute('stroke-width', '1');
+      svg.appendChild(line);
+
+      const lx = cx + Math.cos(a) * (R + 24);
+      const ly = cy + Math.sin(a) * (R + 24);
+      const text = document.createElementNS(svgNS, 'text');
+      text.setAttribute('x', lx); text.setAttribute('y', ly);
+      text.setAttribute('fill', '#424245');
+      text.setAttribute('font-size', '12');
+      text.setAttribute('font-weight', '600');
+      text.setAttribute('font-family', 'Montserrat, sans-serif');
+      text.setAttribute('text-anchor', 'middle');
+      text.setAttribute('dominant-baseline', 'middle');
+      text.textContent = d.label;
+      svg.appendChild(text);
+    });
+
+    // Data polygon
+    const pts = [];
+    dims.forEach((d, i) => {
+      const a = (Math.PI * 2 * i / n) - Math.PI / 2;
+      const r = (d.value / 5) * R;
+      pts.push((cx + Math.cos(a) * r) + ',' + (cy + Math.sin(a) * r));
+    });
+    const data = document.createElementNS(svgNS, 'polygon');
+    data.setAttribute('points', pts.join(' '));
+    data.setAttribute('fill', 'rgba(16, 101, 60, 0.18)');
+    data.setAttribute('stroke', '#10653c');
+    data.setAttribute('stroke-width', '2.5');
+    data.setAttribute('stroke-linejoin', 'round');
+    svg.appendChild(data);
+
+    // Data points
+    dims.forEach((d, i) => {
+      const a = (Math.PI * 2 * i / n) - Math.PI / 2;
+      const r = (d.value / 5) * R;
+      const dot = document.createElementNS(svgNS, 'circle');
+      dot.setAttribute('cx', cx + Math.cos(a) * r);
+      dot.setAttribute('cy', cy + Math.sin(a) * r);
+      dot.setAttribute('r', 4);
+      dot.setAttribute('fill', '#10653c');
+      svg.appendChild(dot);
+    });
+
+    return svg;
+  }
+
+  function clear() { while (screen.firstChild) screen.removeChild(screen.firstChild); }
+
+  renderIntro();
+})();
+</script>
+
+</body>
+</html>

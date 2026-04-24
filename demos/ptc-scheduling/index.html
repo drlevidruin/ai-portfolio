@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PTC Scheduling Demo &middot; AI Inside a Small School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #10653c;
+    --forest-dark: #0a4a2b;
+    --forest-soft: #b7e2c6;
+    --navy: #343e85;
+    --cream: #f8f4ed;
+    --sage-light: #f0f4ee;
+    --white: #ffffff;
+    --text-dark: #1d1d1f;
+    --text-body: #424245;
+    --text-light: #86868b;
+    --line: rgba(16, 101, 60, 0.14);
+    --line-soft: rgba(0, 0, 0, 0.06);
+    --amber: #d4940a;
+    --danger: #8b2c1a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Montserrat', system-ui, -apple-system, sans-serif; background: var(--cream); color: var(--text-body); -webkit-font-smoothing: antialiased; min-height: 100vh; }
+  h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; color: var(--text-dark); margin: 0; letter-spacing: -0.02em; }
+  a { color: var(--forest); text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; }
+
+  .topbar { background: var(--white); border-bottom: 1px solid var(--line-soft); padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+  .topbar .back { font-size: 13px; font-weight: 600; color: var(--forest); display: inline-flex; align-items: center; gap: 6px; }
+  .topbar .back::before { content: "\2190"; }
+  .topbar .logo { font-family: 'Caveat', cursive; color: var(--forest); font-size: 22px; font-weight: 600; }
+  .topbar .demo-label { font-size: 11px; font-weight: 700; color: var(--forest); letter-spacing: 0.14em; text-transform: uppercase; padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; }
+
+  .wrap { max-width: 960px; margin: 0 auto; padding: 28px 24px 60px; }
+
+  /* Step indicator */
+  .steps { display: flex; justify-content: center; gap: 12px; margin-bottom: 28px; }
+  .step { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-light); font-weight: 600; }
+  .step .n { width: 22px; height: 22px; border-radius: 50%; background: #e9e9e7; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: white; }
+  .step.active .n { background: var(--forest); }
+  .step.done .n { background: var(--forest-dark); }
+  .step.active, .step.done { color: var(--text-dark); }
+  .step .sep { width: 24px; height: 1px; background: var(--line-soft); display: inline-block; vertical-align: middle; }
+
+  /* Sign in */
+  .signin {
+    background: white;
+    border: 1px solid var(--line-soft);
+    border-radius: 18px;
+    padding: 40px 44px;
+    max-width: 480px;
+    margin: 0 auto;
+    box-shadow: 0 18px 40px -28px rgba(16,101,60,0.18);
+  }
+  .signin .eyebrow { font-family: 'Caveat', cursive; color: var(--forest); font-size: 24px; font-weight: 600; margin-bottom: 6px; }
+  .signin h1 { font-size: 28px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.02em; }
+  .signin p { font-size: 14px; color: var(--text-body); margin: 0 0 24px; line-height: 1.55; }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); margin-bottom: 6px; }
+  .field input { width: 100%; border: 1px solid var(--line-soft); border-radius: 10px; padding: 12px 14px; font-family: inherit; font-size: 15px; outline: none; background: #fafafa; color: var(--text-dark); }
+  .field input:focus { border-color: var(--forest); background: white; }
+  .signin button.primary { width: 100%; background: var(--forest-dark); color: white; border: none; border-radius: 10px; padding: 13px; font-size: 15px; font-weight: 700; margin-top: 8px; letter-spacing: 0.02em; }
+  .signin button.primary:hover { background: var(--forest); }
+  .demo-note { margin-top: 14px; font-size: 12px; color: var(--text-light); text-align: center; }
+  .demo-note b { color: var(--forest); font-weight: 700; }
+
+  /* Dashboard */
+  .hello { text-align: center; margin-bottom: 20px; }
+  .hello .eyebrow { font-family: 'Caveat', cursive; color: var(--forest); font-size: 24px; font-weight: 600; }
+  .hello h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+  .hello p { font-size: 14px; color: var(--text-body); margin: 6px auto 0; max-width: 52ch; }
+
+  .summary-bar {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    margin: 20px 0 24px;
+  }
+  .summ {
+    background: white; border: 1px solid var(--line-soft);
+    border-radius: 12px; padding: 14px 16px;
+  }
+  .summ .n { font-size: 22px; font-weight: 800; color: var(--forest); letter-spacing: -0.02em; line-height: 1; }
+  .summ .l { font-size: 11.5px; color: var(--text-light); font-weight: 600; margin-top: 4px; letter-spacing: 0.04em; text-transform: uppercase; }
+
+  .kid { background: white; border: 1px solid var(--line-soft); border-radius: 16px; padding: 22px 24px; margin-bottom: 14px; }
+  .kid-head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+  .kid-avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #10653c, #343e85); color: white; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+  .kid-avatar.v2 { background: linear-gradient(135deg, #343e85, #10653c); }
+  .kid-avatar.v3 { background: linear-gradient(135deg, #d4940a, #10653c); }
+  .kid-name { font-size: 19px; font-weight: 800; color: var(--text-dark); letter-spacing: -0.01em; }
+  .kid-grade { font-size: 12.5px; color: var(--text-light); font-weight: 600; margin-top: 1px; }
+
+  .teachers { display: flex; flex-direction: column; gap: 10px; }
+  .teacher {
+    display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 14px;
+    padding: 14px 16px; border: 1px solid var(--line-soft); border-radius: 12px; background: #fafbfa;
+  }
+  .teacher .tname { font-size: 14px; font-weight: 700; color: var(--text-dark); }
+  .teacher .trole { font-size: 11.5px; color: var(--text-light); margin-top: 1px; font-weight: 500; }
+  .teacher .slots { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .teacher.booked { background: var(--sage-light); border-color: var(--forest-soft); }
+  .teacher.booked .status {
+    font-size: 11px; font-weight: 700; color: var(--forest-dark); letter-spacing: 0.06em;
+    text-transform: uppercase; display: inline-flex; align-items: center; gap: 5px;
+  }
+  .teacher.booked .status::before { content: "\2713"; }
+  .slot-btn {
+    border: 1px solid var(--line); background: white; color: var(--forest-dark);
+    font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 7px; cursor: pointer;
+    font-family: inherit; transition: background 0.12s ease;
+  }
+  .slot-btn:hover { background: var(--sage-light); }
+  .slot-btn.taken { color: var(--text-light); background: #f3f3f1; cursor: not-allowed; text-decoration: line-through; }
+  .book-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .book-row .book-meta { font-size: 12px; color: var(--text-body); }
+  .book-row .book-meta b { color: var(--text-dark); font-weight: 700; }
+  .expand-btn { background: transparent; border: 1px solid var(--line); color: var(--forest); font-size: 12px; font-weight: 700; padding: 7px 12px; border-radius: 8px; }
+  .expand-btn:hover { background: var(--sage-light); }
+  .slot-tray { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); }
+  .slot-tray.show { display: block; }
+  .tray-day { margin-bottom: 12px; }
+  .tray-day .day-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); margin-bottom: 6px; }
+  .tray-day .slots { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  /* Confirmation */
+  .conf { background: white; border: 1px solid var(--forest-soft); border-radius: 18px; padding: 40px 44px; max-width: 560px; margin: 0 auto; text-align: center; }
+  .conf .check { width: 60px; height: 60px; border-radius: 50%; background: var(--forest); color: white; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 18px; }
+  .conf h1 { font-size: 28px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.02em; }
+  .conf p { font-size: 15px; color: var(--text-body); margin: 0 0 20px; line-height: 1.55; }
+  .conf .booking-list { text-align: left; border: 1px solid var(--line-soft); border-radius: 12px; padding: 16px 20px; margin: 20px 0; }
+  .conf .booking { display: grid; grid-template-columns: 90px 1fr auto; gap: 14px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line-soft); }
+  .conf .booking:last-child { border-bottom: none; }
+  .conf .booking .time { font-weight: 700; color: var(--forest-dark); font-size: 13px; }
+  .conf .booking .who { font-size: 13.5px; color: var(--text-dark); }
+  .conf .booking .who .teacher-name { font-weight: 700; }
+  .conf .booking .who .kid-name { font-size: 12px; color: var(--text-light); font-weight: 500; }
+  .conf .booking .cal { font-size: 11px; color: var(--text-light); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+  .conf .actions { display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+  .conf button { border: 1px solid var(--line); background: white; color: var(--forest); padding: 10px 16px; border-radius: 10px; font-weight: 700; font-size: 13.5px; }
+  .conf button.primary { background: var(--forest-dark); color: white; border-color: var(--forest-dark); }
+  .conf button.primary:hover { background: var(--forest); }
+  .conf button:hover { background: var(--sage-light); }
+
+  /* System note */
+  .system-note { margin-top: 30px; padding: 16px 18px; background: rgba(16,101,60,0.05); border-left: 3px solid var(--forest); border-radius: 8px; font-size: 13px; color: var(--text-body); line-height: 1.55; }
+  .system-note b { color: var(--forest-dark); font-weight: 700; }
+
+  @media (max-width: 720px) {
+    .signin { padding: 28px 24px; }
+    .summary-bar { grid-template-columns: 1fr; }
+    .teacher { grid-template-columns: 1fr; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back" href="../../index.html">Back to portfolio</a>
+  <div class="logo">Pardes PTC Scheduling</div>
+  <span class="demo-label">Live demo</span>
+</div>
+
+<div class="wrap">
+
+  <div class="steps" id="stepsEl"></div>
+
+  <div id="screen"></div>
+
+  <div class="system-note">
+    <b>What you are demoing:</b> Parents sign in with last name plus last 4 of phone, see every one of their kids' teachers on one dashboard, and book 15-minute slots. The real version handles script locking so two parents cannot grab the same slot, and sends branded confirmation emails with Google Calendar invites. This demo uses a fake family with 3 kids to show the full flow.
+  </div>
+</div>
+
+<script>
+(function(){
+  const FAMILY = {
+    name: 'The Demo Family',
+    lastName: 'Demo',
+    phone: '1234',
+    kids: [
+      { id: 'a', name: 'Demo A', grade: '1st Grade', avatarV: 1, teachers: [
+        { id: 'alpha', name: 'Morah Alpha', role: '1st Grade Judaic' },
+        { id: 'beta', name: 'Morah Beta', role: '1st Grade General Studies' }
+      ]},
+      { id: 'b', name: 'Demo B', grade: '3rd Grade', avatarV: 2, teachers: [
+        { id: 'gamma', name: 'Morah Gamma', role: '3rd Grade Judaic' },
+        { id: 'delta', name: 'Morah Delta', role: '3rd Grade General Studies' }
+      ]},
+      { id: 'c', name: 'Demo C', grade: '5th Grade', avatarV: 3, teachers: [
+        { id: 'epsilon', name: 'Rabbi Epsilon', role: '5th Grade Judaic (AM)' },
+        { id: 'zeta', name: 'Morah Zeta', role: '5th Grade Judaic (PM)' },
+        { id: 'eta', name: 'Ms. Eta', role: '5th Grade General Studies' }
+      ]}
+    ]
+  };
+
+  // Generate slots per teacher
+  const DAYS = [
+    { key: 'night1', label: 'Conference Night 1', short: 'Night 1' },
+    { key: 'night2', label: 'Conference Night 2', short: 'Night 2' }
+  ];
+  const SLOTS_PER_DAY = [
+    '3:30 PM', '3:45 PM', '4:00 PM', '4:15 PM', '4:30 PM', '4:45 PM',
+    '5:00 PM', '5:15 PM', '5:30 PM', '5:45 PM', '6:00 PM', '6:15 PM'
+  ];
+
+  // Make some slots randomly "taken" (by other families) so the demo feels real
+  function buildTeacherSlots(seed) {
+    const slots = {};
+    DAYS.forEach((day, di) => {
+      slots[day.key] = SLOTS_PER_DAY.map((s, si) => {
+        // Deterministic-ish "taken" based on seed
+        const taken = ((seed * 7 + di * 13 + si * 17) % 10) < 3;
+        return { time: s, taken, booked: false };
+      });
+    });
+    return slots;
+  }
+
+  FAMILY.kids.forEach((k, ki) => {
+    k.teachers.forEach((t, ti) => {
+      t.slots = buildTeacherSlots(ki * 10 + ti);
+      t.expanded = false;
+      t.booking = null; // { dayKey, time }
+    });
+  });
+
+  let step = 'signin'; // signin | dashboard | confirm
+  const stepsEl = document.getElementById('stepsEl');
+  const screen = document.getElementById('screen');
+
+  function renderSteps() {
+    while (stepsEl.firstChild) stepsEl.removeChild(stepsEl.firstChild);
+    const defs = [
+      { key: 'signin', label: 'Sign in' },
+      { key: 'dashboard', label: 'Book conferences' },
+      { key: 'confirm', label: 'Confirm' }
+    ];
+    const order = { signin: 0, dashboard: 1, confirm: 2 };
+    defs.forEach((d, i) => {
+      const s = document.createElement('div');
+      s.className = 'step' + (d.key === step ? ' active' : order[d.key] < order[step] ? ' done' : '');
+      const n = document.createElement('span'); n.className = 'n'; n.textContent = (i + 1);
+      const l = document.createElement('span'); l.textContent = d.label;
+      s.appendChild(n); s.appendChild(l);
+      stepsEl.appendChild(s);
+      if (i < defs.length - 1) {
+        const sep = document.createElement('span'); sep.className = 'sep'; stepsEl.appendChild(sep);
+      }
+    });
+  }
+
+  function renderSignin() {
+    while (screen.firstChild) screen.removeChild(screen.firstChild);
+    const c = document.createElement('div'); c.className = 'signin';
+    const eyebrow = document.createElement('div'); eyebrow.className = 'eyebrow'; eyebrow.textContent = 'Parent-Teacher Conferences';
+    const h = document.createElement('h1'); h.textContent = 'Welcome. Book all your conferences in one place.';
+    const p = document.createElement('p'); p.textContent = 'Enter your last name and the last 4 digits of the phone number on file. You will see every one of your kids\u2019 teachers.';
+    c.appendChild(eyebrow); c.appendChild(h); c.appendChild(p);
+    const f1 = document.createElement('div'); f1.className = 'field';
+    const l1 = document.createElement('label'); l1.textContent = 'Last name'; l1.htmlFor = 'lname';
+    const i1 = document.createElement('input'); i1.id = 'lname'; i1.type = 'text'; i1.placeholder = 'Demo'; i1.value = 'Demo';
+    f1.appendChild(l1); f1.appendChild(i1);
+    const f2 = document.createElement('div'); f2.className = 'field';
+    const l2 = document.createElement('label'); l2.textContent = 'Last 4 digits of phone'; l2.htmlFor = 'phone';
+    const i2 = document.createElement('input'); i2.id = 'phone'; i2.type = 'text'; i2.placeholder = '1234'; i2.value = '1234'; i2.maxLength = 4;
+    f2.appendChild(l2); f2.appendChild(i2);
+    c.appendChild(f1); c.appendChild(f2);
+    const btn = document.createElement('button'); btn.className = 'primary'; btn.textContent = 'Sign in and see my kids\u2019 teachers';
+    btn.addEventListener('click', () => { step = 'dashboard'; renderSteps(); renderDashboard(); });
+    c.appendChild(btn);
+    const n = document.createElement('div'); n.className = 'demo-note';
+    const b = document.createElement('b'); b.textContent = 'Demo mode: '; n.appendChild(b);
+    n.appendChild(document.createTextNode('Any values work. The real app matches family records to authenticate.'));
+    c.appendChild(n);
+    screen.appendChild(c);
+  }
+
+  function renderDashboard() {
+    while (screen.firstChild) screen.removeChild(screen.firstChild);
+    const hello = document.createElement('div'); hello.className = 'hello';
+    const eyebrow = document.createElement('div'); eyebrow.className = 'eyebrow'; eyebrow.textContent = 'Welcome, ' + FAMILY.name;
+    const h = document.createElement('h1'); h.textContent = 'All your kids\u2019 teachers. One screen.';
+    const p = document.createElement('p'); p.textContent = 'Tap a time under each teacher to book a 15-minute conference. You can change it later.';
+    hello.appendChild(eyebrow); hello.appendChild(h); hello.appendChild(p);
+    screen.appendChild(hello);
+
+    const totalTeachers = FAMILY.kids.reduce((a, k) => a + k.teachers.length, 0);
+    const booked = countBooked();
+    const summary = document.createElement('div'); summary.className = 'summary-bar';
+    [
+      { n: FAMILY.kids.length, l: 'Your kids' },
+      { n: totalTeachers, l: 'Teachers to meet' },
+      { n: booked + ' / ' + totalTeachers, l: 'Booked so far' }
+    ].forEach(item => {
+      const s = document.createElement('div'); s.className = 'summ';
+      const nEl = document.createElement('div'); nEl.className = 'n'; nEl.textContent = item.n;
+      const lEl = document.createElement('div'); lEl.className = 'l'; lEl.textContent = item.l;
+      s.appendChild(nEl); s.appendChild(lEl);
+      summary.appendChild(s);
+    });
+    screen.appendChild(summary);
+
+    FAMILY.kids.forEach(kid => {
+      const k = document.createElement('div'); k.className = 'kid';
+      const head = document.createElement('div'); head.className = 'kid-head';
+      const av = document.createElement('div'); av.className = 'kid-avatar v' + kid.avatarV; av.textContent = kid.name.split(' ').map(w => w[0]).join('').slice(0, 2);
+      head.appendChild(av);
+      const info = document.createElement('div');
+      const nm = document.createElement('div'); nm.className = 'kid-name'; nm.textContent = kid.name;
+      const gr = document.createElement('div'); gr.className = 'kid-grade'; gr.textContent = kid.grade + ' \u00B7 ' + kid.teachers.length + ' teachers';
+      info.appendChild(nm); info.appendChild(gr);
+      head.appendChild(info);
+      k.appendChild(head);
+
+      const tchs = document.createElement('div'); tchs.className = 'teachers';
+      kid.teachers.forEach(t => {
+        const row = document.createElement('div'); row.className = 'teacher' + (t.booking ? ' booked' : '');
+        const left = document.createElement('div');
+        const tn = document.createElement('div'); tn.className = 'tname'; tn.textContent = t.name;
+        const tr = document.createElement('div'); tr.className = 'trole'; tr.textContent = t.role;
+        left.appendChild(tn); left.appendChild(tr);
+        if (t.booking) {
+          const st = document.createElement('div'); st.className = 'status';
+          const day = DAYS.find(d => d.key === t.booking.dayKey);
+          st.appendChild(document.createTextNode(' Booked ' + day.label + ' at ' + t.booking.time));
+          left.appendChild(st);
+        }
+        const right = document.createElement('div');
+        const expand = document.createElement('button'); expand.className = 'expand-btn';
+        expand.textContent = t.booking ? 'Change' : 'See times';
+        expand.addEventListener('click', () => { t.expanded = !t.expanded; renderDashboard(); });
+        right.appendChild(expand);
+        row.appendChild(left); row.appendChild(right);
+
+        if (t.expanded || t.booking) {
+          const tray = document.createElement('div'); tray.className = 'slot-tray show';
+          tray.style.gridColumn = '1 / -1';
+          DAYS.forEach(day => {
+            const d = document.createElement('div'); d.className = 'tray-day';
+            const dl = document.createElement('div'); dl.className = 'day-label'; dl.textContent = day.label;
+            d.appendChild(dl);
+            const grid = document.createElement('div'); grid.className = 'slots';
+            t.slots[day.key].forEach((sl, si) => {
+              const sb = document.createElement('button'); sb.className = 'slot-btn';
+              sb.textContent = sl.time;
+              const isMyBooking = t.booking && t.booking.dayKey === day.key && t.booking.time === sl.time;
+              if (isMyBooking) { sb.style.background = 'var(--forest-dark)'; sb.style.color = 'white'; sb.style.borderColor = 'var(--forest-dark)'; }
+              else if (sl.taken) { sb.classList.add('taken'); sb.disabled = true; }
+              sb.addEventListener('click', () => {
+                if (sl.taken) return;
+                t.booking = { dayKey: day.key, time: sl.time };
+                t.expanded = false;
+                renderDashboard();
+              });
+              grid.appendChild(sb);
+            });
+            d.appendChild(grid);
+            tray.appendChild(d);
+          });
+          row.appendChild(tray);
+        }
+
+        tchs.appendChild(row);
+      });
+      k.appendChild(tchs);
+      screen.appendChild(k);
+    });
+
+    // CTA
+    const cta = document.createElement('div');
+    cta.style.cssText = 'margin-top:18px; text-align:center;';
+    const finish = document.createElement('button');
+    finish.className = 'primary';
+    finish.style.cssText = 'background: var(--forest-dark); color: white; border: none; border-radius: 10px; padding: 13px 26px; font-weight: 700; font-size: 14px; letter-spacing: 0.02em; cursor: pointer; font-family: inherit;';
+    finish.textContent = booked === 0 ? 'Book at least one to confirm' : 'Confirm all ' + booked + ' bookings';
+    if (booked === 0) finish.disabled = true, finish.style.opacity = 0.5, finish.style.cursor = 'not-allowed';
+    finish.addEventListener('click', () => { if (booked > 0) { step = 'confirm'; renderSteps(); renderConfirm(); } });
+    cta.appendChild(finish);
+    screen.appendChild(cta);
+  }
+
+  function countBooked() {
+    let c = 0;
+    FAMILY.kids.forEach(k => k.teachers.forEach(t => { if (t.booking) c++; }));
+    return c;
+  }
+
+  function renderConfirm() {
+    while (screen.firstChild) screen.removeChild(screen.firstChild);
+    const c = document.createElement('div'); c.className = 'conf';
+    const ch = document.createElement('div'); ch.className = 'check'; ch.textContent = '\u2713';
+    c.appendChild(ch);
+    const h = document.createElement('h1'); h.textContent = 'You\u2019re booked.'; c.appendChild(h);
+    const count = countBooked();
+    const p = document.createElement('p');
+    p.textContent = count + ' conference' + (count === 1 ? '' : 's') + ' confirmed. A branded email is on its way with a calendar invite for each one. You can come back any time to make changes.';
+    c.appendChild(p);
+
+    const list = document.createElement('div'); list.className = 'booking-list';
+    const all = [];
+    FAMILY.kids.forEach(k => k.teachers.forEach(t => {
+      if (t.booking) {
+        const day = DAYS.find(d => d.key === t.booking.dayKey);
+        all.push({ day, time: t.booking.time, teacher: t.name, kid: k.name + ' \u00B7 ' + k.grade });
+      }
+    }));
+    // Sort by day then time
+    all.sort((a, b) => (a.day.key + a.time).localeCompare(b.day.key + b.time));
+    all.forEach(b => {
+      const row = document.createElement('div'); row.className = 'booking';
+      const t = document.createElement('div'); t.className = 'time';
+      t.textContent = b.day.short + ' ' + b.time;
+      const who = document.createElement('div'); who.className = 'who';
+      const tn = document.createElement('span'); tn.className = 'teacher-name'; tn.textContent = b.teacher;
+      const kn = document.createElement('div'); kn.className = 'kid-name'; kn.textContent = 'for ' + b.kid;
+      who.appendChild(tn); who.appendChild(kn);
+      const cal = document.createElement('div'); cal.className = 'cal'; cal.textContent = '+ Calendar';
+      row.appendChild(t); row.appendChild(who); row.appendChild(cal);
+      list.appendChild(row);
+    });
+    c.appendChild(list);
+
+    const actions = document.createElement('div'); actions.className = 'actions';
+    const back = document.createElement('button'); back.textContent = 'Change bookings';
+    back.addEventListener('click', () => { step = 'dashboard'; renderSteps(); renderDashboard(); });
+    const restart = document.createElement('button'); restart.className = 'primary'; restart.textContent = 'Reset demo';
+    restart.addEventListener('click', () => {
+      FAMILY.kids.forEach(k => k.teachers.forEach(t => { t.booking = null; t.expanded = false; }));
+      step = 'signin'; renderSteps(); renderSignin();
+    });
+    actions.appendChild(back); actions.appendChild(restart);
+    c.appendChild(actions);
+    screen.appendChild(c);
+  }
+
+  renderSteps();
+  renderSignin();
+})();
+</script>
+
+</body>
+</html>

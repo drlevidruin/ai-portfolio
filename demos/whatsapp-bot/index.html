@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WhatsApp Bot Demo &middot; AI Inside a Small School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #10653c;
+    --forest-dark: #0a4a2b;
+    --forest-soft: #b7e2c6;
+    --navy: #343e85;
+    --cream: #f8f4ed;
+    --sage-light: #f0f4ee;
+    --white: #ffffff;
+    --text-dark: #1d1d1f;
+    --text-body: #424245;
+    --text-light: #86868b;
+    --line: rgba(16, 101, 60, 0.14);
+    --line-soft: rgba(0, 0, 0, 0.06);
+    --wa-bg: #e5ddd5;
+    --wa-teal: #075e54;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Montserrat', system-ui, -apple-system, sans-serif; background: var(--cream); color: var(--text-body); -webkit-font-smoothing: antialiased; min-height: 100vh; }
+  h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; color: var(--text-dark); margin: 0; letter-spacing: -0.02em; }
+  a { color: var(--forest); text-decoration: none; }
+  .topbar { background: var(--white); border-bottom: 1px solid var(--line-soft); padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+  .topbar .back { font-size: 13px; font-weight: 600; color: var(--forest); display: inline-flex; align-items: center; gap: 6px; }
+  .topbar .back::before { content: "\2190"; }
+  .topbar .logo { font-family: 'Caveat', cursive; color: var(--forest); font-size: 22px; font-weight: 600; }
+  .topbar .demo-label { font-size: 11px; font-weight: 700; color: var(--forest); letter-spacing: 0.14em; text-transform: uppercase; padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; }
+
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 32px 28px 64px; }
+
+  .header { margin-bottom: 28px; }
+  .header .eyebrow { font-family: 'Caveat', cursive; color: var(--forest); font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+  .header h1 { font-size: clamp(28px, 4vw, 42px); font-weight: 800; }
+  .header p { font-size: 16px; color: var(--text-body); max-width: 72ch; margin: 12px 0 0; line-height: 1.55; }
+
+  .stage { display: grid; grid-template-columns: 380px 1fr; gap: 32px; align-items: start; margin-top: 24px; }
+
+  .phone { background: #000; border-radius: 38px; padding: 12px; box-shadow: 0 24px 48px -20px rgba(0,0,0,0.35); width: 380px; justify-self: start; }
+  .phone-notch { height: 24px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 11px; font-weight: 600; }
+  .phone-screen { background: var(--wa-bg); border-radius: 28px; overflow: hidden; height: 600px; display: flex; flex-direction: column; background-image: radial-gradient(circle at 10% 10%, rgba(255,255,255,0.3) 1px, transparent 1px), radial-gradient(circle at 30% 60%, rgba(0,0,0,0.02) 1px, transparent 1px); background-size: 42px 42px; }
+  .wa-header { background: var(--wa-teal); color: white; padding: 12px 14px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; }
+  .wa-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #10653c, #25d366); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 12px; font-family: 'Montserrat', sans-serif; }
+  .wa-title { flex: 1; line-height: 1.2; }
+  .wa-title .name { font-size: 14.5px; font-weight: 600; }
+  .wa-title .status { font-size: 11px; color: rgba(255,255,255,0.75); font-weight: 400; }
+  .wa-log { flex: 1; padding: 14px 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+  .bubble { max-width: 78%; padding: 8px 11px; border-radius: 10px; line-height: 1.4; word-wrap: break-word; box-shadow: 0 1px 0.5px rgba(0,0,0,0.12); font-size: 13.5px; animation: bubbleIn 0.3s ease; }
+  @keyframes bubbleIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .bubble.me { background: #dcf8c6; align-self: flex-end; border-bottom-right-radius: 2px; color: #111; }
+  .bubble.them { background: #fff; align-self: flex-start; border-bottom-left-radius: 2px; color: #111; }
+  .bubble .time { display: block; font-size: 10px; color: #999; margin-top: 2px; text-align: right; }
+  .bubble.typing { display: inline-flex; align-items: center; gap: 4px; padding: 12px 14px; }
+  .bubble.typing span { width: 7px; height: 7px; background: #888; border-radius: 50%; animation: pulse 1.2s infinite; }
+  .bubble.typing span:nth-child(2) { animation-delay: 0.15s; }
+  .bubble.typing span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes pulse { 0%, 60%, 100% { opacity: 0.25; } 30% { opacity: 1; } }
+  .wa-input { padding: 8px; background: #f0f0f0; display: flex; gap: 8px; align-items: center; }
+  .wa-input input { flex: 1; border: none; border-radius: 22px; padding: 10px 14px; font-family: inherit; font-size: 14px; outline: none; background: white; }
+  .wa-input button { background: var(--wa-teal); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 16px; font-family: inherit; display: flex; align-items: center; justify-content: center; }
+  .wa-input button:hover { background: var(--forest-dark); }
+
+  .panel { background: var(--white); border: 1px solid var(--line-soft); border-radius: 16px; padding: 24px; }
+  .panel h3 { font-size: 18px; margin-bottom: 4px; }
+  .panel .panel-sub { font-size: 13px; color: var(--text-light); margin-bottom: 20px; }
+
+  .suggestion-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .sugg { background: var(--sage-light); border: 1px solid var(--line); color: var(--forest-dark); font-size: 12.5px; font-weight: 600; padding: 8px 12px; border-radius: 999px; cursor: pointer; font-family: inherit; transition: background 0.15s ease; }
+  .sugg:hover { background: var(--forest-soft); }
+
+  .stage-box { border: 1px dashed var(--line); border-radius: 12px; padding: 18px; margin-bottom: 14px; background: #fafbfa; transition: all 0.2s ease; }
+  .stage-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .stage-head .step { width: 24px; height: 24px; border-radius: 6px; background: var(--sage-light); color: var(--forest); font-weight: 800; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+  .stage-head .label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); }
+  .stage-box.active .stage-head .step { background: var(--forest); color: white; }
+  .stage-box.active { background: white; border-style: solid; border-color: var(--forest); }
+  .stage-body { font-size: 14px; color: var(--text-body); line-height: 1.5; }
+  .stage-body code { background: #1d1d1f; color: #b7e2c6; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: 'SF Mono', Menlo, monospace; }
+  .stage-body .user-quote { font-style: normal; }
+  .stage-body .user-quote b { color: var(--text-dark); font-weight: 700; }
+  .stage-body .sub-note { margin-top: 6px; font-size: 12px; color: var(--text-light); }
+
+  .result-card { margin-top: 4px; padding: 16px; border-radius: 10px; background: var(--sage-light); border: 1px solid var(--forest-soft); }
+  .result-card .kind { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--forest-dark); }
+  .result-card .detail { margin-top: 6px; font-size: 14px; color: var(--text-dark); font-weight: 500; }
+  .result-card .flow { margin-top: 12px; font-size: 13px; color: var(--text-body); line-height: 1.55; }
+  .result-card .flow code { background: #1d1d1f; color: #b7e2c6; padding: 2px 6px; border-radius: 4px; font-size: 11.5px; font-family: 'SF Mono', Menlo, monospace; }
+  .result-card .flow b { color: var(--forest-dark); font-weight: 700; }
+
+  .stat-row2 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--line-soft); }
+  .sr2 .n { font-size: 20px; font-weight: 800; color: var(--forest); letter-spacing: -0.02em; }
+  .sr2 .l { font-size: 11px; color: var(--text-body); margin-top: 2px; font-weight: 500; }
+
+  .reset-btn { margin-top: 18px; background: transparent; border: 1px solid var(--line); color: var(--forest); font-size: 12.5px; font-weight: 600; padding: 8px 14px; border-radius: 999px; cursor: pointer; font-family: inherit; }
+  .reset-btn:hover { background: var(--sage-light); }
+
+  @media (max-width: 960px) {
+    .stage { grid-template-columns: 1fr; }
+    .phone { width: 100%; max-width: 360px; margin: 0 auto; justify-self: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back" href="../../index.html">Back to portfolio</a>
+  <div class="logo">The Pardes WhatsApp Bot</div>
+  <span class="demo-label">Live demo</span>
+</div>
+
+<div class="wrap">
+  <div class="header">
+    <div class="eyebrow">Flagship demo</div>
+    <h1>Text the school. The bot routes it.</h1>
+    <p>In real life, staff at Pardes text the school WhatsApp number. Claude reads the message, decides what kind of request it is (time-off, supply order, absence, general question), and routes it to the right place automatically. This is a safe-data simulation of that exact flow. Type a message below, or tap a suggestion.</p>
+  </div>
+
+  <div class="stage">
+
+    <div class="phone">
+      <div class="phone-notch">Pardes Staff &middot; Demo</div>
+      <div class="phone-screen">
+        <div class="wa-header">
+          <div class="wa-avatar">PS</div>
+          <div class="wa-title">
+            <div class="name">Pardes School Office</div>
+            <div class="status">online</div>
+          </div>
+        </div>
+        <div class="wa-log" id="waLog"></div>
+        <div class="wa-input">
+          <input id="waInput" type="text" placeholder="Type a message" autocomplete="off">
+          <button type="button" id="waSend" aria-label="Send">&#10148;</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>What Claude is doing under the hood</h3>
+      <div class="panel-sub">Every message the staff sends goes through this exact flow in the real bot.</div>
+
+      <div class="suggestion-row">
+        <button type="button" class="sugg" data-msg="I need tomorrow off, I have a doctor appointment">Request time off</button>
+        <button type="button" class="sugg" data-msg="Can we order more staplers for the office?">Order supplies</button>
+        <button type="button" class="sugg" data-msg="What time does school end on Friday?">Ask a question</button>
+        <button type="button" class="sugg" data-msg="My daughter is sick today, she will not be at school">Report absence</button>
+      </div>
+
+      <div class="stage-box" id="stage1">
+        <div class="stage-head"><div class="step">1</div><div class="label">Message received</div></div>
+        <div class="stage-body" id="stage1Body">Waiting for a message.</div>
+      </div>
+
+      <div class="stage-box" id="stage2">
+        <div class="stage-head"><div class="step">2</div><div class="label">Claude classifies intent</div></div>
+        <div class="stage-body" id="stage2Body"></div>
+      </div>
+
+      <div class="stage-box" id="stage3">
+        <div class="stage-head"><div class="step">3</div><div class="label">Automatic routing</div></div>
+        <div class="stage-body" id="stage3Body">Based on the intent, the bot either files a time-off request into the SIS, logs a supply order to the office sheet, records an absence, or replies with the answer.</div>
+      </div>
+
+      <div class="stat-row2">
+        <div class="sr2"><div class="n" id="msgCount">0</div><div class="l">Messages routed</div></div>
+        <div class="sr2"><div class="n" id="claudeCost">$0.00</div><div class="l">Claude spend</div></div>
+        <div class="sr2"><div class="n" id="timeSaved">0 min</div><div class="l">Staff time saved</div></div>
+      </div>
+
+      <button type="button" class="reset-btn" id="resetBtn">Reset demo</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const log = document.getElementById('waLog');
+  const input = document.getElementById('waInput');
+  const sendBtn = document.getElementById('waSend');
+  const stage1 = document.getElementById('stage1');
+  const stage2 = document.getElementById('stage2');
+  const stage3 = document.getElementById('stage3');
+  const stage1Body = document.getElementById('stage1Body');
+  const stage2Body = document.getElementById('stage2Body');
+  const stage3Body = document.getElementById('stage3Body');
+  const msgCount = document.getElementById('msgCount');
+  const claudeCost = document.getElementById('claudeCost');
+  const timeSaved = document.getElementById('timeSaved');
+  const resetBtn = document.getElementById('resetBtn');
+  const suggBtns = document.querySelectorAll('.sugg');
+
+  let count = 0;
+
+  function now() {
+    const d = new Date();
+    return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  }
+
+  // Remove all children safely
+  function clearNode(node) {
+    while (node.firstChild) node.removeChild(node.firstChild);
+  }
+
+  function addBubble(text, who) {
+    const b = document.createElement('div');
+    b.className = 'bubble ' + who;
+    b.appendChild(document.createTextNode(text));
+    const ts = document.createElement('span');
+    ts.className = 'time';
+    ts.textContent = now();
+    b.appendChild(ts);
+    log.appendChild(b);
+    log.scrollTop = log.scrollHeight;
+    return b;
+  }
+
+  function showTyping() {
+    const t = document.createElement('div');
+    t.className = 'bubble them typing';
+    t.id = 'typingNow';
+    for (let i = 0; i < 3; i++) t.appendChild(document.createElement('span'));
+    log.appendChild(t);
+    log.scrollTop = log.scrollHeight;
+  }
+  function removeTyping() {
+    const t = document.getElementById('typingNow');
+    if (t) t.remove();
+  }
+
+  function clearActive() {
+    [stage1, stage2, stage3].forEach(s => s.classList.remove('active'));
+  }
+
+  function classify(msg) {
+    const m = msg.toLowerCase();
+    if (/\b(off|vacation|pto|personal day|taking .* (off|day)|out (on|tomorrow|today|monday|tuesday|wednesday|thursday|friday)|doctor( |')s? appointment|day off)\b/.test(m)) return 'pto';
+    if (/\b(sick|absent|not .* (coming|at school|in today)|will .* miss|stay(ing)? home|my (son|daughter|child|kid))\b/.test(m)) return 'absence';
+    if (/\b(order|need more|buy|supplies?|staplers?|paper|pens?|markers?|chairs?|glue|crayons?|ink|toner|printer|snacks?|sanitizer)\b/.test(m)) return 'supply';
+    return 'general';
+  }
+
+  const ROUTES = {
+    pto: {
+      kind: 'Time-off request',
+      detail: 'Filed to the SIS automatically',
+      flowHtml: (doc) => {
+        const f = doc.createDocumentFragment();
+        f.appendChild(doc.createTextNode('Claude returned '));
+        const c = doc.createElement('code'); c.textContent = 'pto'; f.appendChild(c);
+        f.appendChild(doc.createTextNode(' then the bot authenticated against the SIS service token, created a new row in '));
+        const b = doc.createElement('b'); b.textContent = 'staff_pto'; f.appendChild(b);
+        f.appendChild(doc.createTextNode(', and emailed the supervisor. No human re-typing.'));
+        return f;
+      },
+      reply: 'Got it. Your time-off request has been filed in the SIS. Your supervisor will be notified. Feel better or enjoy your appointment.'
+    },
+    supply: {
+      kind: 'Supply request',
+      detail: 'Logged to office sheet, office emailed',
+      flowHtml: (doc) => {
+        const f = doc.createDocumentFragment();
+        f.appendChild(doc.createTextNode('Claude returned '));
+        const c = doc.createElement('code'); c.textContent = 'supply'; f.appendChild(c);
+        f.appendChild(doc.createTextNode(' then added a new row in the '));
+        const b = doc.createElement('b'); b.textContent = 'supply_requests'; f.appendChild(b);
+        f.appendChild(doc.createTextNode(' sheet. The office got a digest email with a one-click approve link.'));
+        return f;
+      },
+      reply: 'Supply request logged. The office just got an email and will order it with this week\'s purchase order.'
+    },
+    absence: {
+      kind: 'Student absence',
+      detail: 'Marked in the SIS attendance system',
+      flowHtml: (doc) => {
+        const f = doc.createDocumentFragment();
+        f.appendChild(doc.createTextNode('Claude returned '));
+        const c = doc.createElement('code'); c.textContent = 'absence'; f.appendChild(c);
+        f.appendChild(doc.createTextNode(' then matched the parent phone to the student record and marked absent in '));
+        const b = doc.createElement('b'); b.textContent = 'attendance'; f.appendChild(b);
+        f.appendChild(doc.createTextNode('. The classroom teacher was notified.'));
+        return f;
+      },
+      reply: 'Thank you. Your child has been marked absent for today. The teacher has been notified. We hope they feel better soon.'
+    },
+    general: {
+      kind: 'General question',
+      detail: 'Forwarded to the office with a draft reply',
+      flowHtml: (doc) => {
+        const f = doc.createDocumentFragment();
+        f.appendChild(doc.createTextNode('Claude returned '));
+        const c = doc.createElement('code'); c.textContent = 'general'; f.appendChild(c);
+        f.appendChild(doc.createTextNode(' then logged the question in '));
+        const b = doc.createElement('b'); b.textContent = 'office_inbox'; f.appendChild(b);
+        f.appendChild(doc.createTextNode('. A draft answer was generated for the office to approve and send.'));
+        return f;
+      },
+      reply: 'I have forwarded your question to the office. You will hear back shortly.'
+    }
+  };
+
+  function renderStage1(msg) {
+    clearNode(stage1Body);
+    const q = document.createElement('div');
+    q.className = 'user-quote';
+    q.appendChild(document.createTextNode('"'));
+    const b = document.createElement('b');
+    b.textContent = msg;
+    q.appendChild(b);
+    q.appendChild(document.createTextNode('"'));
+    const note = document.createElement('div');
+    note.className = 'sub-note';
+    note.textContent = 'Sender identified, sent to Claude for intent classification.';
+    stage1Body.appendChild(q);
+    stage1Body.appendChild(note);
+  }
+
+  function renderStage2Thinking() {
+    clearNode(stage2Body);
+    stage2Body.appendChild(document.createTextNode('Claude is classifying. Model returns one of '));
+    ['pto', 'supply', 'absence', 'general'].forEach((intent, i) => {
+      const c = document.createElement('code');
+      c.textContent = intent;
+      stage2Body.appendChild(c);
+      if (i < 3) stage2Body.appendChild(document.createTextNode(', '));
+    });
+    stage2Body.appendChild(document.createTextNode('.'));
+  }
+
+  function renderStage2Result(intent) {
+    clearNode(stage2Body);
+    stage2Body.appendChild(document.createTextNode('Classification: '));
+    const c = document.createElement('code'); c.textContent = intent; stage2Body.appendChild(c);
+    stage2Body.appendChild(document.createTextNode(' \u00B7 confidence ~0.96 \u00B7 cost: '));
+    const s = document.createElement('strong'); s.textContent = '$0.0017'; stage2Body.appendChild(s);
+  }
+
+  function renderStage2Idle() {
+    clearNode(stage2Body);
+    stage2Body.appendChild(document.createTextNode('Claude sees the message and returns one of four intents: '));
+    ['pto', 'supply', 'absence', 'general'].forEach((intent, i) => {
+      const c = document.createElement('code');
+      c.textContent = intent;
+      stage2Body.appendChild(c);
+      if (i < 3) stage2Body.appendChild(document.createTextNode(', '));
+    });
+    stage2Body.appendChild(document.createTextNode('. Cost: about '));
+    const s = document.createElement('strong'); s.textContent = '$0.0017'; stage2Body.appendChild(s);
+    stage2Body.appendChild(document.createTextNode(' per message.'));
+  }
+
+  function renderStage3(intent) {
+    const r = ROUTES[intent];
+    clearNode(stage3Body);
+    const card = document.createElement('div');
+    card.className = 'result-card';
+    const kind = document.createElement('div'); kind.className = 'kind'; kind.textContent = r.kind;
+    const detail = document.createElement('div'); detail.className = 'detail'; detail.textContent = r.detail;
+    const flow = document.createElement('div'); flow.className = 'flow';
+    flow.appendChild(r.flowHtml(document));
+    card.appendChild(kind);
+    card.appendChild(detail);
+    card.appendChild(flow);
+    stage3Body.appendChild(card);
+  }
+
+  function renderStage3Idle() {
+    stage3Body.textContent = 'Based on the intent, the bot either files a time-off request into the SIS, logs a supply order to the office sheet, records an absence, or replies with the answer.';
+  }
+
+  function updateStats() {
+    count++;
+    msgCount.textContent = count;
+    claudeCost.textContent = '$' + (count * 0.0017).toFixed(4);
+    timeSaved.textContent = Math.round(count * 3.5) + ' min';
+  }
+
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  async function handleMessage(msg) {
+    if (!msg || !msg.trim()) return;
+    input.value = '';
+    sendBtn.disabled = true;
+    clearActive();
+
+    addBubble(msg, 'me');
+    stage1.classList.add('active');
+    renderStage1(msg);
+
+    await sleep(600);
+
+    clearActive();
+    stage2.classList.add('active');
+    showTyping();
+    renderStage2Thinking();
+
+    await sleep(900);
+
+    const intent = classify(msg);
+    renderStage2Result(intent);
+
+    await sleep(400);
+
+    clearActive();
+    stage3.classList.add('active');
+    renderStage3(intent);
+
+    await sleep(700);
+    removeTyping();
+    addBubble(ROUTES[intent].reply, 'them');
+    updateStats();
+    sendBtn.disabled = false;
+  }
+
+  function addGreeting() {
+    const b = document.createElement('div');
+    b.className = 'bubble them';
+    b.appendChild(document.createTextNode('Hi! Text me what you need and I will take care of it.'));
+    const ts = document.createElement('span');
+    ts.className = 'time';
+    ts.textContent = '9:00 AM';
+    b.appendChild(ts);
+    log.appendChild(b);
+  }
+
+  // Init
+  renderStage2Idle();
+  addGreeting();
+
+  sendBtn.addEventListener('click', () => handleMessage(input.value));
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleMessage(input.value); });
+  suggBtns.forEach(b => b.addEventListener('click', () => handleMessage(b.dataset.msg)));
+
+  resetBtn.addEventListener('click', () => {
+    clearNode(log);
+    addGreeting();
+    clearActive();
+    stage1Body.textContent = 'Waiting for a message.';
+    renderStage2Idle();
+    renderStage3Idle();
+    count = 0;
+    msgCount.textContent = '0';
+    claudeCost.textContent = '$0.00';
+    timeSaved.textContent = '0 min';
+  });
+})();
+</script>
+
+</body>
+</html>
