@@ -199,9 +199,9 @@
 
   <aside class="sidebar">
     <div class="class-picker">
-      <div class="label">Viewing</div>
+      <div class="label">Pardes Elementary &middot; K-5</div>
       <div class="class-name">2nd Grade &middot; Sapphires</div>
-      <div class="teacher">Morah Demo &amp; Morah Sample</div>
+      <div class="teacher">Admin view &middot; role-based nav shown</div>
     </div>
     <div class="student-search">
       <input type="text" id="searchInput" placeholder="Search students">
@@ -526,13 +526,13 @@
 
     // Systems
     const sysCard = document.createElement('div'); sysCard.className = 'systems-card';
-    const sysH3 = document.createElement('h3'); sysH3.textContent = 'Data sources connected to this student'; sysCard.appendChild(sysH3);
+    const sysH3 = document.createElement('h3'); sysH3.textContent = 'Real systems feeding the Pardes SIS'; sysCard.appendChild(sysH3);
     const sysGrid = document.createElement('div'); sysGrid.className = 'systems-grid';
     [
-      { icon: 'KC', name: 'Kriah Coach', role: 'Hebrew reading' },
-      { icon: 'WG', name: 'Waggle', role: 'Adaptive math' },
-      { icon: 'TC', name: 'Time Clock', role: 'Attendance' },
-      { icon: 'OB', name: 'Observation', role: 'Teacher notes' },
+      { icon: 'DB', name: 'Master DB Sheet', role: 'Students, Staff, Classes' },
+      { icon: 'AV2', name: 'Attendance V2', role: 'Google Forms intake' },
+      { icon: 'WG', name: 'Waggle (HMH)', role: 'Adaptive math data' },
+      { icon: 'PDF', name: 'Report Card PDFs', role: 'Drive folder' },
       { icon: 'AI', name: 'Claude', role: 'Weekly summary' }
     ].forEach((sys, i) => {
       const w = document.createElement('div'); w.className = 'sys';

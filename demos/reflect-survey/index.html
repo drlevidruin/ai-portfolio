@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Reflect Survey Demo &middot; AI Inside a Small School</title>
+<title>Reflect Demo &middot; AI Inside a Small School</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -35,49 +35,57 @@
   .topbar .logo { font-family: 'Caveat', cursive; color: var(--forest); font-size: 22px; font-weight: 600; }
   .topbar .demo-label { font-size: 11px; font-weight: 700; color: var(--forest); letter-spacing: 0.14em; text-transform: uppercase; padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; }
 
-  .wrap { max-width: 760px; margin: 0 auto; padding: 40px 24px 80px; }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 40px 24px 80px; }
 
-  /* Progress */
   .progress-bar-wrap { height: 4px; background: #eae5d6; border-radius: 99px; overflow: hidden; margin-bottom: 28px; }
   .progress-bar-fill { height: 100%; background: var(--forest); border-radius: 99px; transition: width 0.4s ease; }
 
   /* Intro */
   .intro { background: white; border: 1px solid var(--line-soft); border-radius: 18px; padding: 44px 48px; box-shadow: 0 18px 40px -28px rgba(16,101,60,0.18); }
   .intro .eyebrow { font-family: 'Caveat', cursive; color: var(--forest); font-size: 26px; font-weight: 600; margin-bottom: 8px; }
-  .intro h1 { font-size: 34px; font-weight: 800; margin-bottom: 14px; letter-spacing: -0.03em; }
-  .intro p { font-size: 16px; color: var(--text-body); margin: 0 0 12px; line-height: 1.6; }
-  .intro .key-points { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line-soft); }
-  .kp { display: flex; gap: 14px; margin-bottom: 14px; }
-  .kp .n { width: 28px; height: 28px; border-radius: 50%; background: var(--sage-light); color: var(--forest-dark); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; flex-shrink: 0; }
-  .kp .t { font-size: 14.5px; color: var(--text-dark); line-height: 1.5; }
-  .intro button.primary { margin-top: 28px; width: 100%; background: var(--forest-dark); color: white; border: none; border-radius: 12px; padding: 15px; font-size: 15.5px; font-weight: 700; }
+  .intro h1 { font-size: 34px; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.03em; line-height: 1.08; }
+  .intro p { font-size: 16px; color: var(--text-body); margin: 0 0 14px; line-height: 1.6; }
+
+  .form-picker { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line-soft); }
+  .form-picker-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); margin-bottom: 12px; }
+  .forms { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .form-option { padding: 16px 18px; border: 2px solid var(--line-soft); border-radius: 12px; background: white; text-align: left; transition: all 0.15s ease; font-family: inherit; }
+  .form-option:hover:not(.locked) { border-color: var(--forest-soft); background: var(--sage-light); }
+  .form-option.selected { border-color: var(--forest); background: var(--sage-light); }
+  .form-option .nm { font-size: 15px; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; }
+  .form-option .mt { font-size: 12px; color: var(--text-body); line-height: 1.4; }
+  .form-option .tag { display: inline-block; font-size: 10px; font-weight: 700; color: var(--forest); background: var(--sage-light); padding: 2px 8px; border-radius: 4px; margin-top: 6px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .form-option.selected .tag { background: white; }
+  .form-option.locked { opacity: 0.55; cursor: not-allowed; }
+
+  .domains-chip { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+  .domain-chip { font-size: 11px; font-weight: 700; color: var(--forest-dark); background: var(--sage-light); padding: 5px 10px; border-radius: 999px; border: 1px solid var(--forest-soft); letter-spacing: 0.02em; }
+
+  .intro button.primary { margin-top: 26px; width: 100%; background: var(--forest-dark); color: white; border: none; border-radius: 12px; padding: 15px; font-size: 15.5px; font-weight: 700; }
   .intro button.primary:hover { background: var(--forest); }
 
   /* Question card */
   .qcard { background: white; border: 1px solid var(--line-soft); border-radius: 18px; padding: 36px 44px; }
-  .qnum { font-family: 'Caveat', cursive; color: var(--forest); font-size: 22px; font-weight: 600; margin-bottom: 10px; }
-  .qtext { font-size: 24px; color: var(--text-dark); font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 12px; }
-  .qsub { font-size: 14px; color: var(--text-light); margin-bottom: 28px; }
+  .q-dom { font-family: 'Caveat', cursive; color: var(--forest); font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+  .qnum { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-light); margin-bottom: 14px; }
+  .qtext { font-size: 22px; color: var(--text-dark); font-weight: 700; line-height: 1.3; letter-spacing: -0.015em; margin-bottom: 10px; }
+  .qmeasure { font-size: 13px; color: var(--text-light); margin-bottom: 28px; font-style: italic; }
 
-  /* Scale */
-  .scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-  .scale-btn {
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-    padding: 18px 12px; border: 2px solid var(--line-soft); border-radius: 12px;
-    background: white; color: var(--text-body); font-family: inherit;
-    transition: border-color 0.15s ease, background 0.15s ease;
-  }
+  .scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .scale-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 10px; border: 2px solid var(--line-soft); border-radius: 12px; background: white; color: var(--text-body); font-family: inherit; transition: border-color 0.15s ease, background 0.15s ease; }
   .scale-btn .num { font-size: 22px; font-weight: 800; color: var(--forest); letter-spacing: -0.02em; }
   .scale-btn .lbl { font-size: 11.5px; color: var(--text-light); font-weight: 600; text-align: center; line-height: 1.25; }
   .scale-btn:hover { border-color: var(--forest-soft); background: var(--sage-light); }
   .scale-btn.selected { border-color: var(--forest); background: var(--sage-light); }
   .scale-btn.selected .lbl { color: var(--text-dark); }
+  .cannot-observe { display: block; width: 100%; margin-top: 10px; padding: 10px 14px; background: transparent; border: 1px dashed var(--line); color: var(--text-light); font-size: 13px; font-weight: 600; border-radius: 10px; font-family: inherit; }
+  .cannot-observe:hover { background: #fafafa; }
+  .cannot-observe.selected { border-style: solid; border-color: var(--forest); background: var(--sage-light); color: var(--forest-dark); }
 
-  /* Text area */
-  .text-area { width: 100%; min-height: 120px; border: 1px solid var(--line-soft); border-radius: 12px; padding: 14px 16px; font-family: inherit; font-size: 15px; line-height: 1.5; color: var(--text-dark); outline: none; background: #fafafa; resize: vertical; }
+  .text-area { width: 100%; min-height: 110px; border: 1px solid var(--line-soft); border-radius: 12px; padding: 14px 16px; font-family: inherit; font-size: 15px; line-height: 1.5; color: var(--text-dark); outline: none; background: #fafafa; resize: vertical; }
   .text-area:focus { border-color: var(--forest); background: white; }
+  .char-count { text-align: right; font-size: 11px; color: var(--text-light); margin-top: 4px; font-weight: 500; }
 
-  /* Nav */
   .qnav { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; }
   .qnav button.secondary { background: transparent; color: var(--text-body); border: 1px solid var(--line-soft); padding: 12px 20px; border-radius: 10px; font-weight: 600; font-size: 14px; }
   .qnav button.secondary:hover { background: #f3f3f1; }
@@ -86,59 +94,81 @@
   .qnav button.primary:disabled { opacity: 0.5; cursor: not-allowed; background: var(--forest-dark); }
   .step-count { font-size: 12px; color: var(--text-light); font-weight: 600; letter-spacing: 0.04em; }
 
-  /* Processing */
   .processing { background: white; border: 1px solid var(--line-soft); border-radius: 18px; padding: 60px 44px; text-align: center; }
   .processing .spinner { width: 60px; height: 60px; margin: 0 auto 24px; border: 4px solid var(--sage-light); border-top-color: var(--forest); border-radius: 50%; animation: spin 0.9s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .processing h2 { font-size: 22px; margin-bottom: 10px; }
-  .processing p { font-size: 14px; color: var(--text-light); max-width: 42ch; margin: 0 auto; }
-  .processing .dots { margin-top: 20px; display: flex; justify-content: center; gap: 6px; }
-  .processing .dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--forest-soft); animation: bounce 1.4s infinite ease-in-out both; }
-  .processing .dots span:nth-child(1) { animation-delay: -0.32s; }
-  .processing .dots span:nth-child(2) { animation-delay: -0.16s; }
-  @keyframes bounce { 0%, 80%, 100% { transform: scale(0.5); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
+  .processing p { font-size: 14px; color: var(--text-light); max-width: 44ch; margin: 0 auto; line-height: 1.55; }
 
-  /* Report */
   .report { background: white; border: 1px solid var(--line-soft); border-radius: 18px; padding: 36px 44px; }
   .report-head { margin-bottom: 28px; padding-bottom: 22px; border-bottom: 1px solid var(--line-soft); }
   .report-head .eyebrow { font-family: 'Caveat', cursive; color: var(--forest); font-size: 22px; font-weight: 600; }
-  .report-head h1 { font-size: 30px; font-weight: 800; margin: 4px 0 8px; letter-spacing: -0.02em; }
+  .report-head h1 { font-size: 28px; font-weight: 800; margin: 4px 0 8px; letter-spacing: -0.02em; line-height: 1.15; }
   .report-head .meta { font-size: 13px; color: var(--text-light); font-weight: 500; }
 
-  .overall { background: linear-gradient(135deg, #0a4a2b 0%, #10653c 100%); color: white; border-radius: 14px; padding: 24px 26px; margin-bottom: 24px; display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; }
-  .overall .big { font-size: 52px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
-  .overall .cap { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--forest-soft); font-weight: 700; margin-bottom: 4px; }
-  .overall .desc { font-size: 14px; color: rgba(255,255,255,0.85); line-height: 1.5; }
-
-  .section-block { margin-bottom: 26px; }
-  .section-block h2 { font-size: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--forest-dark); margin-bottom: 12px; display: inline-flex; align-items: center; gap: 10px; }
+  .section-block { margin-bottom: 28px; }
+  .section-block h2 { font-size: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--forest-dark); margin-bottom: 14px; display: inline-flex; align-items: center; gap: 10px; }
   .section-block h2::before { content: ""; width: 4px; height: 14px; background: var(--forest); border-radius: 2px; }
+  .section-block .lede { font-size: 14.5px; color: var(--text-body); line-height: 1.55; margin-bottom: 14px; }
 
-  .insight-card { background: #fafbfa; border: 1px solid var(--line-soft); border-radius: 12px; padding: 16px 18px; margin-bottom: 10px; }
-  .insight-card h4 { font-size: 15px; margin-bottom: 6px; font-weight: 700; color: var(--text-dark); }
-  .insight-card p { font-size: 13.5px; color: var(--text-body); margin: 0; line-height: 1.55; }
-  .insight-card .quote { margin-top: 10px; padding: 10px 14px; border-left: 3px solid var(--forest); background: white; border-radius: 0 8px 8px 0; font-size: 13px; color: var(--text-body); font-style: italic; }
+  .domain-row { display: grid; grid-template-columns: 180px 1fr 48px; gap: 14px; align-items: center; margin-bottom: 10px; font-size: 13.5px; }
+  .domain-row .nm { font-weight: 700; color: var(--text-dark); font-size: 13px; }
+  .domain-row .bars { position: relative; height: 22px; background: #f3f3f1; border-radius: 5px; }
+  .domain-row .bar { position: absolute; height: 10px; border-radius: 5px; top: 6px; left: 0; }
+  .domain-row .bar.teacher { background: var(--forest); }
+  .domain-row .bar.self { background: var(--navy); opacity: 0.75; height: 4px; top: 9px; }
+  .domain-row .score { font-weight: 800; color: var(--forest-dark); font-size: 14px; text-align: right; font-variant-numeric: tabular-nums; }
+  .legend-row { display: flex; gap: 18px; margin-top: 10px; font-size: 12px; color: var(--text-body); font-weight: 600; }
+  .legend-row .dot { display: inline-block; width: 12px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: middle; }
 
-  .themes { display: flex; flex-wrap: wrap; gap: 8px; }
-  .theme-pill { padding: 7px 14px; border-radius: 999px; background: var(--sage-light); color: var(--forest-dark); font-weight: 700; font-size: 13px; border: 1px solid var(--forest-soft); }
-  .theme-pill.big { font-size: 15px; padding: 9px 18px; background: var(--forest-dark); color: white; border-color: var(--forest-dark); }
-  .theme-pill.med { font-size: 14px; }
+  .johari { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .quad { padding: 16px 18px; border-radius: 12px; border: 1px solid var(--line-soft); background: #fafbfa; }
+  .quad .label { font-size: 10.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); margin-bottom: 8px; }
+  .quad.strength .label { color: var(--forest); }
+  .quad.strength { background: var(--sage-light); border-color: var(--forest-soft); }
+  .quad.blind .label { color: #8b2c1a; }
+  .quad.blind { background: #fdf0ee; border-color: #e5b8ae; }
+  .quad.hidden { background: #fdf8e9; border-color: #e8d48a; }
+  .quad.hidden .label { color: #94670a; }
+  .quad h4 { font-size: 14px; color: var(--text-dark); margin-bottom: 4px; font-weight: 800; letter-spacing: -0.01em; }
+  .quad p { font-size: 12.5px; color: var(--text-body); margin: 0; line-height: 1.5; }
 
-  .radar-card { background: white; border: 1px solid var(--line-soft); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
-  .radar-card .cap { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-light); font-weight: 700; margin-bottom: 10px; }
-  svg.radar { display: block; margin: 0 auto; max-width: 100%; }
+  .theme-card { padding: 14px 16px; border: 1px solid var(--line-soft); border-radius: 12px; background: #fafbfa; margin-bottom: 10px; }
+  .theme-card .hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .theme-card h4 { font-size: 14px; color: var(--text-dark); font-weight: 800; letter-spacing: -0.01em; }
+  .theme-card .count { font-size: 11px; color: var(--text-light); font-weight: 700; }
+  .theme-card .quote { font-size: 12.5px; color: var(--text-body); font-style: italic; line-height: 1.5; padding-left: 10px; border-left: 2px solid var(--forest-soft); }
 
-  .actions-row { display: flex; gap: 10px; margin-top: 30px; flex-wrap: wrap; }
+  .kss { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .kss-col { padding: 14px 16px; border-radius: 12px; border: 1px solid var(--line-soft); background: white; }
+  .kss-col.keep { border-left: 4px solid var(--forest); }
+  .kss-col.start { border-left: 4px solid var(--navy); }
+  .kss-col.stop { border-left: 4px solid #b8620a; }
+  .kss-col .label { font-size: 10.5px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+  .kss-col.keep .label { color: var(--forest); }
+  .kss-col.start .label { color: var(--navy); }
+  .kss-col.stop .label { color: #b8620a; }
+  .kss-col p { font-size: 12.5px; color: var(--text-body); margin: 0; line-height: 1.5; }
+
+  .actions-row { display: flex; gap: 10px; margin-top: 30px; flex-wrap: wrap; padding-top: 24px; border-top: 1px solid var(--line-soft); }
   .actions-row button { padding: 12px 18px; border-radius: 10px; font-weight: 700; font-size: 14px; border: 1px solid var(--line); background: white; color: var(--forest); }
   .actions-row button.primary { background: var(--forest-dark); color: white; border-color: var(--forest-dark); }
   .actions-row button.primary:hover { background: var(--forest); }
   .actions-row button:hover { background: var(--sage-light); }
 
+  .footnote { font-size: 11.5px; color: var(--text-light); font-style: italic; margin-top: 14px; line-height: 1.55; }
+
   @media (max-width: 700px) {
     .intro, .qcard, .processing, .report { padding: 28px 22px; }
-    .intro h1, .report-head h1 { font-size: 26px; }
-    .overall { grid-template-columns: 1fr; text-align: left; }
-    .overall .big { font-size: 42px; }
+    .intro h1, .report-head h1 { font-size: 24px; }
+    .forms { grid-template-columns: 1fr; }
+    .domain-row { grid-template-columns: 110px 1fr 40px; font-size: 12.5px; }
+    .domain-row .nm { font-size: 12px; }
+    .johari { grid-template-columns: 1fr; }
+    .kss { grid-template-columns: 1fr; }
+    .scale { grid-template-columns: repeat(5, 1fr); gap: 5px; }
+    .scale-btn { padding: 12px 4px; }
+    .scale-btn .lbl { font-size: 10px; }
   }
 </style>
 </head>
@@ -158,128 +188,172 @@
 <script>
 (function(){
 
-  const QUESTIONS = [
-    {
-      type: 'scale',
-      text: 'How clearly does this leader communicate vision and priorities?',
-      sub: 'Think about the last month. Consider both what they said and how it landed.',
-      labels: ['Rarely clear', 'Sometimes', 'Often', 'Usually', 'Always clear']
-    },
-    {
-      type: 'scale',
-      text: 'How well does this leader develop the people around them?',
-      sub: 'Coaching, feedback, stretch opportunities, showing belief.',
-      labels: ['Not at all', 'A little', 'Moderately', 'Strongly', 'Exceptionally']
-    },
-    {
-      type: 'scale',
-      text: 'How responsive is this leader to feedback, especially uncomfortable feedback?',
-      sub: 'Anonymous context. Be honest.',
-      labels: ['Defensive', 'Tolerates it', 'Listens', 'Invites it', 'Grows from it']
-    },
-    {
-      type: 'text',
-      text: 'What is one thing this leader does exceptionally well?',
-      sub: 'Specific is better than general. One concrete story is worth more than a paragraph of praise.',
-      placeholder: 'They run our weekly staff meetings in a way that...'
-    },
-    {
-      type: 'text',
-      text: 'What is one thing this leader could do better?',
-      sub: 'Think about the single change that would most help you and your colleagues.',
-      placeholder: 'I wish they would...'
-    }
+  const DOMAINS = [
+    { id: 1, name: 'Teaching and Learning' },
+    { id: 2, name: 'Communication' },
+    { id: 3, name: 'Culture and Trust' },
+    { id: 4, name: 'Direction and Decision-Making' },
+    { id: 5, name: 'People Development' },
+    { id: 6, name: 'Mission Stewardship' }
   ];
 
-  const answers = new Array(QUESTIONS.length).fill(null);
-  let idx = 0; // -1 = intro, 0..N-1 = questions, N = processing, N+1 = report
-  let stage = 'intro';
+  // Real items pulled directly from the Reflect item bank (Teacher/Staff form)
+  const ITEMS_TEACHER = [
+    { code: 'T1.1', domain: 1, text: 'The principal observes my classroom and provides specific feedback I can act on.', measures: 'Whether observations produce usable guidance or are just walk-throughs with no follow-up.' },
+    { code: 'T2.1', domain: 2, text: 'The principal explains the reasoning behind decisions that affect my work.', measures: 'Whether staff understand why decisions are made, which builds trust and reduces resentment.' },
+    { code: 'T3.2', domain: 3, text: 'The principal responds constructively when I disagree with a decision or raise a concern.', measures: 'Psychological safety. Whether teachers can be honest without fear of retaliation.' },
+    { code: 'T4.1', domain: 4, text: 'The principal communicates clear goals for the school year that I can connect to my own work.', measures: 'Whether teachers know what the priorities are and how their work fits in.' },
+    { code: 'T5.2', domain: 5, text: 'The principal acknowledges my contributions verbally or in writing.', measures: 'Whether teachers feel appreciated. Recognition is one of the strongest predictors of retention.' },
+    { code: 'T6.1', domain: 6, text: "The principal makes decisions that reflect the school's stated values, even when a different choice would be easier or more popular.", measures: 'Whether values visibly drive decisions or get overridden by convenience and politics.' }
+  ];
+
+  const OPEN_ENDED = [
+    { text: 'What is one thing this principal does exceptionally well?', ph: 'Be specific. One concrete moment is worth more than a paragraph of praise.' },
+    { text: 'What is one thing this principal could do better?', ph: 'Think about the single change that would most help you and your colleagues.' }
+  ];
+
+  const SCALE_LABELS = ['Almost Never', 'Rarely', 'Sometimes', 'Often', 'Almost Always'];
+
+  const ALL_QS = ITEMS_TEACHER.concat(OPEN_ENDED.map(function(q, i) {
+    return { code: 'X' + (i + 1), type: 'text', text: q.text, ph: q.ph };
+  }));
+
+  const answers = new Array(ALL_QS.length).fill(null);
+  let idx = 0;
 
   const screen = document.getElementById('screen');
   const pfill = document.getElementById('pfill');
 
   function setProgress(pct) { pfill.style.width = pct + '%'; }
+  function clear() { while (screen.firstChild) screen.removeChild(screen.firstChild); }
 
   function renderIntro() {
-    stage = 'intro';
     setProgress(0);
     clear();
     const c = document.createElement('div'); c.className = 'intro';
     const e = document.createElement('div'); e.className = 'eyebrow'; e.textContent = 'Reflect';
-    const h = document.createElement('h1'); h.textContent = 'A short, anonymous reflection.';
-    const p1 = document.createElement('p'); p1.textContent = 'You are about to give feedback about a leader you work with. Reflect aggregates many voices like yours into a thoughtful, private report the leader can actually use.';
-    const p2 = document.createElement('p'); p2.textContent = 'This survey is five short questions. You can finish in under three minutes.';
+    const h = document.createElement('h1'); h.textContent = 'Leadership Reflection for School Principals.';
+    const p1 = document.createElement('p'); p1.textContent = 'Most school principals have never received structured, multi-perspective feedback on their leadership. Not from their teachers. Not from their board. Not from parents. Reflect is the instrument that fills that gap. It is not a 360 feedback tool in the corporate sense. It is a behavioral reflection built for the realities of a small, mission-driven school.';
+    const p2 = document.createElement('p'); p2.textContent = 'The full Reflect instrument has 75 items across 6 leadership domains and 4 stakeholder forms (Teachers, Supervisors, Parents, Self). This demo walks you through a shortened version of the Teacher/Staff form (6 rated items plus 2 open-ended) and ends with a sample report.';
     c.appendChild(e); c.appendChild(h); c.appendChild(p1); c.appendChild(p2);
-    const kp = document.createElement('div'); kp.className = 'key-points';
-    [
-      { n: '1', t: 'Your answers are anonymous. Reflect aggregates across everyone who responds.' },
-      { n: '2', t: 'The report uses Claude to find themes across free-text answers without exposing who said what.' },
-      { n: '3', t: 'The leader sees the patterns, not the individual responses.' }
-    ].forEach(pt => {
-      const row = document.createElement('div'); row.className = 'kp';
-      const n = document.createElement('div'); n.className = 'n'; n.textContent = pt.n;
-      const t = document.createElement('div'); t.className = 't'; t.textContent = pt.t;
-      row.appendChild(n); row.appendChild(t); kp.appendChild(row);
+
+    const domCh = document.createElement('div'); domCh.className = 'domains-chip';
+    DOMAINS.forEach(function(d) {
+      const chip = document.createElement('span'); chip.className = 'domain-chip';
+      chip.textContent = d.id + '. ' + d.name;
+      domCh.appendChild(chip);
     });
-    c.appendChild(kp);
-    const b = document.createElement('button'); b.className = 'primary'; b.textContent = 'Start the reflection';
-    b.addEventListener('click', () => { idx = 0; renderQuestion(); });
-    c.appendChild(b);
+    c.appendChild(domCh);
+
+    const fp = document.createElement('div'); fp.className = 'form-picker';
+    const fpl = document.createElement('div'); fpl.className = 'form-picker-label'; fpl.textContent = 'In the real pilot, each invitee sees one form only';
+    fp.appendChild(fpl);
+    const forms = document.createElement('div'); forms.className = 'forms';
+    const formDefs = [
+      { nm: 'Teacher / Staff', mt: '18 rated items + 2 open-ended. About 10 minutes.', tag: 'Demo uses this', active: true },
+      { nm: 'Supervisor', mt: 'Board chair, head of school. 18 items + 2 open-ended.', tag: 'Locked', locked: true },
+      { nm: 'Parent', mt: '12 rated items + 2 open-ended. About 7 minutes.', tag: 'Locked', locked: true },
+      { nm: 'Self', mt: 'The principal rates themselves on the same items.', tag: 'Locked', locked: true }
+    ];
+    formDefs.forEach(function(f) {
+      const opt = document.createElement('button'); opt.type = 'button';
+      opt.className = 'form-option' + (f.active ? ' selected' : '') + (f.locked ? ' locked' : '');
+      if (f.locked) opt.disabled = true;
+      const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = f.nm;
+      const mt = document.createElement('div'); mt.className = 'mt'; mt.textContent = f.mt;
+      const tag = document.createElement('div'); tag.className = 'tag'; tag.textContent = f.tag;
+      opt.appendChild(nm); opt.appendChild(mt); opt.appendChild(tag);
+      forms.appendChild(opt);
+    });
+    fp.appendChild(forms);
+    c.appendChild(fp);
+
+    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'primary'; btn.textContent = 'Start the Teacher/Staff reflection';
+    btn.addEventListener('click', function() { idx = 0; renderQuestion(); });
+    c.appendChild(btn);
+
+    const fn = document.createElement('div'); fn.className = 'footnote';
+    fn.textContent = 'Responses in the real system are anonymous and aggregated. Individual answers are never shown to the principal. Demo answers you enter here are not saved anywhere.';
+    c.appendChild(fn);
+
     screen.appendChild(c);
   }
 
   function renderQuestion() {
-    stage = 'q';
-    const q = QUESTIONS[idx];
-    setProgress((idx / QUESTIONS.length) * 80);
+    const q = ALL_QS[idx];
+    setProgress(((idx + 1) / (ALL_QS.length + 1)) * 85);
     clear();
     const c = document.createElement('div'); c.className = 'qcard';
-    const n = document.createElement('div'); n.className = 'qnum'; n.textContent = 'Question ' + (idx + 1) + ' of ' + QUESTIONS.length;
-    const t = document.createElement('div'); t.className = 'qtext'; t.textContent = q.text;
-    const s = document.createElement('div'); s.className = 'qsub'; s.textContent = q.sub;
-    c.appendChild(n); c.appendChild(t); c.appendChild(s);
 
-    // Declare nav elements early so the input handler can update the Next button state live
     const nav = document.createElement('div'); nav.className = 'qnav';
     const backBtn = document.createElement('button'); backBtn.type = 'button'; backBtn.className = 'secondary';
     backBtn.textContent = idx === 0 ? 'Back to intro' : 'Previous';
-    backBtn.addEventListener('click', () => { if (idx === 0) renderIntro(); else { idx--; renderQuestion(); } });
-    const count = document.createElement('div'); count.className = 'step-count'; count.textContent = (idx + 1) + ' / ' + QUESTIONS.length;
+    backBtn.addEventListener('click', function() { if (idx === 0) renderIntro(); else { idx--; renderQuestion(); } });
+    const count = document.createElement('div'); count.className = 'step-count'; count.textContent = (idx + 1) + ' / ' + ALL_QS.length;
     const nextBtn = document.createElement('button'); nextBtn.type = 'button'; nextBtn.className = 'primary';
-    const isLast = idx === QUESTIONS.length - 1;
+    const isLast = idx === ALL_QS.length - 1;
     nextBtn.textContent = isLast ? 'Submit reflection' : 'Next';
 
-    function updateNextButton() {
+    function updateNext() {
       const a = answers[idx];
-      const hasAnswer = q.type === 'scale'
-        ? !!a
-        : (typeof a === 'string' && a.trim().length > 0);
+      const hasAnswer = q.type === 'text'
+        ? (typeof a === 'string' && a.trim().length > 0)
+        : (a !== null && a !== undefined);
       nextBtn.disabled = !hasAnswer;
     }
 
-    if (q.type === 'scale') {
+    if (q.type !== 'text') {
+      const domain = DOMAINS.find(function(d) { return d.id === q.domain; });
+      const dm = document.createElement('div'); dm.className = 'q-dom';
+      dm.textContent = 'Domain ' + domain.id + ': ' + domain.name;
+      c.appendChild(dm);
+      const qn = document.createElement('div'); qn.className = 'qnum';
+      qn.textContent = 'Item ' + q.code + '  \u00B7  Question ' + (idx + 1) + ' of ' + ALL_QS.length;
+      c.appendChild(qn);
+      const t = document.createElement('div'); t.className = 'qtext'; t.textContent = q.text;
+      const m = document.createElement('div'); m.className = 'qmeasure'; m.textContent = 'Measures: ' + q.measures;
+      c.appendChild(t); c.appendChild(m);
+
       const sc = document.createElement('div'); sc.className = 'scale';
-      q.labels.forEach((lab, i) => {
+      SCALE_LABELS.forEach(function(lab, i) {
         const b = document.createElement('button'); b.type = 'button'; b.className = 'scale-btn' + (answers[idx] === i + 1 ? ' selected' : '');
         const num = document.createElement('div'); num.className = 'num'; num.textContent = (i + 1);
         const lb = document.createElement('div'); lb.className = 'lbl'; lb.textContent = lab;
         b.appendChild(num); b.appendChild(lb);
-        b.addEventListener('click', () => { answers[idx] = i + 1; renderQuestion(); });
+        b.addEventListener('click', function() { answers[idx] = i + 1; renderQuestion(); });
         sc.appendChild(b);
       });
       c.appendChild(sc);
+
+      const co = document.createElement('button'); co.type = 'button'; co.className = 'cannot-observe' + (answers[idx] === 'CO' ? ' selected' : '');
+      co.textContent = 'Cannot observe';
+      co.addEventListener('click', function() { answers[idx] = 'CO'; renderQuestion(); });
+      c.appendChild(co);
     } else {
-      const ta = document.createElement('textarea'); ta.className = 'text-area'; ta.placeholder = q.placeholder;
+      const dm = document.createElement('div'); dm.className = 'q-dom';
+      dm.textContent = 'Open-ended';
+      c.appendChild(dm);
+      const qn = document.createElement('div'); qn.className = 'qnum';
+      qn.textContent = 'Question ' + (idx + 1) + ' of ' + ALL_QS.length;
+      c.appendChild(qn);
+      const t = document.createElement('div'); t.className = 'qtext'; t.textContent = q.text;
+      c.appendChild(t);
+      const ta = document.createElement('textarea'); ta.className = 'text-area'; ta.placeholder = q.ph;
+      ta.maxLength = 500;
       if (typeof answers[idx] === 'string') ta.value = answers[idx];
-      ta.addEventListener('input', (e) => {
+      const cc = document.createElement('div'); cc.className = 'char-count';
+      cc.textContent = (ta.value.length || 0) + ' / 500';
+      ta.addEventListener('input', function(e) {
         answers[idx] = e.target.value;
-        updateNextButton();
+        cc.textContent = e.target.value.length + ' / 500';
+        updateNext();
       });
       c.appendChild(ta);
+      c.appendChild(cc);
     }
 
-    updateNextButton();
-    nextBtn.addEventListener('click', () => {
+    updateNext();
+    nextBtn.addEventListener('click', function() {
       if (isLast) { renderProcessing(); return; }
       idx++; renderQuestion();
     });
@@ -289,217 +363,160 @@
   }
 
   function renderProcessing() {
-    stage = 'processing';
-    setProgress(90);
+    setProgress(92);
     clear();
     const c = document.createElement('div'); c.className = 'processing';
     const sp = document.createElement('div'); sp.className = 'spinner'; c.appendChild(sp);
     const h = document.createElement('h2'); h.textContent = 'Analyzing your reflection.'; c.appendChild(h);
-    const p = document.createElement('p'); p.textContent = 'Claude is reading across your answers and the other responses this leader has received, looking for themes and patterns.'; c.appendChild(p);
-    const dots = document.createElement('div'); dots.className = 'dots';
-    for (let i = 0; i < 3; i++) dots.appendChild(document.createElement('span'));
-    c.appendChild(dots);
+    const p = document.createElement('p'); p.textContent = 'In the real system, Claude scans open-ended responses for themes, Cronbach alpha is computed per domain, and gap analysis compares each rater group to the principal\u2019s self-assessment. This is a simulation using your responses plus representative pilot data.';
+    c.appendChild(p);
     screen.appendChild(c);
-    setTimeout(renderReport, 2200);
+    setTimeout(renderReport, 2400);
   }
 
   function renderReport() {
-    stage = 'report';
     setProgress(100);
     clear();
+
+    const ratedItems = ALL_QS.filter(function(q) { return q.type !== 'text'; });
+    const userByDomain = {};
+    ratedItems.forEach(function(q, i) {
+      const a = answers[i];
+      if (typeof a === 'number') userByDomain[q.domain] = a;
+    });
+
+    const teacherAvg = { 1: 3.9, 2: 4.2, 3: 4.0, 4: 3.6, 5: 4.3, 6: 4.5 };
+    const selfAvg = { 1: 4.4, 2: 4.1, 3: 4.3, 4: 4.5, 5: 3.9, 6: 4.2 };
+
+    const finalTeacher = {};
+    DOMAINS.forEach(function(d) {
+      if (userByDomain[d.id]) {
+        finalTeacher[d.id] = ((teacherAvg[d.id] * 24) + userByDomain[d.id]) / 25;
+      } else {
+        finalTeacher[d.id] = teacherAvg[d.id];
+      }
+      finalTeacher[d.id] = Math.round(finalTeacher[d.id] * 10) / 10;
+    });
+
     const c = document.createElement('div'); c.className = 'report';
 
     const head = document.createElement('div'); head.className = 'report-head';
-    const eb = document.createElement('div'); eb.className = 'eyebrow'; eb.textContent = 'Sample leader report';
-    const h1 = document.createElement('h1'); h1.textContent = 'Reflection report for Leader A';
-    const meta = document.createElement('div'); meta.className = 'meta'; meta.textContent = 'Built from 12 responses, including yours. Anonymous aggregation. Generated by Claude.';
+    const eb = document.createElement('div'); eb.className = 'eyebrow'; eb.textContent = 'Sample report';
+    const h1 = document.createElement('h1'); h1.textContent = 'Leadership Reflection for Rabbi Dr. Sample Principal';
+    const meta = document.createElement('div'); meta.className = 'meta'; meta.textContent = 'Pardes Pilot Cycle \u00B7 25 teacher responses + 2 supervisor + 14 parent + 1 self';
     head.appendChild(eb); head.appendChild(h1); head.appendChild(meta);
     c.appendChild(head);
 
-    const s1 = averageScale(0);
-    const s2 = averageScale(1);
-    const s3 = averageScale(2);
-    const overall = ((s1 + s2 + s3) / 3).toFixed(1);
-
-    const ov = document.createElement('div'); ov.className = 'overall';
-    const big = document.createElement('div'); big.className = 'big'; big.textContent = overall;
-    const right = document.createElement('div');
-    const cap = document.createElement('div'); cap.className = 'cap'; cap.textContent = 'Overall score';
-    const desc = document.createElement('div'); desc.className = 'desc'; desc.textContent = 'Out of 5. Strong leader. Aggregated across 12 respondents: staff, board members, and supervisors. See strengths and growth areas below.';
-    right.appendChild(cap); right.appendChild(desc);
-    ov.appendChild(big); ov.appendChild(right);
-    c.appendChild(ov);
-
-    // Radar
-    const radar = document.createElement('div'); radar.className = 'radar-card';
-    const rcap = document.createElement('div'); rcap.className = 'cap'; rcap.textContent = 'Dimensions'; radar.appendChild(rcap);
-    radar.appendChild(buildRadar([
-      { label: 'Vision', value: s1 },
-      { label: 'Development', value: s2 },
-      { label: 'Responsiveness', value: s3 },
-      { label: 'Consistency', value: 4.3 },
-      { label: 'Trust', value: 4.5 }
-    ]));
-    c.appendChild(radar);
-
-    // Strengths
-    const strengths = document.createElement('div'); strengths.className = 'section-block';
-    const sh = document.createElement('h2'); sh.textContent = 'What is working'; strengths.appendChild(sh);
-    [
-      { t: 'Clear direction', d: 'Your team consistently names your ability to set priorities in a noisy moment. This has built trust especially over the last quarter.', q: '"She always knows what the next most important thing is, even when the rest of us are drowning."' },
-      { t: 'Invests in people', d: 'Multiple respondents mentioned times you made space for coaching or a stretch opportunity that changed their trajectory.', q: '"I would not be in this role if he had not believed in me first."' }
-    ].forEach(x => {
-      const card = document.createElement('div'); card.className = 'insight-card';
-      const t = document.createElement('h4'); t.textContent = x.t;
-      const d = document.createElement('p'); d.textContent = x.d;
-      const qt = document.createElement('div'); qt.className = 'quote'; qt.textContent = x.q;
-      card.appendChild(t); card.appendChild(d); card.appendChild(qt);
-      strengths.appendChild(card);
+    const s1 = document.createElement('div'); s1.className = 'section-block';
+    const s1h = document.createElement('h2'); s1h.textContent = 'Domain scores: teachers vs self'; s1.appendChild(s1h);
+    const lede = document.createElement('div'); lede.className = 'lede';
+    lede.textContent = 'Each bar shows your average teacher rating (out of 5). The thin navy line is your self-rating on that domain. Gaps between the two are where your perception and your team\u2019s perception differ.';
+    s1.appendChild(lede);
+    DOMAINS.forEach(function(d) {
+      const row = document.createElement('div'); row.className = 'domain-row';
+      const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = d.name;
+      const bars = document.createElement('div'); bars.className = 'bars';
+      const teacherBar = document.createElement('div'); teacherBar.className = 'bar teacher';
+      teacherBar.style.width = (finalTeacher[d.id] / 5 * 100) + '%';
+      const selfBar = document.createElement('div'); selfBar.className = 'bar self';
+      selfBar.style.width = (selfAvg[d.id] / 5 * 100) + '%';
+      bars.appendChild(teacherBar); bars.appendChild(selfBar);
+      const score = document.createElement('div'); score.className = 'score'; score.textContent = finalTeacher[d.id].toFixed(1);
+      row.appendChild(nm); row.appendChild(bars); row.appendChild(score);
+      s1.appendChild(row);
     });
-    c.appendChild(strengths);
+    const lg = document.createElement('div'); lg.className = 'legend-row';
+    const l1 = document.createElement('span');
+    const d1 = document.createElement('span'); d1.className = 'dot'; d1.style.background = 'var(--forest)';
+    l1.appendChild(d1); l1.appendChild(document.createTextNode(' Teacher group average'));
+    const l2 = document.createElement('span');
+    const d2 = document.createElement('span'); d2.className = 'dot'; d2.style.background = 'var(--navy)'; d2.style.opacity = '0.75';
+    l2.appendChild(d2); l2.appendChild(document.createTextNode(' Self-rating'));
+    lg.appendChild(l1); lg.appendChild(l2);
+    s1.appendChild(lg);
+    c.appendChild(s1);
 
-    // Growth
-    const growth = document.createElement('div'); growth.className = 'section-block';
-    const gh = document.createElement('h2'); gh.textContent = 'Where to grow'; growth.appendChild(gh);
-    [
-      { t: 'Receiving hard feedback', d: 'A pattern across several responses: the team feels your first reaction to critical feedback is defense. They want you to grow from it. You already do eventually; the ask is faster.', q: '"I can see him processing. I just wish I did not have to wait two weeks for him to come back around."' },
-      { t: 'Delegation', d: 'You hold a lot yourself. Two respondents pointed to specific moments where you could have handed off and did not.', q: '"She is the bottleneck because she is too good at everything."' }
-    ].forEach(x => {
-      const card = document.createElement('div'); card.className = 'insight-card';
-      const t = document.createElement('h4'); t.textContent = x.t;
-      const d = document.createElement('p'); d.textContent = x.d;
-      const qt = document.createElement('div'); qt.className = 'quote'; qt.textContent = x.q;
-      card.appendChild(t); card.appendChild(d); card.appendChild(qt);
-      growth.appendChild(card);
-    });
-    c.appendChild(growth);
-
-    // Themes
-    const themes = document.createElement('div'); themes.className = 'section-block';
-    const th = document.createElement('h2'); th.textContent = 'Themes across all answers'; themes.appendChild(th);
-    const tp = document.createElement('div'); tp.className = 'themes';
-    const items = [
-      { t: 'Clarity', s: 'big' },
-      { t: 'Care', s: 'big' },
-      { t: 'Focus', s: 'med' },
-      { t: 'Defensiveness', s: 'med' },
-      { t: 'Vision', s: 'med' },
-      { t: 'Speed', s: '' },
-      { t: 'Trust', s: '' },
-      { t: 'Delegation', s: '' },
-      { t: 'Consistency', s: '' },
-      { t: 'Warmth', s: '' }
+    const s2 = document.createElement('div'); s2.className = 'section-block';
+    const s2h = document.createElement('h2'); s2h.textContent = 'Gap analysis: Johari-style framework'; s2.appendChild(s2h);
+    const s2l = document.createElement('div'); s2l.className = 'lede';
+    s2l.textContent = 'Where your self-rating and your teachers\u2019 average line up or diverge. Confirmed strengths are the ones everyone sees. Blind spots are areas you rate higher than your team does. Hidden strengths are areas the team rates higher than you do.';
+    s2.appendChild(s2l);
+    const johari = document.createElement('div'); johari.className = 'johari';
+    const quads = [
+      { cls: 'strength', label: 'Confirmed strengths', title: 'Mission Stewardship, People Development', body: 'You rated 4.2 on Mission Stewardship, teachers 4.5. You rated 3.9 on People Development, teachers 4.3. Both high, both agreed. These are the landing zones. Protect them.' },
+      { cls: 'blind', label: 'Blind spots', title: 'Direction and Decision-Making', body: 'You rated 4.5, teachers averaged 3.6. A 0.9 point gap. Your team is less clear on school goals than you think. Expect surprise when you read this.' },
+      { cls: 'hidden', label: 'Hidden strengths', title: 'Culture and Trust', body: 'Teachers rated 4.0, you rated 4.3 but underestimated how much your staff feel it. Lean into it. Name it out loud.' },
+      { cls: 'blind', label: 'Development needs', title: 'Teaching and Learning', body: 'Teachers rated 3.9, you rated 4.4. Classroom observation follow-through is the specific gap. The goal is set; the revisit is not.' }
     ];
-    items.forEach(it => {
-      const pill = document.createElement('span'); pill.className = 'theme-pill' + (it.s ? ' ' + it.s : '');
-      pill.textContent = it.t;
-      tp.appendChild(pill);
+    quads.forEach(function(q) {
+      const quad = document.createElement('div'); quad.className = 'quad ' + q.cls;
+      const lab = document.createElement('div'); lab.className = 'label'; lab.textContent = q.label;
+      const h4 = document.createElement('h4'); h4.textContent = q.title;
+      const p = document.createElement('p'); p.textContent = q.body;
+      quad.appendChild(lab); quad.appendChild(h4); quad.appendChild(p);
+      johari.appendChild(quad);
     });
-    themes.appendChild(tp);
-    c.appendChild(themes);
+    s2.appendChild(johari);
+    c.appendChild(s2);
+
+    const s3 = document.createElement('div'); s3.className = 'section-block';
+    const s3h = document.createElement('h2'); s3h.textContent = 'Themes from 25 open-ended answers'; s3.appendChild(s3h);
+    const s3l = document.createElement('div'); s3l.className = 'lede';
+    s3l.textContent = 'Claude synthesized patterns from free-text responses. No individual answer is attributed. Quotes below are lightly paraphrased composites preserving anonymity.';
+    s3.appendChild(s3l);
+    const themes = [
+      { name: 'Cares deeply about the school', count: '11 mentions', q: '"You can feel that this school is his life. He shows up for every event and remembers every kid\u2019s name."' },
+      { name: 'Follows through on instructional coaching', count: '7 mentions', q: '"He told me what to work on in October and actually asked me about it in March. That is rare."' },
+      { name: 'Overcommits, hard to reach sometimes', count: '6 mentions', q: '"I know he is doing a hundred things but sometimes my question sits for a week."' },
+      { name: 'Values-driven decision making', count: '5 mentions', q: '"When the easy thing and the right thing diverge, he picks the right thing. That matters."' }
+    ];
+    themes.forEach(function(t) {
+      const card = document.createElement('div'); card.className = 'theme-card';
+      const hd = document.createElement('div'); hd.className = 'hd';
+      const h4 = document.createElement('h4'); h4.textContent = t.name;
+      const cnt = document.createElement('span'); cnt.className = 'count'; cnt.textContent = t.count;
+      hd.appendChild(h4); hd.appendChild(cnt);
+      const q = document.createElement('div'); q.className = 'quote'; q.textContent = t.q;
+      card.appendChild(hd); card.appendChild(q);
+      s3.appendChild(card);
+    });
+    c.appendChild(s3);
+
+    const s4 = document.createElement('div'); s4.className = 'section-block';
+    const s4h = document.createElement('h2'); s4h.textContent = 'Your Keep / Start / Stop plan'; s4.appendChild(s4h);
+    const s4l = document.createElement('div'); s4l.className = 'lede';
+    s4l.textContent = 'The two to three concrete actions that come out of every Reflect debrief. Written during the 60 to 90 minute facilitated session.';
+    s4.appendChild(s4l);
+    const kss = document.createElement('div'); kss.className = 'kss';
+    const kssItems = [
+      { cls: 'keep', label: 'Keep', text: 'Walking the school every morning and greeting students by name. Your team sees this as mission-in-action.' },
+      { cls: 'start', label: 'Start', text: 'A 10-minute weekly written update to faculty on what you decided and why. This directly addresses the Direction and Decision-Making gap.' },
+      { cls: 'stop', label: 'Stop', text: 'Letting non-urgent staff questions sit past 48 hours. Set an explicit response window and tell the team what it is.' }
+    ];
+    kssItems.forEach(function(k) {
+      const col = document.createElement('div'); col.className = 'kss-col ' + k.cls;
+      const lab = document.createElement('div'); lab.className = 'label'; lab.textContent = k.label;
+      const p = document.createElement('p'); p.textContent = k.text;
+      col.appendChild(lab); col.appendChild(p);
+      kss.appendChild(col);
+    });
+    s4.appendChild(kss);
+    c.appendChild(s4);
 
     const actions = document.createElement('div'); actions.className = 'actions-row';
-    const restart = document.createElement('button'); restart.className = 'primary'; restart.textContent = 'Take the survey again';
-    restart.addEventListener('click', () => { for (let i = 0; i < answers.length; i++) answers[i] = null; idx = 0; renderIntro(); });
-    const back = document.createElement('button'); back.textContent = 'Back to portfolio';
-    back.addEventListener('click', () => { window.location.href = '../../index.html'; });
+    const restart = document.createElement('button'); restart.type = 'button'; restart.className = 'primary'; restart.textContent = 'Take the reflection again';
+    restart.addEventListener('click', function() { for (let i = 0; i < answers.length; i++) answers[i] = null; idx = 0; renderIntro(); });
+    const back = document.createElement('button'); back.type = 'button'; back.textContent = 'Back to portfolio';
+    back.addEventListener('click', function() { window.location.href = '../../index.html'; });
     actions.appendChild(restart); actions.appendChild(back);
     c.appendChild(actions);
 
+    const fn = document.createElement('div'); fn.className = 'footnote';
+    fn.textContent = 'The full pilot report is 12 to 15 pages and includes Cronbach alpha per domain, Cannot Observe rates per item, the Jewish day school Identity Module (Domain 6b), and a facilitation guide for the live debrief.';
+    c.appendChild(fn);
+
     screen.appendChild(c);
   }
-
-  function averageScale(i) {
-    // Weighted average: user's answer counts as 1 of 12, 11 pre-filled fake responses
-    const userAns = answers[i] || 4;
-    const fakeAverages = [4.4, 4.2, 3.9]; // dimension baselines
-    return ((userAns + fakeAverages[i] * 11) / 12);
-  }
-
-  function buildRadar(dims) {
-    const svgNS = 'http://www.w3.org/2000/svg';
-    const svg = document.createElementNS(svgNS, 'svg');
-    svg.setAttribute('class', 'radar');
-    const size = 320;
-    svg.setAttribute('viewBox', '0 0 ' + size + ' ' + size);
-    svg.setAttribute('width', size);
-    svg.setAttribute('height', size);
-    const cx = size / 2, cy = size / 2;
-    const R = 110;
-    const n = dims.length;
-
-    // Concentric grid
-    [0.2, 0.4, 0.6, 0.8, 1].forEach(f => {
-      const pts = [];
-      for (let i = 0; i < n; i++) {
-        const a = (Math.PI * 2 * i / n) - Math.PI / 2;
-        pts.push((cx + Math.cos(a) * R * f) + ',' + (cy + Math.sin(a) * R * f));
-      }
-      const poly = document.createElementNS(svgNS, 'polygon');
-      poly.setAttribute('points', pts.join(' '));
-      poly.setAttribute('fill', 'none');
-      poly.setAttribute('stroke', '#d7e4da');
-      poly.setAttribute('stroke-width', '1');
-      svg.appendChild(poly);
-    });
-
-    // Axes + labels
-    dims.forEach((d, i) => {
-      const a = (Math.PI * 2 * i / n) - Math.PI / 2;
-      const x = cx + Math.cos(a) * R;
-      const y = cy + Math.sin(a) * R;
-      const line = document.createElementNS(svgNS, 'line');
-      line.setAttribute('x1', cx); line.setAttribute('y1', cy);
-      line.setAttribute('x2', x); line.setAttribute('y2', y);
-      line.setAttribute('stroke', '#d7e4da');
-      line.setAttribute('stroke-width', '1');
-      svg.appendChild(line);
-
-      const lx = cx + Math.cos(a) * (R + 24);
-      const ly = cy + Math.sin(a) * (R + 24);
-      const text = document.createElementNS(svgNS, 'text');
-      text.setAttribute('x', lx); text.setAttribute('y', ly);
-      text.setAttribute('fill', '#424245');
-      text.setAttribute('font-size', '12');
-      text.setAttribute('font-weight', '600');
-      text.setAttribute('font-family', 'Montserrat, sans-serif');
-      text.setAttribute('text-anchor', 'middle');
-      text.setAttribute('dominant-baseline', 'middle');
-      text.textContent = d.label;
-      svg.appendChild(text);
-    });
-
-    // Data polygon
-    const pts = [];
-    dims.forEach((d, i) => {
-      const a = (Math.PI * 2 * i / n) - Math.PI / 2;
-      const r = (d.value / 5) * R;
-      pts.push((cx + Math.cos(a) * r) + ',' + (cy + Math.sin(a) * r));
-    });
-    const data = document.createElementNS(svgNS, 'polygon');
-    data.setAttribute('points', pts.join(' '));
-    data.setAttribute('fill', 'rgba(16, 101, 60, 0.18)');
-    data.setAttribute('stroke', '#10653c');
-    data.setAttribute('stroke-width', '2.5');
-    data.setAttribute('stroke-linejoin', 'round');
-    svg.appendChild(data);
-
-    // Data points
-    dims.forEach((d, i) => {
-      const a = (Math.PI * 2 * i / n) - Math.PI / 2;
-      const r = (d.value / 5) * R;
-      const dot = document.createElementNS(svgNS, 'circle');
-      dot.setAttribute('cx', cx + Math.cos(a) * r);
-      dot.setAttribute('cy', cy + Math.sin(a) * r);
-      dot.setAttribute('r', 4);
-      dot.setAttribute('fill', '#10653c');
-      svg.appendChild(dot);
-    });
-
-    return svg;
-  }
-
-  function clear() { while (screen.firstChild) screen.removeChild(screen.firstChild); }
 
   renderIntro();
 })();

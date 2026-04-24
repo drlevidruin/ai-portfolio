@@ -62,6 +62,15 @@
   .bubble.typing span:nth-child(2) { animation-delay: 0.15s; }
   .bubble.typing span:nth-child(3) { animation-delay: 0.3s; }
   @keyframes pulse { 0%, 60%, 100% { opacity: 0.25; } 30% { opacity: 1; } }
+  .bubble.confirm-card { background: #fff; padding: 12px 14px; }
+  .bubble.confirm-card .title { font-weight: 700; font-size: 12.5px; color: var(--forest-dark); margin-bottom: 6px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .bubble.confirm-card .detail { font-size: 13px; color: #111; margin-bottom: 10px; line-height: 1.45; }
+  .bubble.confirm-card .detail strong { font-weight: 700; }
+  .bubble.confirm-card .buttons { display: flex; gap: 6px; padding-top: 8px; border-top: 1px solid #eee; }
+  .bubble.confirm-card .btn { flex: 1; padding: 7px 10px; background: white; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; color: var(--wa-teal); }
+  .bubble.confirm-card .btn:hover { background: #f0f9f6; }
+  .bubble.confirm-card .btn.no { color: #888; }
+  .bubble.confirm-card .btn.no:hover { background: #f5f5f5; }
   .wa-input { padding: 8px; background: #f0f0f0; display: flex; gap: 8px; align-items: center; }
   .wa-input input { flex: 1; border: none; border-radius: 22px; padding: 10px 14px; font-family: inherit; font-size: 14px; outline: none; background: white; }
   .wa-input button { background: var(--wa-teal); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 16px; font-family: inherit; display: flex; align-items: center; justify-content: center; }
@@ -69,37 +78,44 @@
 
   .panel { background: var(--white); border: 1px solid var(--line-soft); border-radius: 16px; padding: 24px; }
   .panel h3 { font-size: 18px; margin-bottom: 4px; }
-  .panel .panel-sub { font-size: 13px; color: var(--text-light); margin-bottom: 20px; }
+  .panel .panel-sub { font-size: 13px; color: var(--text-light); margin-bottom: 20px; line-height: 1.5; }
 
   .suggestion-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
   .sugg { background: var(--sage-light); border: 1px solid var(--line); color: var(--forest-dark); font-size: 12.5px; font-weight: 600; padding: 8px 12px; border-radius: 999px; cursor: pointer; font-family: inherit; transition: background 0.15s ease; }
   .sugg:hover { background: var(--forest-soft); }
 
-  .stage-box { border: 1px dashed var(--line); border-radius: 12px; padding: 18px; margin-bottom: 14px; background: #fafbfa; transition: all 0.2s ease; }
-  .stage-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .stage-head .step { width: 24px; height: 24px; border-radius: 6px; background: var(--sage-light); color: var(--forest); font-weight: 800; font-size: 12px; display: flex; align-items: center; justify-content: center; }
-  .stage-head .label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); }
+  .stage-box { border: 1px dashed var(--line); border-radius: 12px; padding: 14px 18px; margin-bottom: 10px; background: #fafbfa; transition: all 0.2s ease; }
+  .stage-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .stage-head .step { width: 22px; height: 22px; border-radius: 6px; background: var(--sage-light); color: var(--forest); font-weight: 800; font-size: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .stage-head .label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); }
   .stage-box.active .stage-head .step { background: var(--forest); color: white; }
   .stage-box.active { background: white; border-style: solid; border-color: var(--forest); }
-  .stage-body { font-size: 14px; color: var(--text-body); line-height: 1.5; }
-  .stage-body code { background: #1d1d1f; color: #b7e2c6; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: 'SF Mono', Menlo, monospace; }
+  .stage-box.done { background: #f5faf2; border-style: solid; border-color: var(--forest-soft); }
+  .stage-box.done .stage-head .step { background: var(--forest); color: white; }
+  .stage-box.done .stage-head .step::before { content: "\2713"; font-size: 12px; }
+  .stage-box.done .stage-head .step .ns { display: none; }
+  .stage-body { font-size: 13px; color: var(--text-body); line-height: 1.5; }
+  .stage-body code { background: #1d1d1f; color: #b7e2c6; padding: 1px 5px; border-radius: 3px; font-size: 11px; font-family: 'SF Mono', Menlo, monospace; }
   .stage-body .user-quote { font-style: normal; }
   .stage-body .user-quote b { color: var(--text-dark); font-weight: 700; }
-  .stage-body .sub-note { margin-top: 6px; font-size: 12px; color: var(--text-light); }
+  .stage-body .sub-note { margin-top: 5px; font-size: 11.5px; color: var(--text-light); }
 
-  .result-card { margin-top: 4px; padding: 16px; border-radius: 10px; background: var(--sage-light); border: 1px solid var(--forest-soft); }
-  .result-card .kind { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--forest-dark); }
-  .result-card .detail { margin-top: 6px; font-size: 14px; color: var(--text-dark); font-weight: 500; }
-  .result-card .flow { margin-top: 12px; font-size: 13px; color: var(--text-body); line-height: 1.55; }
-  .result-card .flow code { background: #1d1d1f; color: #b7e2c6; padding: 2px 6px; border-radius: 4px; font-size: 11.5px; font-family: 'SF Mono', Menlo, monospace; }
+  .result-card { margin-top: 2px; padding: 12px 14px; border-radius: 8px; background: var(--sage-light); border: 1px solid var(--forest-soft); }
+  .result-card .kind { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--forest-dark); }
+  .result-card .detail { margin-top: 4px; font-size: 13px; color: var(--text-dark); font-weight: 500; }
+  .result-card .flow { margin-top: 8px; font-size: 12px; color: var(--text-body); line-height: 1.5; }
+  .result-card .flow code { background: #1d1d1f; color: #b7e2c6; padding: 1px 5px; border-radius: 3px; font-size: 10.5px; font-family: 'SF Mono', Menlo, monospace; }
   .result-card .flow b { color: var(--forest-dark); font-weight: 700; }
 
-  .stat-row2 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--line-soft); }
-  .sr2 .n { font-size: 20px; font-weight: 800; color: var(--forest); letter-spacing: -0.02em; }
-  .sr2 .l { font-size: 11px; color: var(--text-body); margin-top: 2px; font-weight: 500; }
+  .stat-row2 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line-soft); }
+  .sr2 .n { font-size: 19px; font-weight: 800; color: var(--forest); letter-spacing: -0.02em; }
+  .sr2 .l { font-size: 10.5px; color: var(--text-body); margin-top: 2px; font-weight: 500; }
 
-  .reset-btn { margin-top: 18px; background: transparent; border: 1px solid var(--line); color: var(--forest); font-size: 12.5px; font-weight: 600; padding: 8px 14px; border-radius: 999px; cursor: pointer; font-family: inherit; }
+  .reset-btn { margin-top: 14px; background: transparent; border: 1px solid var(--line); color: var(--forest); font-size: 12px; font-weight: 600; padding: 7px 13px; border-radius: 999px; cursor: pointer; font-family: inherit; }
   .reset-btn:hover { background: var(--sage-light); }
+
+  .real-note { margin-top: 16px; padding: 10px 14px; background: rgba(16,101,60,0.05); border-left: 3px solid var(--forest); border-radius: 6px; font-size: 11.5px; color: var(--text-body); line-height: 1.55; }
+  .real-note b { color: var(--forest-dark); font-weight: 700; }
 
   @media (max-width: 960px) {
     .stage { grid-template-columns: 1fr; }
@@ -118,8 +134,8 @@
 <div class="wrap">
   <div class="header">
     <div class="eyebrow">Flagship demo</div>
-    <h1>Text the school. The bot routes it.</h1>
-    <p>In real life, staff at Pardes text the school WhatsApp number. Claude reads the message, decides what kind of request it is (time-off, supply order, absence, general question), and routes it to the right place automatically. This is a safe-data simulation of that exact flow. Type a message below, or tap a suggestion.</p>
+    <h1>Text the school. Claude confirms. Sheets get written.</h1>
+    <p>Pardes staff (about 25 teachers, rabbis, and admin) text the school WhatsApp number. V1 handles two intents: <strong>time-off requests</strong> (piped into the existing SIS) and <strong>supply requests</strong> (logged to a sheet plus emailed to the office). Claude extracts the details, sends back a confirmation card, and nothing gets written until staff tap "Yes, submit." This is a simulation of that exact flow.</p>
   </div>
 
   <div class="stage">
@@ -143,38 +159,47 @@
     </div>
 
     <div class="panel">
-      <h3>What Claude is doing under the hood</h3>
-      <div class="panel-sub">Every message the staff sends goes through this exact flow in the real bot.</div>
+      <h3>What the system is doing</h3>
+      <div class="panel-sub">Every message goes through this exact 4-stage flow. Meta requires a 200 OK within 10 seconds, so a Cloudflare Worker sits in front and Apps Script processes asynchronously on a 1-minute trigger.</div>
 
       <div class="suggestion-row">
-        <button type="button" class="sugg" data-msg="I need tomorrow off, I have a doctor appointment">Request time off</button>
-        <button type="button" class="sugg" data-msg="Can we order more staplers for the office?">Order supplies</button>
-        <button type="button" class="sugg" data-msg="What time does school end on Friday?">Ask a question</button>
-        <button type="button" class="sugg" data-msg="My daughter is sick today, she will not be at school">Report absence</button>
+        <button type="button" class="sugg" data-msg="I need to take tomorrow off, I have a doctor appointment">Time off tomorrow</button>
+        <button type="button" class="sugg" data-msg="Can we order more whiteboard markers for 3rd grade?">Order markers</button>
+        <button type="button" class="sugg" data-msg="Taking Friday as a personal day">Personal day Friday</button>
+        <button type="button" class="sugg" data-msg="We need 3 boxes of copy paper for the office">Order copy paper</button>
       </div>
 
       <div class="stage-box" id="stage1">
-        <div class="stage-head"><div class="step">1</div><div class="label">Message received</div></div>
+        <div class="stage-head"><div class="step"><span class="ns">1</span></div><div class="label">Meta webhook, Cloudflare Worker</div></div>
         <div class="stage-body" id="stage1Body">Waiting for a message.</div>
       </div>
 
       <div class="stage-box" id="stage2">
-        <div class="stage-head"><div class="step">2</div><div class="label">Claude classifies intent</div></div>
+        <div class="stage-head"><div class="step"><span class="ns">2</span></div><div class="label">Claude classifies + extracts</div></div>
         <div class="stage-body" id="stage2Body"></div>
       </div>
 
       <div class="stage-box" id="stage3">
-        <div class="stage-head"><div class="step">3</div><div class="label">Automatic routing</div></div>
-        <div class="stage-body" id="stage3Body">Based on the intent, the bot either files a time-off request into the SIS, logs a supply order to the office sheet, records an absence, or replies with the answer.</div>
+        <div class="stage-head"><div class="step"><span class="ns">3</span></div><div class="label">Confirmation card sent</div></div>
+        <div class="stage-body" id="stage3Body">Waiting.</div>
+      </div>
+
+      <div class="stage-box" id="stage4">
+        <div class="stage-head"><div class="step"><span class="ns">4</span></div><div class="label">Routed and saved</div></div>
+        <div class="stage-body" id="stage4Body">Nothing is written until staff tap "Yes, submit" on the card.</div>
       </div>
 
       <div class="stat-row2">
         <div class="sr2"><div class="n" id="msgCount">0</div><div class="l">Messages routed</div></div>
         <div class="sr2"><div class="n" id="claudeCost">$0.00</div><div class="l">Claude spend</div></div>
-        <div class="sr2"><div class="n" id="timeSaved">0 min</div><div class="l">Staff time saved</div></div>
+        <div class="sr2"><div class="n" id="timeSaved">0 min</div><div class="l">Office time saved</div></div>
       </div>
 
       <button type="button" class="reset-btn" id="resetBtn">Reset demo</button>
+
+      <div class="real-note">
+        <b>Real-world details:</b> Model is Claude Haiku 4.5 at roughly $0.0017 per message based on observed usage. The Cloudflare Worker verifies Meta's HMAC-SHA256 signature and returns 200 to Meta via <code>event.waitUntil()</code>. Apps Script checks a <code>proxy_token</code> before doing any work. Messages are dedup'd by <code>wa_message_id</code> in the <code>Message_Queue</code> sheet. Confirmation cards include a nonce so double-taps cannot double-submit.
+      </div>
     </div>
   </div>
 </div>
@@ -187,9 +212,11 @@
   const stage1 = document.getElementById('stage1');
   const stage2 = document.getElementById('stage2');
   const stage3 = document.getElementById('stage3');
+  const stage4 = document.getElementById('stage4');
   const stage1Body = document.getElementById('stage1Body');
   const stage2Body = document.getElementById('stage2Body');
   const stage3Body = document.getElementById('stage3Body');
+  const stage4Body = document.getElementById('stage4Body');
   const msgCount = document.getElementById('msgCount');
   const claudeCost = document.getElementById('claudeCost');
   const timeSaved = document.getElementById('timeSaved');
@@ -197,16 +224,13 @@
   const suggBtns = document.querySelectorAll('.sugg');
 
   let count = 0;
+  let costCount = 0; // each full flow = 2 Claude calls (extract, confirm generate)
 
   function now() {
     const d = new Date();
     return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
   }
-
-  // Remove all children safely
-  function clearNode(node) {
-    while (node.firstChild) node.removeChild(node.firstChild);
-  }
+  function clearNode(node) { while (node.firstChild) node.removeChild(node.firstChild); }
 
   function addBubble(text, who) {
     const b = document.createElement('div');
@@ -219,6 +243,49 @@
     log.appendChild(b);
     log.scrollTop = log.scrollHeight;
     return b;
+  }
+
+  function addConfirmCard(intent, extraction, onYes, onNo) {
+    const b = document.createElement('div');
+    b.className = 'bubble them confirm-card';
+    const title = document.createElement('div'); title.className = 'title';
+    title.textContent = intent === 'pto' ? 'Time-off request' : 'Supply request';
+    const detail = document.createElement('div'); detail.className = 'detail';
+    if (intent === 'pto') {
+      detail.appendChild(document.createTextNode('Filing for '));
+      const s = document.createElement('strong');
+      s.textContent = extraction.day || 'a day off';
+      detail.appendChild(s);
+      detail.appendChild(document.createTextNode(extraction.reason ? ' for ' + extraction.reason + '.' : '.'));
+    } else {
+      detail.appendChild(document.createTextNode('Ordering '));
+      const s = document.createElement('strong');
+      s.textContent = extraction.item || 'supplies';
+      detail.appendChild(s);
+      if (extraction.where) {
+        detail.appendChild(document.createTextNode(' for ' + extraction.where + '.'));
+      } else {
+        detail.appendChild(document.createTextNode('.'));
+      }
+    }
+    const buttons = document.createElement('div'); buttons.className = 'buttons';
+    const yes = document.createElement('button'); yes.type = 'button'; yes.className = 'btn yes';
+    yes.textContent = 'Yes, submit';
+    const no = document.createElement('button'); no.type = 'button'; no.className = 'btn no';
+    no.textContent = 'No, cancel';
+    yes.addEventListener('click', function() {
+      yes.disabled = true; no.disabled = true; yes.style.background = '#f0f9f6'; yes.style.fontWeight = 700;
+      onYes();
+    });
+    no.addEventListener('click', function() {
+      yes.disabled = true; no.disabled = true; no.style.background = '#f5f5f5'; no.style.fontWeight = 700;
+      onNo();
+    });
+    buttons.appendChild(yes); buttons.appendChild(no);
+    const ts = document.createElement('span'); ts.className = 'time'; ts.textContent = now();
+    b.appendChild(title); b.appendChild(detail); b.appendChild(buttons); b.appendChild(ts);
+    log.appendChild(b);
+    log.scrollTop = log.scrollHeight;
   }
 
   function showTyping() {
@@ -234,194 +301,245 @@
     if (t) t.remove();
   }
 
+  function setStageState(el, state) {
+    el.classList.remove('active', 'done');
+    if (state) el.classList.add(state);
+  }
+
   function clearActive() {
-    [stage1, stage2, stage3].forEach(s => s.classList.remove('active'));
+    [stage1, stage2, stage3, stage4].forEach(function(s) { s.classList.remove('active'); });
+  }
+  function resetStages() {
+    [stage1, stage2, stage3, stage4].forEach(function(s) { s.classList.remove('active', 'done'); });
   }
 
   function classify(msg) {
     const m = msg.toLowerCase();
-    if (/\b(off|vacation|pto|personal day|taking .* (off|day)|out (on|tomorrow|today|monday|tuesday|wednesday|thursday|friday)|doctor( |')s? appointment|day off)\b/.test(m)) return 'pto';
-    if (/\b(sick|absent|not .* (coming|at school|in today)|will .* miss|stay(ing)? home|my (son|daughter|child|kid))\b/.test(m)) return 'absence';
-    if (/\b(order|need more|buy|supplies?|staplers?|paper|pens?|markers?|chairs?|glue|crayons?|ink|toner|printer|snacks?|sanitizer)\b/.test(m)) return 'supply';
-    return 'general';
+    if (/\b(off|vacation|pto|personal day|taking .* (off|day)|out (on|tomorrow|today|monday|tuesday|wednesday|thursday|friday)|doctor( |')s? appointment|day off|sick day)\b/.test(m)) return 'pto';
+    if (/\b(order|need more|buy|supplies?|staplers?|paper|pens?|markers?|chairs?|glue|crayons?|ink|toner|printer|snacks?|sanitizer|boxes?|copy paper|whiteboard|tissues?)\b/.test(m)) return 'supply';
+    return 'unknown';
+  }
+
+  function extract(msg, intent) {
+    const m = msg.toLowerCase();
+    if (intent === 'pto') {
+      let day = null;
+      const dayMatch = m.match(/\b(tomorrow|today|monday|tuesday|wednesday|thursday|friday|this (morning|afternoon))\b/);
+      if (dayMatch) day = dayMatch[0].charAt(0).toUpperCase() + dayMatch[0].slice(1);
+      let reason = null;
+      if (/doctor|appointment/.test(m)) reason = 'a doctor appointment';
+      else if (/personal/.test(m)) reason = 'personal reasons';
+      else if (/sick/.test(m)) reason = 'illness';
+      return { day: day, reason: reason };
+    }
+    if (intent === 'supply') {
+      let item = null;
+      const itemMatch = msg.match(/(staplers?|copy paper|whiteboard markers?|markers?|pens?|glue|ink|toner|crayons?|snacks?|sanitizer|boxes? of [a-z]+)/i);
+      if (itemMatch) item = itemMatch[0].toLowerCase();
+      let where = null;
+      const whereMatch = msg.match(/(for|in) (the )?([^,.?!]+)/i);
+      if (whereMatch && whereMatch[3] && whereMatch[3].length < 40) where = whereMatch[3].trim();
+      return { item: item, where: where };
+    }
+    return {};
   }
 
   const ROUTES = {
     pto: {
       kind: 'Time-off request',
-      detail: 'Filed to the SIS automatically',
-      flowHtml: (doc) => {
+      detail: 'Filed to SIS via submitPTORequest()',
+      flowHtml: function(doc) {
         const f = doc.createDocumentFragment();
-        f.appendChild(doc.createTextNode('Claude returned '));
-        const c = doc.createElement('code'); c.textContent = 'pto'; f.appendChild(c);
-        f.appendChild(doc.createTextNode(' then the bot authenticated against the SIS service token, created a new row in '));
-        const b = doc.createElement('b'); b.textContent = 'staff_pto'; f.appendChild(b);
-        f.appendChild(doc.createTextNode(', and emailed the supervisor. No human re-typing.'));
+        f.appendChild(doc.createTextNode('Calls the existing SIS function '));
+        const c = doc.createElement('code'); c.textContent = 'submitPTORequest()'; f.appendChild(c);
+        f.appendChild(doc.createTextNode(' with a service token. Same sheet, same approver, same approve/deny email flow staff already know.'));
         return f;
       },
-      reply: 'Got it. Your time-off request has been filed in the SIS. Your supervisor will be notified. Feel better or enjoy your appointment.'
+      reply: 'Done. Your time-off request was filed in the SIS. Your supervisor will get the usual approve/deny email.'
     },
     supply: {
       kind: 'Supply request',
-      detail: 'Logged to office sheet, office emailed',
-      flowHtml: (doc) => {
+      detail: 'Logged to Supply_Requests sheet, office emailed',
+      flowHtml: function(doc) {
         const f = doc.createDocumentFragment();
-        f.appendChild(doc.createTextNode('Claude returned '));
-        const c = doc.createElement('code'); c.textContent = 'supply'; f.appendChild(c);
-        f.appendChild(doc.createTextNode(' then added a new row in the '));
-        const b = doc.createElement('b'); b.textContent = 'supply_requests'; f.appendChild(b);
-        f.appendChild(doc.createTextNode(' sheet. The office got a digest email with a one-click approve link.'));
+        f.appendChild(doc.createTextNode('Writes a new row in the '));
+        const c = doc.createElement('code'); c.textContent = 'Supply_Requests'; f.appendChild(c);
+        f.appendChild(doc.createTextNode(' sheet and emails '));
+        const b = doc.createElement('b'); b.textContent = 'office@pardesdayschool.org'; f.appendChild(b);
+        f.appendChild(doc.createTextNode('.'));
         return f;
       },
-      reply: 'Supply request logged. The office just got an email and will order it with this week\'s purchase order.'
-    },
-    absence: {
-      kind: 'Student absence',
-      detail: 'Marked in the SIS attendance system',
-      flowHtml: (doc) => {
-        const f = doc.createDocumentFragment();
-        f.appendChild(doc.createTextNode('Claude returned '));
-        const c = doc.createElement('code'); c.textContent = 'absence'; f.appendChild(c);
-        f.appendChild(doc.createTextNode(' then matched the parent phone to the student record and marked absent in '));
-        const b = doc.createElement('b'); b.textContent = 'attendance'; f.appendChild(b);
-        f.appendChild(doc.createTextNode('. The classroom teacher was notified.'));
-        return f;
-      },
-      reply: 'Thank you. Your child has been marked absent for today. The teacher has been notified. We hope they feel better soon.'
-    },
-    general: {
-      kind: 'General question',
-      detail: 'Forwarded to the office with a draft reply',
-      flowHtml: (doc) => {
-        const f = doc.createDocumentFragment();
-        f.appendChild(doc.createTextNode('Claude returned '));
-        const c = doc.createElement('code'); c.textContent = 'general'; f.appendChild(c);
-        f.appendChild(doc.createTextNode(' then logged the question in '));
-        const b = doc.createElement('b'); b.textContent = 'office_inbox'; f.appendChild(b);
-        f.appendChild(doc.createTextNode('. A draft answer was generated for the office to approve and send.'));
-        return f;
-      },
-      reply: 'I have forwarded your question to the office. You will hear back shortly.'
+      reply: 'Done. Logged to the supply sheet and the office was notified. Expect it in the next weekly order.'
     }
   };
 
   function renderStage1(msg) {
     clearNode(stage1Body);
-    const q = document.createElement('div');
-    q.className = 'user-quote';
+    const q = document.createElement('div'); q.className = 'user-quote';
     q.appendChild(document.createTextNode('"'));
     const b = document.createElement('b');
     b.textContent = msg;
     q.appendChild(b);
     q.appendChild(document.createTextNode('"'));
-    const note = document.createElement('div');
-    note.className = 'sub-note';
-    note.textContent = 'Sender identified, sent to Claude for intent classification.';
+    const note = document.createElement('div'); note.className = 'sub-note';
+    note.textContent = 'Signature verified by Worker, appended to Message_Queue with wa_message_id. Worker returns 200 to Meta immediately.';
     stage1Body.appendChild(q);
     stage1Body.appendChild(note);
   }
 
   function renderStage2Thinking() {
     clearNode(stage2Body);
-    stage2Body.appendChild(document.createTextNode('Claude is classifying. Model returns one of '));
-    ['pto', 'supply', 'absence', 'general'].forEach((intent, i) => {
-      const c = document.createElement('code');
-      c.textContent = intent;
+    stage2Body.appendChild(document.createTextNode('1-minute trigger picked up the message. Roster matched by phone. Claude Haiku 4.5 returns intent '));
+    ['pto', 'supply', 'unknown'].forEach(function(intent, i) {
+      const c = document.createElement('code'); c.textContent = intent;
       stage2Body.appendChild(c);
-      if (i < 3) stage2Body.appendChild(document.createTextNode(', '));
+      if (i < 2) stage2Body.appendChild(document.createTextNode(' | '));
     });
-    stage2Body.appendChild(document.createTextNode('.'));
+    stage2Body.appendChild(document.createTextNode(' plus extracted fields.'));
   }
 
-  function renderStage2Result(intent) {
+  function renderStage2Result(intent, extraction) {
     clearNode(stage2Body);
-    stage2Body.appendChild(document.createTextNode('Classification: '));
-    const c = document.createElement('code'); c.textContent = intent; stage2Body.appendChild(c);
-    stage2Body.appendChild(document.createTextNode(' \u00B7 confidence ~0.96 \u00B7 cost: '));
-    const s = document.createElement('strong'); s.textContent = '$0.0017'; stage2Body.appendChild(s);
-  }
-
-  function renderStage2Idle() {
-    clearNode(stage2Body);
-    stage2Body.appendChild(document.createTextNode('Claude sees the message and returns one of four intents: '));
-    ['pto', 'supply', 'absence', 'general'].forEach((intent, i) => {
-      const c = document.createElement('code');
-      c.textContent = intent;
-      stage2Body.appendChild(c);
-      if (i < 3) stage2Body.appendChild(document.createTextNode(', '));
+    const t1 = document.createTextNode('Classification: ');
+    const c = document.createElement('code'); c.textContent = intent;
+    stage2Body.appendChild(t1); stage2Body.appendChild(c);
+    stage2Body.appendChild(document.createTextNode(' \u00B7 fields: '));
+    const fields = intent === 'pto'
+      ? [{ k: 'day', v: extraction.day || 'null' }, { k: 'reason', v: extraction.reason || 'null' }]
+      : intent === 'supply'
+      ? [{ k: 'item', v: extraction.item || 'null' }, { k: 'where', v: extraction.where || 'null' }]
+      : [{ k: 'fallback', v: 'unknown' }];
+    fields.forEach(function(f, i) {
+      const code = document.createElement('code'); code.textContent = f.k + '=' + f.v;
+      stage2Body.appendChild(code);
+      if (i < fields.length - 1) stage2Body.appendChild(document.createTextNode(' '));
     });
-    stage2Body.appendChild(document.createTextNode('. Cost: about '));
-    const s = document.createElement('strong'); s.textContent = '$0.0017'; stage2Body.appendChild(s);
-    stage2Body.appendChild(document.createTextNode(' per message.'));
+    const costNote = document.createElement('div'); costNote.className = 'sub-note';
+    costNote.textContent = 'Cost: about $0.0017 per classification.';
+    stage2Body.appendChild(costNote);
   }
 
-  function renderStage3(intent) {
-    const r = ROUTES[intent];
+  function renderStage3Sent() {
     clearNode(stage3Body);
-    const card = document.createElement('div');
-    card.className = 'result-card';
+    stage3Body.textContent = 'Confirmation card sent via WhatsApp Cloud API with a nonce. Nothing is saved until the staffer taps Yes. Tap a button in the phone to continue.';
+  }
+  function renderStage3Cancelled() {
+    clearNode(stage3Body);
+    stage3Body.textContent = 'Staff tapped No. Message dropped. No data written anywhere.';
+  }
+  function renderStage3Confirmed() {
+    clearNode(stage3Body);
+    stage3Body.textContent = 'Staff tapped Yes. Nonce validated. Ready to save.';
+  }
+
+  function renderStage4(intent) {
+    const r = ROUTES[intent];
+    clearNode(stage4Body);
+    const card = document.createElement('div'); card.className = 'result-card';
     const kind = document.createElement('div'); kind.className = 'kind'; kind.textContent = r.kind;
     const detail = document.createElement('div'); detail.className = 'detail'; detail.textContent = r.detail;
     const flow = document.createElement('div'); flow.className = 'flow';
     flow.appendChild(r.flowHtml(document));
-    card.appendChild(kind);
-    card.appendChild(detail);
-    card.appendChild(flow);
-    stage3Body.appendChild(card);
+    card.appendChild(kind); card.appendChild(detail); card.appendChild(flow);
+    stage4Body.appendChild(card);
+  }
+  function renderStage4Cancelled() {
+    clearNode(stage4Body);
+    stage4Body.textContent = 'Cancelled. Nothing written.';
   }
 
-  function renderStage3Idle() {
-    stage3Body.textContent = 'Based on the intent, the bot either files a time-off request into the SIS, logs a supply order to the office sheet, records an absence, or replies with the answer.';
+  function renderStage2Idle() {
+    clearNode(stage2Body);
+    stage2Body.appendChild(document.createTextNode('Claude Haiku 4.5 returns one of '));
+    ['pto', 'supply', 'unknown'].forEach(function(intent, i) {
+      const c = document.createElement('code'); c.textContent = intent;
+      stage2Body.appendChild(c);
+      if (i < 2) stage2Body.appendChild(document.createTextNode(' | '));
+    });
+    stage2Body.appendChild(document.createTextNode(' plus extracted fields.'));
   }
 
   function updateStats() {
     count++;
     msgCount.textContent = count;
-    claudeCost.textContent = '$' + (count * 0.0017).toFixed(4);
+    costCount += 0.0017; // classify cost only; extraction combined for simplicity
+    claudeCost.textContent = '$' + costCount.toFixed(4);
     timeSaved.textContent = Math.round(count * 3.5) + ' min';
   }
 
-  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+  function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
 
   async function handleMessage(msg) {
     if (!msg || !msg.trim()) return;
     input.value = '';
     sendBtn.disabled = true;
-    clearActive();
+    resetStages();
 
     addBubble(msg, 'me');
     stage1.classList.add('active');
     renderStage1(msg);
 
-    await sleep(600);
+    await sleep(700);
 
-    clearActive();
+    stage1.classList.remove('active'); stage1.classList.add('done');
     stage2.classList.add('active');
     showTyping();
     renderStage2Thinking();
 
-    await sleep(900);
+    await sleep(1100);
 
     const intent = classify(msg);
-    renderStage2Result(intent);
+    if (intent === 'unknown') {
+      removeTyping();
+      renderStage2Result(intent, {});
+      addBubble("Hmm, I didn't recognize that. I can help with time-off requests and supply orders. Can you try that again?", 'them');
+      stage2.classList.remove('active'); stage2.classList.add('done');
+      sendBtn.disabled = false;
+      return;
+    }
+
+    const extraction = extract(msg, intent);
+    renderStage2Result(intent, extraction);
 
     await sleep(400);
+    stage2.classList.remove('active'); stage2.classList.add('done');
 
-    clearActive();
+    // Stage 3: confirmation card
     stage3.classList.add('active');
-    renderStage3(intent);
-
-    await sleep(700);
+    renderStage3Sent();
     removeTyping();
-    addBubble(ROUTES[intent].reply, 'them');
-    updateStats();
-    sendBtn.disabled = false;
+    addConfirmCard(intent, extraction,
+      function onYes() {
+        // User confirmed
+        renderStage3Confirmed();
+        stage3.classList.remove('active'); stage3.classList.add('done');
+        stage4.classList.add('active');
+        renderStage4(intent);
+        setTimeout(function() {
+          addBubble(ROUTES[intent].reply, 'them');
+          updateStats();
+          stage4.classList.remove('active'); stage4.classList.add('done');
+          sendBtn.disabled = false;
+        }, 600);
+      },
+      function onNo() {
+        renderStage3Cancelled();
+        stage3.classList.remove('active'); stage3.classList.add('done');
+        stage4.classList.add('active');
+        renderStage4Cancelled();
+        setTimeout(function() {
+          addBubble('Cancelled. Nothing was saved. Send me a new message when you want to try again.', 'them');
+          stage4.classList.remove('active'); stage4.classList.add('done');
+          sendBtn.disabled = false;
+        }, 500);
+      }
+    );
   }
 
   function addGreeting() {
     const b = document.createElement('div');
     b.className = 'bubble them';
-    b.appendChild(document.createTextNode('Hi! Text me what you need and I will take care of it.'));
+    b.appendChild(document.createTextNode('Hi! Text me a time-off request or a supply order and I will take care of it.'));
     const ts = document.createElement('span');
     ts.className = 'time';
     ts.textContent = '9:00 AM';
@@ -429,22 +547,22 @@
     log.appendChild(b);
   }
 
-  // Init
   renderStage2Idle();
   addGreeting();
 
-  sendBtn.addEventListener('click', () => handleMessage(input.value));
-  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleMessage(input.value); });
-  suggBtns.forEach(b => b.addEventListener('click', () => handleMessage(b.dataset.msg)));
+  sendBtn.addEventListener('click', function() { handleMessage(input.value); });
+  input.addEventListener('keydown', function(e) { if (e.key === 'Enter') handleMessage(input.value); });
+  suggBtns.forEach(function(b) { b.addEventListener('click', function() { handleMessage(b.dataset.msg); }); });
 
-  resetBtn.addEventListener('click', () => {
+  resetBtn.addEventListener('click', function() {
     clearNode(log);
     addGreeting();
-    clearActive();
+    resetStages();
     stage1Body.textContent = 'Waiting for a message.';
     renderStage2Idle();
-    renderStage3Idle();
-    count = 0;
+    stage3Body.textContent = 'Waiting.';
+    stage4Body.textContent = 'Nothing is written until staff tap "Yes, submit" on the card.';
+    count = 0; costCount = 0;
     msgCount.textContent = '0';
     claudeCost.textContent = '$0.00';
     timeSaved.textContent = '0 min';
