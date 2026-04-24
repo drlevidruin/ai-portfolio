@@ -6,13 +6,12 @@
 <title>WhatsApp Bot Demo &middot; AI Inside a Small School</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --forest: #10653c;
     --forest-dark: #0a4a2b;
     --forest-soft: #b7e2c6;
-    --navy: #343e85;
     --cream: #f8f4ed;
     --sage-light: #f0f4ee;
     --white: #ffffff;
@@ -21,552 +20,1659 @@
     --text-light: #86868b;
     --line: rgba(16, 101, 60, 0.14);
     --line-soft: rgba(0, 0, 0, 0.06);
-    --wa-bg: #e5ddd5;
-    --wa-teal: #075e54;
+
+    /* WhatsApp authentic colors */
+    --wa-header: #075e54;
+    --wa-header-light: #128c7e;
+    --wa-chat-bg: #e5ddd5;
+    --wa-bubble-user: #dcf8c6;
+    --wa-bubble-bot: #ffffff;
+    --wa-text: #303030;
+    --wa-meta: #667781;
+    --wa-tick: #4fc3f7;
+    --wa-input-bg: #f0f0f0;
   }
+
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: 'Montserrat', system-ui, -apple-system, sans-serif; background: var(--cream); color: var(--text-body); -webkit-font-smoothing: antialiased; min-height: 100vh; }
-  h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; color: var(--text-dark); margin: 0; letter-spacing: -0.02em; }
-  a { color: var(--forest); text-decoration: none; }
-  .topbar { background: var(--white); border-bottom: 1px solid var(--line-soft); padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
-  .topbar .back { font-size: 13px; font-weight: 600; color: var(--forest); display: inline-flex; align-items: center; gap: 6px; }
-  .topbar .back::before { content: "\2190"; }
-  .topbar .logo { font-family: 'Caveat', cursive; color: var(--forest); font-size: 22px; font-weight: 600; }
-  .topbar .demo-label { font-size: 11px; font-weight: 700; color: var(--forest); letter-spacing: 0.14em; text-transform: uppercase; padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; }
 
-  .wrap { max-width: 1240px; margin: 0 auto; padding: 32px 28px 64px; }
+  body {
+    margin: 0;
+    font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+    background: var(--cream);
+    color: var(--text-body);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
 
-  .header { margin-bottom: 28px; }
-  .header .eyebrow { font-family: 'Caveat', cursive; color: var(--forest); font-size: 24px; font-weight: 600; margin-bottom: 8px; }
-  .header h1 { font-size: clamp(28px, 4vw, 42px); font-weight: 800; }
-  .header p { font-size: 16px; color: var(--text-body); max-width: 72ch; margin: 12px 0 0; line-height: 1.55; }
+  h1, h2, h3, h4 {
+    font-family: 'Montserrat', sans-serif;
+    color: var(--text-dark);
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
 
-  .stage { display: grid; grid-template-columns: 380px 1fr; gap: 32px; align-items: start; margin-top: 24px; }
+  a {
+    color: var(--forest);
+    text-decoration: none;
+  }
 
-  .phone { background: #000; border-radius: 38px; padding: 12px; box-shadow: 0 24px 48px -20px rgba(0,0,0,0.35); width: 380px; justify-self: start; }
-  .phone-notch { height: 24px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 11px; font-weight: 600; }
-  .phone-screen { background: var(--wa-bg); border-radius: 28px; overflow: hidden; height: 600px; display: flex; flex-direction: column; background-image: radial-gradient(circle at 10% 10%, rgba(255,255,255,0.3) 1px, transparent 1px), radial-gradient(circle at 30% 60%, rgba(0,0,0,0.02) 1px, transparent 1px); background-size: 42px 42px; }
-  .wa-header { background: var(--wa-teal); color: white; padding: 12px 14px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; }
-  .wa-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #10653c, #25d366); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 12px; font-family: 'Montserrat', sans-serif; }
-  .wa-title { flex: 1; line-height: 1.2; }
-  .wa-title .name { font-size: 14.5px; font-weight: 600; }
-  .wa-title .status { font-size: 11px; color: rgba(255,255,255,0.75); font-weight: 400; }
-  .wa-log { flex: 1; padding: 14px 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
-  .bubble { max-width: 78%; padding: 8px 11px; border-radius: 10px; line-height: 1.4; word-wrap: break-word; box-shadow: 0 1px 0.5px rgba(0,0,0,0.12); font-size: 13.5px; animation: bubbleIn 0.3s ease; }
-  @keyframes bubbleIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-  .bubble.me { background: #dcf8c6; align-self: flex-end; border-bottom-right-radius: 2px; color: #111; }
-  .bubble.them { background: #fff; align-self: flex-start; border-bottom-left-radius: 2px; color: #111; }
-  .bubble .time { display: block; font-size: 10px; color: #999; margin-top: 2px; text-align: right; }
-  .bubble.typing { display: inline-flex; align-items: center; gap: 4px; padding: 12px 14px; }
-  .bubble.typing span { width: 7px; height: 7px; background: #888; border-radius: 50%; animation: pulse 1.2s infinite; }
-  .bubble.typing span:nth-child(2) { animation-delay: 0.15s; }
-  .bubble.typing span:nth-child(3) { animation-delay: 0.3s; }
-  @keyframes pulse { 0%, 60%, 100% { opacity: 0.25; } 30% { opacity: 1; } }
-  .bubble.confirm-card { background: #fff; padding: 12px 14px; }
-  .bubble.confirm-card .title { font-weight: 700; font-size: 12.5px; color: var(--forest-dark); margin-bottom: 6px; letter-spacing: 0.04em; text-transform: uppercase; }
-  .bubble.confirm-card .detail { font-size: 13px; color: #111; margin-bottom: 10px; line-height: 1.45; }
-  .bubble.confirm-card .detail strong { font-weight: 700; }
-  .bubble.confirm-card .buttons { display: flex; gap: 6px; padding-top: 8px; border-top: 1px solid #eee; }
-  .bubble.confirm-card .btn { flex: 1; padding: 7px 10px; background: white; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; color: var(--wa-teal); }
-  .bubble.confirm-card .btn:hover { background: #f0f9f6; }
-  .bubble.confirm-card .btn.no { color: #888; }
-  .bubble.confirm-card .btn.no:hover { background: #f5f5f5; }
-  .wa-input { padding: 8px; background: #f0f0f0; display: flex; gap: 8px; align-items: center; }
-  .wa-input input { flex: 1; border: none; border-radius: 22px; padding: 10px 14px; font-family: inherit; font-size: 14px; outline: none; background: white; }
-  .wa-input button { background: var(--wa-teal); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 16px; font-family: inherit; display: flex; align-items: center; justify-content: center; }
-  .wa-input button:hover { background: var(--forest-dark); }
+  /* Top nav bar */
+  .topbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
 
-  .panel { background: var(--white); border: 1px solid var(--line-soft); border-radius: 16px; padding: 24px; }
-  .panel h3 { font-size: 18px; margin-bottom: 4px; }
-  .panel .panel-sub { font-size: 13px; color: var(--text-light); margin-bottom: 20px; line-height: 1.5; }
+  .back-link {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--forest);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.15s;
+  }
 
-  .suggestion-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-  .sugg { background: var(--sage-light); border: 1px solid var(--line); color: var(--forest-dark); font-size: 12.5px; font-weight: 600; padding: 8px 12px; border-radius: 999px; cursor: pointer; font-family: inherit; transition: background 0.15s ease; }
-  .sugg:hover { background: var(--forest-soft); }
+  .back-link:hover { color: var(--forest-dark); }
+  .back-link::before { content: '\2190'; font-size: 16px; }
 
-  .stage-box { border: 1px dashed var(--line); border-radius: 12px; padding: 14px 18px; margin-bottom: 10px; background: #fafbfa; transition: all 0.2s ease; }
-  .stage-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-  .stage-head .step { width: 22px; height: 22px; border-radius: 6px; background: var(--sage-light); color: var(--forest); font-weight: 800; font-size: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .stage-head .label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); }
-  .stage-box.active .stage-head .step { background: var(--forest); color: white; }
-  .stage-box.active { background: white; border-style: solid; border-color: var(--forest); }
-  .stage-box.done { background: #f5faf2; border-style: solid; border-color: var(--forest-soft); }
-  .stage-box.done .stage-head .step { background: var(--forest); color: white; }
-  .stage-box.done .stage-head .step::before { content: "\2713"; font-size: 12px; }
-  .stage-box.done .stage-head .step .ns { display: none; }
-  .stage-body { font-size: 13px; color: var(--text-body); line-height: 1.5; }
-  .stage-body code { background: #1d1d1f; color: #b7e2c6; padding: 1px 5px; border-radius: 3px; font-size: 11px; font-family: 'SF Mono', Menlo, monospace; }
-  .stage-body .user-quote { font-style: normal; }
-  .stage-body .user-quote b { color: var(--text-dark); font-weight: 700; }
-  .stage-body .sub-note { margin-top: 5px; font-size: 11.5px; color: var(--text-light); }
+  .topbar-title {
+    font-size: 12px;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+  }
 
-  .result-card { margin-top: 2px; padding: 12px 14px; border-radius: 8px; background: var(--sage-light); border: 1px solid var(--forest-soft); }
-  .result-card .kind { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--forest-dark); }
-  .result-card .detail { margin-top: 4px; font-size: 13px; color: var(--text-dark); font-weight: 500; }
-  .result-card .flow { margin-top: 8px; font-size: 12px; color: var(--text-body); line-height: 1.5; }
-  .result-card .flow code { background: #1d1d1f; color: #b7e2c6; padding: 1px 5px; border-radius: 3px; font-size: 10.5px; font-family: 'SF Mono', Menlo, monospace; }
-  .result-card .flow b { color: var(--forest-dark); font-weight: 700; }
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 56px 24px 28px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
 
-  .stat-row2 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line-soft); }
-  .sr2 .n { font-size: 19px; font-weight: 800; color: var(--forest); letter-spacing: -0.02em; }
-  .sr2 .l { font-size: 10.5px; color: var(--text-body); margin-top: 2px; font-weight: 500; }
+  .hero-eyebrow {
+    display: inline-block;
+    background: var(--forest-soft);
+    color: var(--forest-dark);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 5px 12px;
+    border-radius: 99px;
+    margin-bottom: 18px;
+  }
 
-  .reset-btn { margin-top: 14px; background: transparent; border: 1px solid var(--line); color: var(--forest); font-size: 12px; font-weight: 600; padding: 7px 13px; border-radius: 999px; cursor: pointer; font-family: inherit; }
-  .reset-btn:hover { background: var(--sage-light); }
+  .hero h1 {
+    font-size: clamp(32px, 5vw, 46px);
+    font-weight: 800;
+    color: var(--forest-dark);
+    margin-bottom: 14px;
+  }
 
-  .real-note { margin-top: 16px; padding: 10px 14px; background: rgba(16,101,60,0.05); border-left: 3px solid var(--forest); border-radius: 6px; font-size: 11.5px; color: var(--text-body); line-height: 1.55; }
-  .real-note b { color: var(--forest-dark); font-weight: 700; }
+  .hero p {
+    font-size: 17px;
+    color: var(--text-body);
+    line-height: 1.55;
+    max-width: 560px;
+    margin: 0 auto;
+  }
 
-  @media (max-width: 960px) {
-    .stage { grid-template-columns: 1fr; }
-    .phone { width: 100%; max-width: 360px; margin: 0 auto; justify-self: center; }
+  /* Layout: phone center + side panels */
+  .stage {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 24px 24px 64px;
+    align-items: start;
+  }
+
+  @media (min-width: 1000px) {
+    .stage {
+      grid-template-columns: 1fr auto 1fr;
+      gap: 40px;
+    }
+  }
+
+  /* Side info panels */
+  .side-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .panel-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px 22px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  }
+
+  .panel-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--forest);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .panel-label .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--forest);
+  }
+
+  .panel-label.live .dot {
+    background: #ef4444;
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    animation: pulse 1.6s infinite;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
+    70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+  }
+
+  .panel-card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--text-dark);
+  }
+
+  .panel-card .panel-sub {
+    font-size: 12.5px;
+    color: var(--text-light);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  /* JSON output box */
+  .json-box {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 110px;
+    transition: opacity 0.3s;
+  }
+
+  .json-box.empty {
+    color: #6b6b6b;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .json-key { color: #9cdcfe; }
+  .json-string { color: #ce9178; }
+  .json-number { color: #b5cea8; }
+  .json-boolean { color: #569cd6; }
+  .json-null { color: #569cd6; }
+
+  /* Routing box */
+  .routing-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .routing-item {
+    background: var(--sage-light);
+    border-left: 3px solid var(--forest);
+    padding: 10px 12px;
+    border-radius: 0 6px 6px 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text-body);
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    animation: slideIn 0.4s ease-out;
+  }
+
+  .routing-item.muted {
+    background: #fafafa;
+    border-left-color: #d0d0d0;
+    color: var(--text-light);
+    font-style: italic;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-6px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Cost meter */
+  .cost-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line-soft);
+    font-size: 13px;
+  }
+
+  .cost-row:last-child {
+    border-bottom: 0;
+    padding-top: 12px;
+  }
+
+  .cost-label {
+    color: var(--text-light);
+  }
+
+  .cost-value {
+    font-family: 'SF Mono', Menlo, monospace;
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+
+  .cost-total .cost-value {
+    color: var(--forest);
+    font-size: 16px;
+  }
+
+  /* Phone mockup */
+  .phone-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 12px 0;
+  }
+
+  .phone {
+    width: 360px;
+    max-width: 100%;
+    height: 720px;
+    background: #0a0a0a;
+    border-radius: 44px;
+    padding: 12px;
+    box-shadow:
+      0 30px 60px rgba(0, 0, 0, 0.25),
+      0 8px 16px rgba(0, 0, 0, 0.1),
+      inset 0 0 0 2px #1a1a1a;
+    position: relative;
+  }
+
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    background: var(--wa-chat-bg);
+    border-radius: 34px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Status bar (iOS top) */
+  .status-bar {
+    height: 26px;
+    background: var(--wa-header);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 22px 0 26px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+    position: relative;
+  }
+
+  .status-bar::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 4px;
+    transform: translateX(-50%);
+    width: 96px;
+    height: 18px;
+    background: #0a0a0a;
+    border-radius: 0 0 14px 14px;
+  }
+
+  .status-icons {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    font-size: 10px;
+  }
+
+  /* WhatsApp header */
+  .wa-header {
+    background: var(--wa-header);
+    color: white;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    z-index: 5;
+  }
+
+  .wa-back {
+    color: white;
+    font-size: 22px;
+    width: 22px;
+    text-align: center;
+    opacity: 0.95;
+  }
+
+  .wa-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #25d366, #128c7e);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  .wa-contact {
+    flex: 1;
+    line-height: 1.2;
+  }
+
+  .wa-contact .name {
+    font-size: 15px;
+    font-weight: 600;
+    font-family: -apple-system, 'SF Pro Display', system-ui, sans-serif;
+  }
+
+  .wa-contact .status {
+    font-size: 11.5px;
+    opacity: 0.85;
+    margin-top: 1px;
+  }
+
+  .wa-header-icons {
+    display: flex;
+    gap: 14px;
+    font-size: 16px;
+    opacity: 0.92;
+  }
+
+  /* Chat area */
+  .chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 10px 8px;
+    background-color: var(--wa-chat-bg);
+    background-image:
+      radial-gradient(circle at 25% 30%, rgba(0,0,0,0.025) 0%, transparent 50%),
+      radial-gradient(circle at 75% 60%, rgba(0,0,0,0.025) 0%, transparent 50%),
+      radial-gradient(circle at 50% 90%, rgba(0,0,0,0.02) 0%, transparent 50%);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    scrollbar-width: thin;
+  }
+
+  .chat::-webkit-scrollbar { width: 4px; }
+  .chat::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+
+  .chat-day {
+    align-self: center;
+    background: rgba(225, 245, 254, 0.92);
+    color: #50616d;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    margin: 8px 0;
+    box-shadow: 0 1px 0.5px rgba(0,0,0,0.06);
+  }
+
+  .bubble-row {
+    display: flex;
+    width: 100%;
+    margin-top: 2px;
+    animation: bubbleIn 0.22s ease-out;
+  }
+
+  @keyframes bubbleIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .bubble-row.user { justify-content: flex-end; }
+  .bubble-row.bot { justify-content: flex-start; }
+
+  .bubble {
+    max-width: 78%;
+    padding: 6px 9px 4px 10px;
+    border-radius: 7.5px;
+    font-size: 14.2px;
+    line-height: 1.35;
+    font-family: -apple-system, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+    color: var(--wa-text);
+    box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.08);
+    word-wrap: break-word;
+    position: relative;
+    white-space: pre-wrap;
+  }
+
+  .bubble.user {
+    background: var(--wa-bubble-user);
+    border-top-right-radius: 0;
+  }
+
+  .bubble.user::after {
+    content: '';
+    position: absolute;
+    right: -7px;
+    top: 0;
+    width: 0;
+    height: 0;
+    border-left: 8px solid var(--wa-bubble-user);
+    border-top: 8px solid var(--wa-bubble-user);
+    border-right: 0;
+    border-bottom: 8px solid transparent;
+  }
+
+  .bubble.bot {
+    background: var(--wa-bubble-bot);
+    border-top-left-radius: 0;
+  }
+
+  .bubble.bot::after {
+    content: '';
+    position: absolute;
+    left: -7px;
+    top: 0;
+    width: 0;
+    height: 0;
+    border-right: 8px solid var(--wa-bubble-bot);
+    border-top: 8px solid var(--wa-bubble-bot);
+    border-left: 0;
+    border-bottom: 8px solid transparent;
+  }
+
+  .meta {
+    display: inline-block;
+    font-size: 10.5px;
+    color: var(--wa-meta);
+    margin-left: 6px;
+    float: right;
+    margin-top: 4px;
+  }
+
+  .tick {
+    color: var(--wa-tick);
+    font-weight: 700;
+    margin-left: 2px;
+    letter-spacing: -2px;
+  }
+
+  /* Typing indicator */
+  .typing-bubble {
+    background: var(--wa-bubble-bot);
+    padding: 12px 14px;
+    border-radius: 7.5px;
+    border-top-left-radius: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.08);
+    position: relative;
+  }
+
+  .typing-bubble::after {
+    content: '';
+    position: absolute;
+    left: -7px;
+    top: 0;
+    width: 0;
+    height: 0;
+    border-right: 8px solid var(--wa-bubble-bot);
+    border-top: 8px solid var(--wa-bubble-bot);
+    border-left: 0;
+    border-bottom: 8px solid transparent;
+  }
+
+  .typing-dot {
+    width: 7px;
+    height: 7px;
+    background: #9aa0a6;
+    border-radius: 50%;
+    animation: typingBounce 1.2s infinite;
+  }
+
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes typingBounce {
+    0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+    30% { opacity: 1; transform: translateY(-3px); }
+  }
+
+  .thinking-tag {
+    margin-left: 8px;
+    font-size: 10.5px;
+    color: #6b7280;
+    font-style: italic;
+  }
+
+  /* Quick reply buttons */
+  .quick-replies {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    margin: 2px 0 4px 0;
+    align-self: flex-start;
+    max-width: 78%;
+    width: 78%;
+    background: var(--wa-bubble-bot);
+    border-radius: 0 0 7.5px 7.5px;
+    overflow: hidden;
+    box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.08);
+  }
+
+  .quick-reply {
+    background: var(--wa-bubble-bot);
+    color: #00a884;
+    border: none;
+    border-top: 1px solid #f0f0f0;
+    padding: 9px 10px;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    font-family: -apple-system, 'SF Pro Text', system-ui, sans-serif;
+    transition: background 0.12s;
+  }
+
+  .quick-reply:hover { background: #f6f6f6; }
+  .quick-reply:active { background: #ececec; }
+  .quick-reply:disabled {
+    color: #b0b0b0;
+    cursor: not-allowed;
+  }
+
+  /* Input area */
+  .input-bar {
+    background: #f0f0f0;
+    padding: 7px 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .input-field {
+    flex: 1;
+    background: white;
+    border-radius: 22px;
+    padding: 9px 14px;
+    font-size: 14px;
+    font-family: -apple-system, system-ui, sans-serif;
+    border: none;
+    outline: none;
+    color: var(--wa-text);
+  }
+
+  .input-field::placeholder { color: #9aa0a6; }
+
+  .send-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--wa-header);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    transition: transform 0.1s;
+  }
+
+  .send-btn:hover { background: var(--wa-header-light); }
+  .send-btn:active { transform: scale(0.92); }
+
+  /* Demo scenario buttons */
+  .demo-actions {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 22px;
+    margin-top: 18px;
+  }
+
+  .demo-actions h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .demo-actions p {
+    font-size: 12.5px;
+    color: var(--text-light);
+    margin: 0 0 14px 0;
+    line-height: 1.5;
+  }
+
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .scenario-btn {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 11px 14px;
+    text-align: left;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    color: var(--text-dark);
+    font-weight: 500;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .scenario-btn:hover:not(:disabled) {
+    background: var(--sage-light);
+    border-color: var(--forest);
+    transform: translateY(-1px);
+  }
+
+  .scenario-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .scenario-btn .scenario-tag {
+    font-size: 9.5px;
+    background: var(--forest);
+    color: white;
+    padding: 2px 7px;
+    border-radius: 99px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+
+  .scenario-btn .scenario-tag.alt {
+    background: #b8860b;
+  }
+
+  .scenario-btn .scenario-tag.supply {
+    background: #1e6091;
+  }
+
+  /* Reset button */
+  .reset-btn {
+    background: transparent;
+    color: var(--text-light);
+    border: 1px solid var(--line);
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    margin-top: 12px;
+    width: 100%;
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .reset-btn:hover {
+    color: var(--forest);
+    border-color: var(--forest);
+  }
+
+  /* Architecture footer */
+  .architecture {
+    max-width: 1180px;
+    margin: 24px auto 0;
+    padding: 0 24px 80px;
+  }
+
+  .arch-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 32px;
+  }
+
+  .arch-card h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--forest-dark);
+    margin-bottom: 8px;
+  }
+
+  .arch-card .arch-sub {
+    font-size: 14px;
+    color: var(--text-body);
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+
+  .arch-flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-family: 'SF Mono', Menlo, monospace;
+    color: var(--text-body);
+  }
+
+  .arch-step {
+    background: var(--sage-light);
+    border: 1px solid var(--line);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    color: var(--forest-dark);
+  }
+
+  .arch-arrow {
+    color: var(--text-light);
+    font-weight: 700;
+  }
+
+  .arch-stack {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+
+  .stack-item {
+    padding: 14px 16px;
+    background: var(--sage-light);
+    border-radius: 10px;
+  }
+
+  .stack-item .stack-label {
+    font-size: 10px;
+    color: var(--forest);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+
+  .stack-item .stack-value {
+    font-size: 13px;
+    color: var(--text-dark);
+    font-weight: 600;
+  }
+
+  /* Demo notice */
+  .demo-notice {
+    font-size: 11px;
+    color: var(--text-light);
+    text-align: center;
+    margin-top: 18px;
+    padding: 10px;
+    background: rgba(184, 134, 11, 0.08);
+    border-radius: 6px;
+    border: 1px dashed rgba(184, 134, 11, 0.3);
   }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <a class="back" href="../../index.html" onclick="if(window.history.length>1){event.preventDefault();window.history.back();}">Back to portfolio</a>
-  <div class="logo">The Pardes WhatsApp Bot</div>
-  <span class="demo-label">Live demo</span>
+  <a href="../../index.html" class="back-link">Back to portfolio</a>
+  <span class="topbar-title">Demo &middot; WhatsApp Bot</span>
 </div>
 
-<div class="wrap">
-  <div class="header">
-    <div class="eyebrow">Flagship demo</div>
-    <h1>Text the school. Claude confirms. Sheets get written.</h1>
-    <p>Pardes staff (about 25 teachers, rabbis, and admin) text the school WhatsApp number. V1 handles two intents: <strong>time-off requests</strong> (piped into the existing SIS) and <strong>supply requests</strong> (logged to a sheet plus emailed to the office). Claude extracts the details, sends back a confirmation card, and nothing gets written until staff tap "Yes, submit." This is a simulation of that exact flow.</p>
-  </div>
+<section class="hero">
+  <span class="hero-eyebrow">Live demo</span>
+  <h1>Pardes WhatsApp Bot</h1>
+  <p>Type a message below. Watch Claude read it, classify the intent, and route the request to the right system. Same prompt and flow as production.</p>
+</section>
 
-  <div class="stage">
+<div class="stage">
 
+  <!-- LEFT PANEL: classification + routing -->
+  <aside class="side-panel">
+    <div class="panel-card">
+      <div class="panel-label live"><span class="dot"></span> Claude classification</div>
+      <h3>Haiku 3.5 returns JSON</h3>
+      <p class="panel-sub">Same system prompt as production (IntentPrompt.js v1.0.0).</p>
+      <div id="json-box" class="json-box empty">Waiting for a message...</div>
+    </div>
+
+    <div class="panel-card">
+      <div class="panel-label"><span class="dot"></span> Routing</div>
+      <h3>Where the request goes</h3>
+      <p class="panel-sub">Submitted requests fan out to the right backend.</p>
+      <ul id="routing-list" class="routing-list">
+        <li class="routing-item muted">No routing yet. Send a message to start.</li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- CENTER: Phone mockup -->
+  <div class="phone-wrap">
     <div class="phone">
-      <div class="phone-notch">Pardes Staff &middot; Demo</div>
       <div class="phone-screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <span class="status-icons">&#9679;&#9679;&#9679; &nbsp;5G &nbsp;&#9646;&#9646;&#9646;&#9646;</span>
+        </div>
         <div class="wa-header">
-          <div class="wa-avatar">PS</div>
-          <div class="wa-title">
-            <div class="name">Pardes School Office</div>
+          <span class="wa-back">&#8249;</span>
+          <div class="wa-avatar">P</div>
+          <div class="wa-contact">
+            <div class="name">Pardes Bot</div>
             <div class="status">online</div>
           </div>
+          <div class="wa-header-icons">
+            <span>&#128247;</span>
+            <span>&#9742;</span>
+          </div>
         </div>
-        <div class="wa-log" id="waLog"></div>
-        <div class="wa-input">
-          <input id="waInput" type="text" placeholder="Type a message" autocomplete="off">
-          <button type="button" id="waSend" aria-label="Send">&#10148;</button>
+        <div id="chat" class="chat">
+          <div class="chat-day">TODAY</div>
+          <div class="bubble-row bot">
+            <div class="bubble bot">
+              Hi! I'm the Pardes staff bot. Tell me about a time-off request or supplies you need. Try one of the example buttons below or just type.<span class="meta">9:41 AM</span>
+            </div>
+          </div>
+        </div>
+        <div class="input-bar">
+          <input id="input-field" class="input-field" type="text" placeholder="Type a message..." autocomplete="off">
+          <button id="send-btn" class="send-btn" title="Send">&#10148;</button>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="panel">
-      <h3>What the system is doing</h3>
-      <div class="panel-sub">Every message goes through this exact 4-stage flow. Meta requires a 200 OK within 10 seconds, so a Cloudflare Worker sits in front and Apps Script processes asynchronously on a 1-minute trigger.</div>
-
-      <div class="suggestion-row">
-        <button type="button" class="sugg" data-msg="I need to take tomorrow off, I have a doctor appointment">Time off tomorrow</button>
-        <button type="button" class="sugg" data-msg="Can we order more whiteboard markers for 3rd grade?">Order markers</button>
-        <button type="button" class="sugg" data-msg="Taking Friday as a personal day">Personal day Friday</button>
-        <button type="button" class="sugg" data-msg="We need 3 boxes of copy paper for the office">Order copy paper</button>
+  <!-- RIGHT PANEL: cost + scenarios -->
+  <aside class="side-panel">
+    <div class="panel-card">
+      <div class="panel-label"><span class="dot"></span> Cost meter</div>
+      <h3>Claude Haiku 3.5 cost</h3>
+      <p class="panel-sub">Per-message API cost. Production runs about $0.0017 per classified message.</p>
+      <div class="cost-row">
+        <span class="cost-label">Per message (avg)</span>
+        <span class="cost-value">$0.0017</span>
       </div>
-
-      <div class="stage-box" id="stage1">
-        <div class="stage-head"><div class="step"><span class="ns">1</span></div><div class="label">Meta webhook, Cloudflare Worker</div></div>
-        <div class="stage-body" id="stage1Body">Waiting for a message.</div>
+      <div class="cost-row">
+        <span class="cost-label">Messages this session</span>
+        <span class="cost-value" id="msg-count">0</span>
       </div>
-
-      <div class="stage-box" id="stage2">
-        <div class="stage-head"><div class="step"><span class="ns">2</span></div><div class="label">Claude classifies + extracts</div></div>
-        <div class="stage-body" id="stage2Body"></div>
+      <div class="cost-row cost-total">
+        <span class="cost-label">Running total</span>
+        <span class="cost-value" id="cost-total">$0.0000</span>
       </div>
+    </div>
 
-      <div class="stage-box" id="stage3">
-        <div class="stage-head"><div class="step"><span class="ns">3</span></div><div class="label">Confirmation card sent</div></div>
-        <div class="stage-body" id="stage3Body">Waiting.</div>
+    <div class="demo-actions">
+      <h3>Try a scenario</h3>
+      <p>Click to auto-type. Or type your own message.</p>
+      <div class="scenario-grid">
+        <button class="scenario-btn" data-scenario="ptoFull">
+          <span class="scenario-tag">PTO</span>
+          <span>Full day off (happy path)</span>
+        </button>
+        <button class="scenario-btn" data-scenario="ptoMissing">
+          <span class="scenario-tag alt">PTO</span>
+          <span>Missing info, bot asks back</span>
+        </button>
+        <button class="scenario-btn" data-scenario="supply">
+          <span class="scenario-tag supply">SUPPLIES</span>
+          <span>Order supplies for room</span>
+        </button>
       </div>
+      <button class="reset-btn" id="reset-btn">Reset conversation</button>
+      <div class="demo-notice">Demo only. No messages are sent. The real bot uses Claude Haiku via Cloudflare Worker plus Apps Script + WhatsApp Business API.</div>
+    </div>
+  </aside>
 
-      <div class="stage-box" id="stage4">
-        <div class="stage-head"><div class="step"><span class="ns">4</span></div><div class="label">Routed and saved</div></div>
-        <div class="stage-body" id="stage4Body">Nothing is written until staff tap "Yes, submit" on the card.</div>
+</div>
+
+<!-- Architecture footer -->
+<div class="architecture">
+  <div class="arch-card">
+    <h2>How the real bot works</h2>
+    <p class="arch-sub">When a teacher messages the bot from her own WhatsApp, here's the flow that happens in the next two seconds.</p>
+
+    <div class="arch-flow">
+      <span class="arch-step">WhatsApp Cloud API</span>
+      <span class="arch-arrow">&rarr;</span>
+      <span class="arch-step">Cloudflare Worker (webhook)</span>
+      <span class="arch-arrow">&rarr;</span>
+      <span class="arch-step">Apps Script queue</span>
+      <span class="arch-arrow">&rarr;</span>
+      <span class="arch-step">Claude Haiku classify</span>
+      <span class="arch-arrow">&rarr;</span>
+      <span class="arch-step">Validate + confirm</span>
+      <span class="arch-arrow">&rarr;</span>
+      <span class="arch-step">SIS API or Sheet + email</span>
+    </div>
+
+    <div class="arch-stack">
+      <div class="stack-item">
+        <div class="stack-label">LLM</div>
+        <div class="stack-value">Claude Haiku 3.5</div>
       </div>
-
-      <div class="stat-row2">
-        <div class="sr2"><div class="n" id="msgCount">0</div><div class="l">Messages routed</div></div>
-        <div class="sr2"><div class="n" id="claudeCost">$0.00</div><div class="l">Claude spend</div></div>
-        <div class="sr2"><div class="n" id="timeSaved">0 min</div><div class="l">Office time saved</div></div>
+      <div class="stack-item">
+        <div class="stack-label">Webhook layer</div>
+        <div class="stack-value">Cloudflare Worker</div>
       </div>
-
-      <button type="button" class="reset-btn" id="resetBtn">Reset demo</button>
-
-      <div class="real-note">
-        <b>Real-world details:</b> Model is Claude Haiku 4.5 at roughly $0.0017 per message based on observed usage. The Cloudflare Worker verifies Meta's HMAC-SHA256 signature and returns 200 to Meta via <code>event.waitUntil()</code>. Apps Script checks a <code>proxy_token</code> before doing any work. Messages are dedup'd by <code>wa_message_id</code> in the <code>Message_Queue</code> sheet. Confirmation cards include a nonce so double-taps cannot double-submit.
+      <div class="stack-item">
+        <div class="stack-label">Business logic</div>
+        <div class="stack-value">Google Apps Script</div>
+      </div>
+      <div class="stack-item">
+        <div class="stack-label">Roster + storage</div>
+        <div class="stack-value">Google Sheets</div>
+      </div>
+      <div class="stack-item">
+        <div class="stack-label">Messaging</div>
+        <div class="stack-value">WhatsApp Business Cloud API</div>
+      </div>
+      <div class="stack-item">
+        <div class="stack-label">Backend integrations</div>
+        <div class="stack-value">SIS Dashboard API + Gmail</div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-(function(){
-  const log = document.getElementById('waLog');
-  const input = document.getElementById('waInput');
-  const sendBtn = document.getElementById('waSend');
-  const stage1 = document.getElementById('stage1');
-  const stage2 = document.getElementById('stage2');
-  const stage3 = document.getElementById('stage3');
-  const stage4 = document.getElementById('stage4');
-  const stage1Body = document.getElementById('stage1Body');
-  const stage2Body = document.getElementById('stage2Body');
-  const stage3Body = document.getElementById('stage3Body');
-  const stage4Body = document.getElementById('stage4Body');
-  const msgCount = document.getElementById('msgCount');
-  const claudeCost = document.getElementById('claudeCost');
-  const timeSaved = document.getElementById('timeSaved');
-  const resetBtn = document.getElementById('resetBtn');
-  const suggBtns = document.querySelectorAll('.sugg');
+/* ============================================================
+ *  Pardes WhatsApp Bot Demo
+ *  Simulates the production message flow:
+ *    user msg -> Claude classify -> validate -> confirmation card
+ *    -> Submit/Edit/Cancel -> route to backend
+ * ============================================================ */
 
-  let count = 0;
-  let costCount = 0; // each full flow = 2 Claude calls (extract, confirm generate)
+// Today is the date the prompt receives. The real bot passes today's date
+// to Claude. Hardcoded to 2026-04-24 to match the example dates.
+const TODAY = '2026-04-24';
+const COST_PER_MSG = 0.0017;
 
-  function now() {
-    const d = new Date();
-    return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-  }
-  function clearNode(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+// ---------- DOM refs ----------
+const chat       = document.getElementById('chat');
+const input      = document.getElementById('input-field');
+const sendBtn    = document.getElementById('send-btn');
+const jsonBox    = document.getElementById('json-box');
+const routingList= document.getElementById('routing-list');
+const msgCountEl = document.getElementById('msg-count');
+const costTotalEl= document.getElementById('cost-total');
+const resetBtn   = document.getElementById('reset-btn');
 
-  function addBubble(text, who) {
-    const b = document.createElement('div');
-    b.className = 'bubble ' + who;
-    b.appendChild(document.createTextNode(text));
-    const ts = document.createElement('span');
-    ts.className = 'time';
-    ts.textContent = now();
-    b.appendChild(ts);
-    log.appendChild(b);
-    log.scrollTop = log.scrollHeight;
-    return b;
-  }
+// ---------- State ----------
+let state = {
+  msgCount: 0,
+  // pendingIntent + pendingFields hold a request waiting for Submit/Edit/Cancel
+  pendingIntent: null,
+  pendingFields: null,
+  // missingField is the field we're waiting for in a follow-up
+  awaitingField: null,
+  awaitingForIntent: null,
+  partialFields: null,
+  busy: false
+};
 
-  function addConfirmCard(intent, extraction, onYes, onNo) {
-    const b = document.createElement('div');
-    b.className = 'bubble them confirm-card';
-    const title = document.createElement('div'); title.className = 'title';
-    title.textContent = intent === 'pto' ? 'Time-off request' : 'Supply request';
-    const detail = document.createElement('div'); detail.className = 'detail';
-    if (intent === 'pto') {
-      detail.appendChild(document.createTextNode('Filing for '));
-      const s = document.createElement('strong');
-      s.textContent = extraction.day || 'a day off';
-      detail.appendChild(s);
-      detail.appendChild(document.createTextNode(extraction.reason ? ' for ' + extraction.reason + '.' : '.'));
-    } else {
-      detail.appendChild(document.createTextNode('Ordering '));
-      const s = document.createElement('strong');
-      s.textContent = extraction.item || 'supplies';
-      detail.appendChild(s);
-      if (extraction.where) {
-        detail.appendChild(document.createTextNode(' for ' + extraction.where + '.'));
-      } else {
-        detail.appendChild(document.createTextNode('.'));
-      }
-    }
-    const buttons = document.createElement('div'); buttons.className = 'buttons';
-    const yes = document.createElement('button'); yes.type = 'button'; yes.className = 'btn yes';
-    yes.textContent = 'Yes, submit';
-    const no = document.createElement('button'); no.type = 'button'; no.className = 'btn no';
-    no.textContent = 'No, cancel';
-    yes.addEventListener('click', function() {
-      yes.disabled = true; no.disabled = true; yes.style.background = '#f0f9f6'; yes.style.fontWeight = 700;
-      onYes();
-    });
-    no.addEventListener('click', function() {
-      yes.disabled = true; no.disabled = true; no.style.background = '#f5f5f5'; no.style.fontWeight = 700;
-      onNo();
-    });
-    buttons.appendChild(yes); buttons.appendChild(no);
-    const ts = document.createElement('span'); ts.className = 'time'; ts.textContent = now();
-    b.appendChild(title); b.appendChild(detail); b.appendChild(buttons); b.appendChild(ts);
-    log.appendChild(b);
-    log.scrollTop = log.scrollHeight;
-  }
+// ---------- Time helpers ----------
+function nowTime() {
+  const d = new Date();
+  let h = d.getHours();
+  const m = String(d.getMinutes()).padStart(2, '0');
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return `${h}:${m} ${ampm}`;
+}
 
-  function showTyping() {
-    const t = document.createElement('div');
-    t.className = 'bubble them typing';
-    t.id = 'typingNow';
-    for (let i = 0; i < 3; i++) t.appendChild(document.createElement('span'));
-    log.appendChild(t);
-    log.scrollTop = log.scrollHeight;
-  }
-  function removeTyping() {
-    const t = document.getElementById('typingNow');
-    if (t) t.remove();
-  }
+function dayOfWeek(yyyymmdd) {
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const d = new Date(yyyymmdd + 'T12:00:00');
+  return days[d.getDay()];
+}
 
-  function setStageState(el, state) {
-    el.classList.remove('active', 'done');
-    if (state) el.classList.add(state);
-  }
+// ---------- Bubble rendering ----------
+function addUserBubble(text) {
+  const row = document.createElement('div');
+  row.className = 'bubble-row user';
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble user';
+  bubble.textContent = text;
+  const meta = document.createElement('span');
+  meta.className = 'meta';
+  meta.innerHTML = nowTime() + ' <span class="tick">&#10003;&#10003;</span>';
+  bubble.appendChild(meta);
+  row.appendChild(bubble);
+  chat.appendChild(row);
+  scrollChat();
+}
 
-  function clearActive() {
-    [stage1, stage2, stage3, stage4].forEach(function(s) { s.classList.remove('active'); });
-  }
-  function resetStages() {
-    [stage1, stage2, stage3, stage4].forEach(function(s) { s.classList.remove('active', 'done'); });
-  }
+function addBotBubble(text) {
+  const row = document.createElement('div');
+  row.className = 'bubble-row bot';
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble bot';
+  // We split out trailing meta so we can put the time inside the bubble.
+  bubble.textContent = text;
+  const meta = document.createElement('span');
+  meta.className = 'meta';
+  meta.textContent = nowTime();
+  bubble.appendChild(meta);
+  row.appendChild(bubble);
+  chat.appendChild(row);
+  scrollChat();
+}
 
-  function classify(msg) {
-    const m = msg.toLowerCase();
-    if (/\b(off|vacation|pto|personal day|taking .* (off|day)|out (on|tomorrow|today|monday|tuesday|wednesday|thursday|friday)|doctor( |')s? appointment|day off|sick day)\b/.test(m)) return 'pto';
-    if (/\b(order|need more|buy|supplies?|staplers?|paper|pens?|markers?|chairs?|glue|crayons?|ink|toner|printer|snacks?|sanitizer|boxes?|copy paper|whiteboard|tissues?)\b/.test(m)) return 'supply';
-    return 'unknown';
-  }
-
-  function extract(msg, intent) {
-    const m = msg.toLowerCase();
-    if (intent === 'pto') {
-      let day = null;
-      const dayMatch = m.match(/\b(tomorrow|today|monday|tuesday|wednesday|thursday|friday|this (morning|afternoon))\b/);
-      if (dayMatch) day = dayMatch[0].charAt(0).toUpperCase() + dayMatch[0].slice(1);
-      let reason = null;
-      if (/doctor|appointment/.test(m)) reason = 'a doctor appointment';
-      else if (/personal/.test(m)) reason = 'personal reasons';
-      else if (/sick/.test(m)) reason = 'illness';
-      return { day: day, reason: reason };
-    }
-    if (intent === 'supply') {
-      let item = null;
-      const itemMatch = msg.match(/(staplers?|copy paper|whiteboard markers?|markers?|pens?|glue|ink|toner|crayons?|snacks?|sanitizer|boxes? of [a-z]+)/i);
-      if (itemMatch) item = itemMatch[0].toLowerCase();
-      let where = null;
-      const whereMatch = msg.match(/(for|in) (the )?([^,.?!]+)/i);
-      if (whereMatch && whereMatch[3] && whereMatch[3].length < 40) where = whereMatch[3].trim();
-      return { item: item, where: where };
-    }
-    return {};
-  }
-
-  const ROUTES = {
-    pto: {
-      kind: 'Time-off request',
-      detail: 'Filed to SIS via submitPTORequest()',
-      flowHtml: function(doc) {
-        const f = doc.createDocumentFragment();
-        f.appendChild(doc.createTextNode('Calls the existing SIS function '));
-        const c = doc.createElement('code'); c.textContent = 'submitPTORequest()'; f.appendChild(c);
-        f.appendChild(doc.createTextNode(' with a service token. Same sheet, same approver, same approve/deny email flow staff already know.'));
-        return f;
-      },
-      reply: 'Done. Your time-off request was filed in the SIS. Your supervisor will get the usual approve/deny email.'
-    },
-    supply: {
-      kind: 'Supply request',
-      detail: 'Logged to Supply_Requests sheet, office emailed',
-      flowHtml: function(doc) {
-        const f = doc.createDocumentFragment();
-        f.appendChild(doc.createTextNode('Writes a new row in the '));
-        const c = doc.createElement('code'); c.textContent = 'Supply_Requests'; f.appendChild(c);
-        f.appendChild(doc.createTextNode(' sheet and emails '));
-        const b = doc.createElement('b'); b.textContent = 'office@pardesdayschool.org'; f.appendChild(b);
-        f.appendChild(doc.createTextNode('.'));
-        return f;
-      },
-      reply: 'Done. Logged to the supply sheet and the office was notified. Expect it in the next weekly order.'
-    }
-  };
-
-  function renderStage1(msg) {
-    clearNode(stage1Body);
-    const q = document.createElement('div'); q.className = 'user-quote';
-    q.appendChild(document.createTextNode('"'));
-    const b = document.createElement('b');
-    b.textContent = msg;
-    q.appendChild(b);
-    q.appendChild(document.createTextNode('"'));
-    const note = document.createElement('div'); note.className = 'sub-note';
-    note.textContent = 'Signature verified by Worker, appended to Message_Queue with wa_message_id. Worker returns 200 to Meta immediately.';
-    stage1Body.appendChild(q);
-    stage1Body.appendChild(note);
-  }
-
-  function renderStage2Thinking() {
-    clearNode(stage2Body);
-    stage2Body.appendChild(document.createTextNode('1-minute trigger picked up the message. Roster matched by phone. Claude Haiku 4.5 returns intent '));
-    ['pto', 'supply', 'unknown'].forEach(function(intent, i) {
-      const c = document.createElement('code'); c.textContent = intent;
-      stage2Body.appendChild(c);
-      if (i < 2) stage2Body.appendChild(document.createTextNode(' | '));
-    });
-    stage2Body.appendChild(document.createTextNode(' plus extracted fields.'));
-  }
-
-  function renderStage2Result(intent, extraction) {
-    clearNode(stage2Body);
-    const t1 = document.createTextNode('Classification: ');
-    const c = document.createElement('code'); c.textContent = intent;
-    stage2Body.appendChild(t1); stage2Body.appendChild(c);
-    stage2Body.appendChild(document.createTextNode(' \u00B7 fields: '));
-    const fields = intent === 'pto'
-      ? [{ k: 'day', v: extraction.day || 'null' }, { k: 'reason', v: extraction.reason || 'null' }]
-      : intent === 'supply'
-      ? [{ k: 'item', v: extraction.item || 'null' }, { k: 'where', v: extraction.where || 'null' }]
-      : [{ k: 'fallback', v: 'unknown' }];
-    fields.forEach(function(f, i) {
-      const code = document.createElement('code'); code.textContent = f.k + '=' + f.v;
-      stage2Body.appendChild(code);
-      if (i < fields.length - 1) stage2Body.appendChild(document.createTextNode(' '));
-    });
-    const costNote = document.createElement('div'); costNote.className = 'sub-note';
-    costNote.textContent = 'Cost: about $0.0017 per classification.';
-    stage2Body.appendChild(costNote);
-  }
-
-  function renderStage3Sent() {
-    clearNode(stage3Body);
-    stage3Body.textContent = 'Confirmation card sent via WhatsApp Cloud API with a nonce. Nothing is saved until the staffer taps Yes. Tap a button in the phone to continue.';
-  }
-  function renderStage3Cancelled() {
-    clearNode(stage3Body);
-    stage3Body.textContent = 'Staff tapped No. Message dropped. No data written anywhere.';
-  }
-  function renderStage3Confirmed() {
-    clearNode(stage3Body);
-    stage3Body.textContent = 'Staff tapped Yes. Nonce validated. Ready to save.';
-  }
-
-  function renderStage4(intent) {
-    const r = ROUTES[intent];
-    clearNode(stage4Body);
-    const card = document.createElement('div'); card.className = 'result-card';
-    const kind = document.createElement('div'); kind.className = 'kind'; kind.textContent = r.kind;
-    const detail = document.createElement('div'); detail.className = 'detail'; detail.textContent = r.detail;
-    const flow = document.createElement('div'); flow.className = 'flow';
-    flow.appendChild(r.flowHtml(document));
-    card.appendChild(kind); card.appendChild(detail); card.appendChild(flow);
-    stage4Body.appendChild(card);
-  }
-  function renderStage4Cancelled() {
-    clearNode(stage4Body);
-    stage4Body.textContent = 'Cancelled. Nothing written.';
-  }
-
-  function renderStage2Idle() {
-    clearNode(stage2Body);
-    stage2Body.appendChild(document.createTextNode('Claude Haiku 4.5 returns one of '));
-    ['pto', 'supply', 'unknown'].forEach(function(intent, i) {
-      const c = document.createElement('code'); c.textContent = intent;
-      stage2Body.appendChild(c);
-      if (i < 2) stage2Body.appendChild(document.createTextNode(' | '));
-    });
-    stage2Body.appendChild(document.createTextNode(' plus extracted fields.'));
-  }
-
-  function updateStats() {
-    count++;
-    msgCount.textContent = count;
-    costCount += 0.0017; // classify cost only; extraction combined for simplicity
-    claudeCost.textContent = '$' + costCount.toFixed(4);
-    timeSaved.textContent = Math.round(count * 3.5) + ' min';
-  }
-
-  function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
-
-  async function handleMessage(msg) {
-    if (!msg || !msg.trim()) return;
-    input.value = '';
-    sendBtn.disabled = true;
-    resetStages();
-
-    addBubble(msg, 'me');
-    stage1.classList.add('active');
-    renderStage1(msg);
-
-    await sleep(700);
-
-    stage1.classList.remove('active'); stage1.classList.add('done');
-    stage2.classList.add('active');
-    showTyping();
-    renderStage2Thinking();
-
-    await sleep(1100);
-
-    const intent = classify(msg);
-    if (intent === 'unknown') {
-      removeTyping();
-      renderStage2Result(intent, {});
-      addBubble("Hmm, I didn't recognize that. I can help with time-off requests and supply orders. Can you try that again?", 'them');
-      stage2.classList.remove('active'); stage2.classList.add('done');
-      sendBtn.disabled = false;
-      return;
-    }
-
-    const extraction = extract(msg, intent);
-    renderStage2Result(intent, extraction);
-
-    await sleep(400);
-    stage2.classList.remove('active'); stage2.classList.add('done');
-
-    // Stage 3: confirmation card
-    stage3.classList.add('active');
-    renderStage3Sent();
-    removeTyping();
-    addConfirmCard(intent, extraction,
-      function onYes() {
-        // User confirmed
-        renderStage3Confirmed();
-        stage3.classList.remove('active'); stage3.classList.add('done');
-        stage4.classList.add('active');
-        renderStage4(intent);
-        setTimeout(function() {
-          addBubble(ROUTES[intent].reply, 'them');
-          updateStats();
-          stage4.classList.remove('active'); stage4.classList.add('done');
-          sendBtn.disabled = false;
-        }, 600);
-      },
-      function onNo() {
-        renderStage3Cancelled();
-        stage3.classList.remove('active'); stage3.classList.add('done');
-        stage4.classList.add('active');
-        renderStage4Cancelled();
-        setTimeout(function() {
-          addBubble('Cancelled. Nothing was saved. Send me a new message when you want to try again.', 'them');
-          stage4.classList.remove('active'); stage4.classList.add('done');
-          sendBtn.disabled = false;
-        }, 500);
-      }
-    );
-  }
-
-  function addGreeting() {
-    const b = document.createElement('div');
-    b.className = 'bubble them';
-    b.appendChild(document.createTextNode('Hi! Text me a time-off request or a supply order and I will take care of it.'));
-    const ts = document.createElement('span');
-    ts.className = 'time';
-    ts.textContent = '9:00 AM';
-    b.appendChild(ts);
-    log.appendChild(b);
-  }
-
-  renderStage2Idle();
-  addGreeting();
-
-  sendBtn.addEventListener('click', function() { handleMessage(input.value); });
-  input.addEventListener('keydown', function(e) { if (e.key === 'Enter') handleMessage(input.value); });
-  suggBtns.forEach(function(b) { b.addEventListener('click', function() { handleMessage(b.dataset.msg); }); });
-
-  resetBtn.addEventListener('click', function() {
-    clearNode(log);
-    addGreeting();
-    resetStages();
-    stage1Body.textContent = 'Waiting for a message.';
-    renderStage2Idle();
-    stage3Body.textContent = 'Waiting.';
-    stage4Body.textContent = 'Nothing is written until staff tap "Yes, submit" on the card.';
-    count = 0; costCount = 0;
-    msgCount.textContent = '0';
-    claudeCost.textContent = '$0.00';
-    timeSaved.textContent = '0 min';
+function addQuickReplies(buttons) {
+  const wrap = document.createElement('div');
+  wrap.className = 'quick-replies';
+  buttons.forEach(b => {
+    const btn = document.createElement('button');
+    btn.className = 'quick-reply';
+    btn.textContent = b.title;
+    btn.onclick = () => {
+      // Disable all siblings so they can only be tapped once
+      Array.from(wrap.children).forEach(c => c.disabled = true);
+      handleButtonReply(b.id);
+    };
+    wrap.appendChild(btn);
   });
+  chat.appendChild(wrap);
+  scrollChat();
+}
+
+function showTyping(label) {
+  const row = document.createElement('div');
+  row.className = 'bubble-row bot typing-row';
+  const bubble = document.createElement('div');
+  bubble.className = 'typing-bubble';
+  bubble.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+  if (label) {
+    const tag = document.createElement('span');
+    tag.className = 'thinking-tag';
+    tag.textContent = label;
+    bubble.appendChild(tag);
+  }
+  row.appendChild(bubble);
+  chat.appendChild(row);
+  scrollChat();
+  return row;
+}
+
+function removeTyping(row) {
+  if (row && row.parentNode) row.parentNode.removeChild(row);
+}
+
+function scrollChat() {
+  chat.scrollTop = chat.scrollHeight;
+}
+
+// ---------- System panel rendering ----------
+function syntaxHighlightJSON(obj) {
+  // Pretty-print, then add classes via regex.
+  let json = JSON.stringify(obj, null, 2);
+  json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  json = json.replace(
+    /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+    function (match) {
+      let cls = 'json-number';
+      if (/^"/.test(match)) {
+        if (/:$/.test(match)) {
+          cls = 'json-key';
+        } else {
+          cls = 'json-string';
+        }
+      } else if (/true|false/.test(match)) {
+        cls = 'json-boolean';
+      } else if (/null/.test(match)) {
+        cls = 'json-null';
+      }
+      return '<span class="' + cls + '">' + match + '</span>';
+    }
+  );
+  return json;
+}
+
+function renderJSON(obj) {
+  jsonBox.classList.remove('empty');
+  jsonBox.innerHTML = syntaxHighlightJSON(obj);
+}
+
+function clearJSON() {
+  jsonBox.classList.add('empty');
+  jsonBox.textContent = 'Waiting for a message...';
+}
+
+function addRouting(text, isCode) {
+  // Replace muted placeholder if present
+  const placeholder = routingList.querySelector('.routing-item.muted');
+  if (placeholder) placeholder.remove();
+  const li = document.createElement('li');
+  li.className = 'routing-item';
+  li.textContent = text;
+  routingList.appendChild(li);
+}
+
+function bumpCost() {
+  state.msgCount += 1;
+  msgCountEl.textContent = state.msgCount;
+  const total = (state.msgCount * COST_PER_MSG).toFixed(4);
+  costTotalEl.textContent = '$' + total;
+}
+
+// ---------- Demo classifier ----------
+// In production this is Claude Haiku reading IntentPrompt.js and returning JSON.
+// For a static demo we use a keyword classifier that produces the same shape.
+
+function classify(text, context) {
+  // context: { awaitingField, awaitingForIntent, partialFields }
+  const lower = text.toLowerCase().trim();
+
+  // If we're waiting for a specific field, treat the message as the answer.
+  if (context && context.awaitingField === 'reasonCategory') {
+    const reason = parseReasonCategory(lower);
+    if (reason) {
+      const merged = Object.assign({}, context.partialFields, { reasonCategory: reason });
+      return {
+        intent: context.awaitingForIntent,
+        fields: merged,
+        missingFields: [],
+        confidence: 0.93,
+        clarifyingQuestion: null
+      };
+    }
+  }
+  if (context && context.awaitingField === 'items') {
+    // User is naming items now.
+    const items = parseItems(text);
+    if (items.length) {
+      const merged = Object.assign({}, context.partialFields, { items: items, urgency: context.partialFields.urgency || 'normal' });
+      return {
+        intent: 'SUPPLIES',
+        fields: merged,
+        missingFields: [],
+        confidence: 0.92,
+        clarifyingQuestion: null
+      };
+    }
+  }
+
+  // Detect supply intent first because "I need" overlaps with PTO
+  const ptoWords = ['off', 'vacation', 'sick', 'day off', 'days off', 'dentist', 'appointment', 'pto', 'absent', 'out', 'bris', 'funeral'];
+  const supplyWords = ['paper', 'markers', 'sharpie', 'tissues', 'supplies', 'order', 'pencils', 'pens', 'glue', 'staples', 'crayons', 'folders', 'whiteboard', 'dry erase', 'dry-erase', 'erasers', 'expo', 'binders'];
+
+  const hasPto = ptoWords.some(w => lower.includes(w));
+  const hasSupply = supplyWords.some(w => lower.includes(w));
+
+  // PTO classification
+  if (hasPto && !hasSupply) {
+    return classifyPTO(text);
+  }
+
+  // Supply classification
+  if (hasSupply) {
+    return classifySupply(text);
+  }
+
+  // Vague "I need to order something" -> SUPPLIES with missing items
+  if (/order|i need/.test(lower)) {
+    return {
+      intent: 'SUPPLIES',
+      fields: { items: [], urgency: 'normal' },
+      missingFields: ['items'],
+      confidence: 0.7,
+      clarifyingQuestion: 'What supplies do you need?'
+    };
+  }
+
+  return {
+    intent: 'UNKNOWN',
+    fields: {},
+    missingFields: [],
+    confidence: 0.95,
+    clarifyingQuestion: null
+  };
+}
+
+function classifyPTO(text) {
+  const lower = text.toLowerCase();
+  const fields = {};
+
+  // Date resolution. Simple heuristics.
+  const today = new Date(TODAY + 'T12:00:00');
+  let date = null;
+
+  const dayMap = { sunday: 0, monday: 1, tuesday: 2, wednesday: 3, thursday: 4, friday: 5, saturday: 6 };
+
+  // "tomorrow"
+  if (/tomorrow/.test(lower)) {
+    const t = new Date(today); t.setDate(t.getDate() + 1);
+    date = t;
+  }
+  // "today"
+  else if (/today/.test(lower)) {
+    date = new Date(today);
+  }
+  // "next [weekday]"
+  else if (/next\s+(sunday|monday|tuesday|wednesday|thursday|friday|saturday)/.test(lower)) {
+    const m = lower.match(/next\s+(sunday|monday|tuesday|wednesday|thursday|friday|saturday)/);
+    const target = dayMap[m[1]];
+    const cur = today.getDay();
+    let diff = (target - cur + 7) % 7;
+    if (diff === 0) diff = 7;
+    const t = new Date(today); t.setDate(t.getDate() + diff);
+    date = t;
+  }
+  // "this [weekday]" or just "[weekday]"
+  else {
+    for (const day in dayMap) {
+      if (lower.includes(day)) {
+        const target = dayMap[day];
+        const cur = today.getDay();
+        let diff = (target - cur + 7) % 7;
+        if (diff === 0) diff = 7;
+        const t = new Date(today); t.setDate(t.getDate() + diff);
+        date = t;
+        break;
+      }
+    }
+  }
+
+  if (date) {
+    fields.dateStart = formatDate(date);
+    fields.dateEnd = fields.dateStart;
+  }
+
+  // ptoType
+  if (/half\s*day\s*am|morning/.test(lower)) fields.ptoType = 'Half Day AM';
+  else if (/half\s*day\s*pm|afternoon/.test(lower)) fields.ptoType = 'Half Day PM';
+  else if (/half\s*day/.test(lower)) fields.ptoType = 'Half Day AM';
+  else fields.ptoType = 'Full Day';
+
+  // reason
+  let reason = null;
+  let notes = null;
+  if (/sick|flu|fever|cold/.test(lower)) reason = 'Sick';
+  else if (/dentist|doctor|appointment|personal/.test(lower)) {
+    reason = 'Personal';
+    if (/dentist/.test(lower)) notes = 'dentist';
+    else if (/doctor/.test(lower)) notes = 'doctor';
+    else if (/appointment/.test(lower)) notes = 'appointment';
+  }
+  else if (/religious|holiday|holy|shabbat|yom/.test(lower)) reason = 'Religious';
+  else if (/family|son|daughter|wife|husband|bris|funeral|kid/.test(lower)) {
+    reason = 'Family';
+    if (/bris/.test(lower)) notes = 'bris';
+    else if (/funeral/.test(lower)) notes = 'funeral';
+  }
+
+  if (reason) fields.reasonCategory = reason;
+  if (notes) fields.notes = notes;
+
+  const missingFields = [];
+  if (!fields.dateStart) missingFields.push('dateStart');
+  if (!fields.reasonCategory) missingFields.push('reasonCategory');
+
+  let clarifyingQuestion = null;
+  if (missingFields.includes('reasonCategory')) {
+    clarifyingQuestion = 'What is the reason? Sick, Personal, Religious, Family, or Other?';
+  } else if (missingFields.includes('dateStart')) {
+    clarifyingQuestion = 'What date do you want off?';
+  }
+
+  return {
+    intent: 'PTO',
+    fields: fields,
+    missingFields: missingFields,
+    confidence: missingFields.length ? 0.82 : 0.95,
+    clarifyingQuestion: clarifyingQuestion
+  };
+}
+
+function classifySupply(text) {
+  const lower = text.toLowerCase();
+  const items = parseItems(text);
+  const urgency = /asap|urgent|today|tomorrow|right away/.test(lower) ? 'urgent' : 'normal';
+
+  const fields = { items: items, urgency: urgency };
+  if (urgency === 'urgent') fields.notes = 'urgent request';
+
+  const missingFields = items.length ? [] : ['items'];
+
+  return {
+    intent: 'SUPPLIES',
+    fields: fields,
+    missingFields: missingFields,
+    confidence: items.length ? 0.95 : 0.7,
+    clarifyingQuestion: items.length ? null : 'What supplies do you need?'
+  };
+}
+
+function parseItems(text) {
+  const lower = text.toLowerCase();
+  const items = [];
+  const map = [
+    { match: /case of copy paper|copy paper|case of paper/, label: 'Case of copy paper' },
+    { match: /dry[\s\-]?erase markers?|expo markers?|whiteboard markers?/, label: 'Dry-erase markers' },
+    { match: /red sharpies?/, label: 'Red Sharpies' },
+    { match: /sharpies?/, label: 'Sharpies' },
+    { match: /tissues?|kleenex/, label: 'Tissues' },
+    { match: /pencils?/, label: 'Pencils' },
+    { match: /pens?/, label: 'Pens' },
+    { match: /glue sticks?|glue/, label: 'Glue sticks' },
+    { match: /staples/, label: 'Staples' },
+    { match: /crayons?/, label: 'Crayons' },
+    { match: /folders?/, label: 'Folders' },
+    { match: /binders?/, label: 'Binders' },
+    { match: /erasers?/, label: 'Erasers' }
+  ];
+  for (const it of map) {
+    if (it.match.test(lower) && !items.includes(it.label)) {
+      items.push(it.label);
+    }
+  }
+  return items;
+}
+
+function parseReasonCategory(lower) {
+  if (/sick/.test(lower)) return 'Sick';
+  if (/personal/.test(lower)) return 'Personal';
+  if (/religious/.test(lower)) return 'Religious';
+  if (/family/.test(lower)) return 'Family';
+  if (/other/.test(lower)) return 'Other';
+  return null;
+}
+
+function formatDate(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+// ---------- Summarize (mirrors Processor.js summarize_) ----------
+function summarize(intent, fields) {
+  if (intent === 'PTO') {
+    const lines = ['Here is what I will submit:'];
+    if (fields.dateStart === fields.dateEnd) {
+      lines.push('Date: ' + fields.dateStart + ' (' + dayOfWeek(fields.dateStart) + ')');
+    } else {
+      lines.push('Dates: ' + fields.dateStart + ' to ' + fields.dateEnd);
+    }
+    lines.push('Type: ' + (fields.ptoType || 'Full Day'));
+    if (fields.customTimes) lines.push('Times: ' + fields.customTimes);
+    lines.push('Reason: ' + fields.reasonCategory);
+    if (fields.notes) lines.push('Notes: ' + fields.notes);
+    lines.push('');
+    lines.push('Reply: Submit, Edit, or Cancel');
+    return lines.join('\n');
+  }
+  if (intent === 'SUPPLIES') {
+    const lines = ['Supply request:'];
+    (fields.items || []).forEach(i => lines.push('  - ' + i));
+    lines.push('Urgency: ' + (fields.urgency || 'normal'));
+    if (fields.notes) lines.push('Notes: ' + fields.notes);
+    lines.push('');
+    lines.push('Reply: Submit, Edit, or Cancel');
+    return lines.join('\n');
+  }
+  return '(unknown)';
+}
+
+// ---------- Main message handler ----------
+async function handleUserText(text) {
+  if (state.busy) return;
+  state.busy = true;
+  sendBtn.disabled = true;
+
+  addUserBubble(text);
+
+  // Show Claude thinking indicator
+  const typingRow = showTyping('Claude classifying...');
+  await wait(1400 + Math.random() * 500);
+  removeTyping(typingRow);
+
+  // Classify with current context
+  const ctx = {
+    awaitingField: state.awaitingField,
+    awaitingForIntent: state.awaitingForIntent,
+    partialFields: state.partialFields
+  };
+  const result = classify(text, ctx);
+
+  // Render the JSON in side panel
+  renderJSON(result);
+  bumpCost();
+
+  // Clear awaiting state since we just got a response
+  state.awaitingField = null;
+  state.awaitingForIntent = null;
+  state.partialFields = null;
+
+  if (result.intent === 'UNKNOWN' || result.confidence < 0.5) {
+    await wait(300);
+    addBotBubble('I can help with time-off requests and supply requests. Try "I need tomorrow off for a dentist appointment" or "I need 3 boxes of tissues".');
+    state.busy = false;
+    sendBtn.disabled = false;
+    return;
+  }
+
+  // Missing fields -> ask clarifying question
+  if (result.missingFields && result.missingFields.length > 0) {
+    state.awaitingField = result.missingFields[0];
+    state.awaitingForIntent = result.intent;
+    state.partialFields = result.fields || {};
+    await wait(300);
+    addBotBubble(result.clarifyingQuestion || ('Need a bit more info: ' + result.missingFields.join(', ')));
+    state.busy = false;
+    sendBtn.disabled = false;
+    return;
+  }
+
+  // Confirmation card
+  await wait(300);
+  state.pendingIntent = result.intent;
+  state.pendingFields = result.fields;
+  addBotBubble(summarize(result.intent, result.fields));
+  await wait(150);
+  addQuickReplies([
+    { id: 'confirm_submit', title: 'Submit' },
+    { id: 'confirm_edit',   title: 'Edit' },
+    { id: 'confirm_cancel', title: 'Cancel' }
+  ]);
+
+  state.busy = false;
+  sendBtn.disabled = false;
+}
+
+// ---------- Button handler (mirrors Processor.js handleButtonReply_) ----------
+async function handleButtonReply(buttonId) {
+  if (!state.pendingIntent) {
+    addBotBubble('I do not have a pending request for you. Tell me what you need.');
+    return;
+  }
+  const intent = state.pendingIntent;
+  const fields = state.pendingFields;
+
+  if (buttonId.indexOf('confirm_cancel') === 0) {
+    addUserBubble('Cancel');
+    await wait(400);
+    addBotBubble('Canceled. Text me anytime if you need something else.');
+    state.pendingIntent = null;
+    state.pendingFields = null;
+    return;
+  }
+
+  if (buttonId.indexOf('confirm_edit') === 0) {
+    addUserBubble('Edit');
+    await wait(400);
+    addBotBubble('What would you like to change? You can tell me the correction, like "make it a half day" or "change to Thursday".');
+    state.pendingIntent = null;
+    state.pendingFields = null;
+    return;
+  }
+
+  if (buttonId.indexOf('confirm_submit') === 0) {
+    addUserBubble('Submit');
+    await wait(700);
+    if (intent === 'PTO') {
+      addRouting('-> SIS API submitPTORequest()  201 Created');
+      addRouting('-> Approval email queued to Katy (head of school)');
+      addBotBubble('Submitted. Katy will get the approval email. You will hear back from her.');
+    } else if (intent === 'SUPPLIES') {
+      addRouting('-> Supply_Requests sheet: row appended');
+      addRouting('-> Email sent to office@pardesdayschool.org');
+      addBotBubble('Done. Emailed the office and logged your request. They will put it in your room.');
+    }
+    state.pendingIntent = null;
+    state.pendingFields = null;
+    return;
+  }
+
+  addBotBubble('Got your tap but I am not sure what to do. Can you tell me in words?');
+}
+
+// ---------- Helpers ----------
+function wait(ms) {
+  return new Promise(r => setTimeout(r, ms));
+}
+
+// ---------- Send handler ----------
+function send() {
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  handleUserText(text);
+}
+
+sendBtn.addEventListener('click', send);
+input.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') send();
+});
+
+// ---------- Scenario buttons ----------
+const scenarios = {
+  ptoFull: {
+    messages: ['I need next Monday off, dentist'],
+    label: 'PTO full-day happy path'
+  },
+  ptoMissing: {
+    // First message has no reason. Bot will ask. Then user replies with reason.
+    messages: ['Can I take Thursday off', 'Personal'],
+    label: 'PTO with follow-up'
+  },
+  supply: {
+    messages: ['Can I get a case of copy paper and new dry erase markers'],
+    label: 'Supply request'
+  }
+};
+
+document.querySelectorAll('.scenario-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const key = btn.dataset.scenario;
+    const sc = scenarios[key];
+    if (!sc) return;
+
+    // Disable all scenario buttons during playback
+    document.querySelectorAll('.scenario-btn').forEach(b => b.disabled = true);
+
+    for (let i = 0; i < sc.messages.length; i++) {
+      // Type the message into the input visually, then send
+      await typeIntoInput(sc.messages[i]);
+      await wait(300);
+      send();
+      // Wait for the bot to finish responding before next scripted msg
+      await waitUntilIdle();
+      await wait(600);
+    }
+
+    document.querySelectorAll('.scenario-btn').forEach(b => b.disabled = false);
+  });
+});
+
+async function typeIntoInput(text) {
+  input.value = '';
+  for (const ch of text) {
+    input.value += ch;
+    await wait(28 + Math.random() * 30);
+  }
+}
+
+async function waitUntilIdle() {
+  // Wait until state.busy goes false AND there are no pending replies expected
+  while (state.busy) {
+    await wait(120);
+  }
+  // Small extra wait so users can see the result
+  await wait(400);
+}
+
+// ---------- Reset ----------
+resetBtn.addEventListener('click', () => {
+  // Wipe chat
+  chat.innerHTML = '';
+  const day = document.createElement('div');
+  day.className = 'chat-day';
+  day.textContent = 'TODAY';
+  chat.appendChild(day);
+  const greetRow = document.createElement('div');
+  greetRow.className = 'bubble-row bot';
+  const greet = document.createElement('div');
+  greet.className = 'bubble bot';
+  greet.textContent = "Hi! I'm the Pardes staff bot. Tell me about a time-off request or supplies you need. Try one of the example buttons below or just type.";
+  const meta = document.createElement('span');
+  meta.className = 'meta';
+  meta.textContent = nowTime();
+  greet.appendChild(meta);
+  greetRow.appendChild(greet);
+  chat.appendChild(greetRow);
+
+  // Wipe panels
+  clearJSON();
+  routingList.innerHTML = '<li class="routing-item muted">No routing yet. Send a message to start.</li>';
+  state = { msgCount: 0, pendingIntent: null, pendingFields: null, awaitingField: null, awaitingForIntent: null, partialFields: null, busy: false };
+  msgCountEl.textContent = '0';
+  costTotalEl.textContent = '$0.0000';
+});
+
+// ---------- Init: greet meta-time ----------
+(function init() {
+  // Replace the static "9:41 AM" greet meta with a real current time
+  const greetMeta = document.querySelector('.bubble.bot .meta');
+  if (greetMeta) greetMeta.textContent = nowTime();
 })();
 </script>
 

@@ -1,448 +1,1537 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PTC Scheduling Demo &middot; AI Inside a Small School</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --forest: #10653c;
-    --forest-dark: #0a4a2b;
-    --forest-soft: #b7e2c6;
-    --navy: #343e85;
-    --cream: #f8f4ed;
-    --sage-light: #f0f4ee;
-    --white: #ffffff;
-    --text-dark: #1d1d1f;
-    --text-body: #424245;
-    --text-light: #86868b;
-    --line: rgba(16, 101, 60, 0.14);
-    --line-soft: rgba(0, 0, 0, 0.06);
-    --amber: #d4940a;
-    --danger: #8b2c1a;
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: 'Montserrat', system-ui, -apple-system, sans-serif; background: var(--cream); color: var(--text-body); -webkit-font-smoothing: antialiased; min-height: 100vh; }
-  h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; color: var(--text-dark); margin: 0; letter-spacing: -0.02em; }
-  a { color: var(--forest); text-decoration: none; }
-  button { font-family: inherit; cursor: pointer; }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pardes Day School &middot; Parent-Teacher Conferences (Demo)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  .topbar { background: var(--white); border-bottom: 1px solid var(--line-soft); padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
-  .topbar .back { font-size: 13px; font-weight: 600; color: var(--forest); display: inline-flex; align-items: center; gap: 6px; }
-  .topbar .back::before { content: "\2190"; }
-  .topbar .logo { font-family: 'Caveat', cursive; color: var(--forest); font-size: 22px; font-weight: 600; }
-  .topbar .demo-label { font-size: 11px; font-weight: 700; color: var(--forest); letter-spacing: 0.14em; text-transform: uppercase; padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; }
+    body {
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f0f2f5;
+      color: #1a1a1a;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
 
-  .wrap { max-width: 960px; margin: 0 auto; padding: 28px 24px 60px; }
+    /* Back-to-portfolio link sits above header */
+    .portfolio-bar {
+      background: #f0f2f5;
+      padding: 10px 16px 0;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .portfolio-bar a {
+      font-size: 12px;
+      font-weight: 600;
+      color: #006B3F;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .portfolio-bar a:hover { text-decoration: underline; }
+    .demo-badge {
+      display: inline-block;
+      margin-left: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #b45309;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      padding: 2px 8px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      vertical-align: middle;
+    }
 
-  /* Step indicator */
-  .steps { display: flex; justify-content: center; gap: 12px; margin-bottom: 28px; }
-  .step { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-light); font-weight: 600; }
-  .step .n { width: 22px; height: 22px; border-radius: 50%; background: #e9e9e7; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: white; }
-  .step.active .n { background: var(--forest); }
-  .step.done .n { background: var(--forest-dark); }
-  .step.active, .step.done { color: var(--text-dark); }
-  .step .sep { width: 24px; height: 1px; background: var(--line-soft); display: inline-block; vertical-align: middle; }
+    .header {
+      background: linear-gradient(135deg, #006B3F 0%, #004d2d 100%);
+      color: white;
+      padding: 20px 20px 24px;
+      text-align: center;
+    }
 
-  /* Sign in */
-  .signin {
-    background: white;
-    border: 1px solid var(--line-soft);
-    border-radius: 18px;
-    padding: 40px 44px;
-    max-width: 480px;
-    margin: 0 auto;
-    box-shadow: 0 18px 40px -28px rgba(16,101,60,0.18);
-  }
-  .signin .eyebrow { font-family: 'Caveat', cursive; color: var(--forest); font-size: 24px; font-weight: 600; margin-bottom: 6px; }
-  .signin h1 { font-size: 28px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.02em; }
-  .signin p { font-size: 14px; color: var(--text-body); margin: 0 0 24px; line-height: 1.55; }
-  .field { margin-bottom: 16px; }
-  .field label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); margin-bottom: 6px; }
-  .field input { width: 100%; border: 1px solid var(--line-soft); border-radius: 10px; padding: 12px 14px; font-family: inherit; font-size: 15px; outline: none; background: #fafafa; color: var(--text-dark); }
-  .field input:focus { border-color: var(--forest); background: white; }
-  .signin button.primary { width: 100%; background: var(--forest-dark); color: white; border: none; border-radius: 10px; padding: 13px; font-size: 15px; font-weight: 700; margin-top: 8px; letter-spacing: 0.02em; }
-  .signin button.primary:hover { background: var(--forest); }
-  .demo-note { margin-top: 14px; font-size: 12px; color: var(--text-light); text-align: center; }
-  .demo-note b { color: var(--forest); font-weight: 700; }
+    .header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
 
-  /* Dashboard */
-  .hello { text-align: center; margin-bottom: 20px; }
-  .hello .eyebrow { font-family: 'Caveat', cursive; color: var(--forest); font-size: 24px; font-weight: 600; }
-  .hello h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
-  .hello p { font-size: 14px; color: var(--text-body); margin: 6px auto 0; max-width: 52ch; }
+    .header .subtitle {
+      font-size: 14px;
+      font-weight: 400;
+      opacity: 0.8;
+      margin-top: 4px;
+    }
 
-  .summary-bar {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
-    margin: 20px 0 24px;
-  }
-  .summ {
-    background: white; border: 1px solid var(--line-soft);
-    border-radius: 12px; padding: 14px 16px;
-  }
-  .summ .n { font-size: 22px; font-weight: 800; color: var(--forest); letter-spacing: -0.02em; line-height: 1; }
-  .summ .l { font-size: 11.5px; color: var(--text-light); font-weight: 600; margin-top: 4px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .logo-badge {
+      background: white;
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
 
-  .kid { background: white; border: 1px solid var(--line-soft); border-radius: 16px; padding: 22px 24px; margin-bottom: 14px; }
-  .kid-head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
-  .kid-avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #10653c, #343e85); color: white; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center; }
-  .kid-avatar.v2 { background: linear-gradient(135deg, #343e85, #10653c); }
-  .kid-avatar.v3 { background: linear-gradient(135deg, #d4940a, #10653c); }
-  .kid-name { font-size: 19px; font-weight: 800; color: var(--text-dark); letter-spacing: -0.01em; }
-  .kid-grade { font-size: 12.5px; color: var(--text-light); font-weight: 600; margin-top: 1px; }
+    .logo-text {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #006B3F;
+      font-size: 18px;
+      letter-spacing: -0.4px;
+      padding: 0 8px;
+    }
+    .logo-text .star {
+      color: #006B3F;
+      margin-right: 6px;
+      font-size: 22px;
+    }
 
-  .teachers { display: flex; flex-direction: column; gap: 10px; }
-  .teacher {
-    display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 14px;
-    padding: 14px 16px; border: 1px solid var(--line-soft); border-radius: 12px; background: #fafbfa;
-  }
-  .teacher .tname { font-size: 14px; font-weight: 700; color: var(--text-dark); }
-  .teacher .trole { font-size: 11.5px; color: var(--text-light); margin-top: 1px; font-weight: 500; }
-  .teacher .slots { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-  .teacher.booked { background: var(--sage-light); border-color: var(--forest-soft); }
-  .teacher.booked .status {
-    font-size: 11px; font-weight: 700; color: var(--forest-dark); letter-spacing: 0.06em;
-    text-transform: uppercase; display: inline-flex; align-items: center; gap: 5px;
-  }
-  .teacher.booked .status::before { content: "\2713"; }
-  .slot-btn {
-    border: 1px solid var(--line); background: white; color: var(--forest-dark);
-    font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 7px; cursor: pointer;
-    font-family: inherit; transition: background 0.12s ease;
-  }
-  .slot-btn:hover { background: var(--sage-light); }
-  .slot-btn.taken { color: var(--text-light); background: #f3f3f1; cursor: not-allowed; text-decoration: line-through; }
-  .book-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .book-row .book-meta { font-size: 12px; color: var(--text-body); }
-  .book-row .book-meta b { color: var(--text-dark); font-weight: 700; }
-  .expand-btn { background: transparent; border: 1px solid var(--line); color: var(--forest); font-size: 12px; font-weight: 700; padding: 7px 12px; border-radius: 8px; }
-  .expand-btn:hover { background: var(--sage-light); }
-  .slot-tray { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); }
-  .slot-tray.show { display: block; }
-  .tray-day { margin-bottom: 12px; }
-  .tray-day .day-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); margin-bottom: 6px; }
-  .tray-day .slots { display: flex; flex-wrap: wrap; gap: 6px; }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
 
-  /* Confirmation */
-  .conf { background: white; border: 1px solid var(--forest-soft); border-radius: 18px; padding: 40px 44px; max-width: 560px; margin: 0 auto; text-align: center; }
-  .conf .check { width: 60px; height: 60px; border-radius: 50%; background: var(--forest); color: white; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 18px; }
-  .conf h1 { font-size: 28px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.02em; }
-  .conf p { font-size: 15px; color: var(--text-body); margin: 0 0 20px; line-height: 1.55; }
-  .conf .booking-list { text-align: left; border: 1px solid var(--line-soft); border-radius: 12px; padding: 16px 20px; margin: 20px 0; }
-  .conf .booking { display: grid; grid-template-columns: 90px 1fr auto; gap: 14px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line-soft); }
-  .conf .booking:last-child { border-bottom: none; }
-  .conf .booking .time { font-weight: 700; color: var(--forest-dark); font-size: 13px; }
-  .conf .booking .who { font-size: 13.5px; color: var(--text-dark); }
-  .conf .booking .who .teacher-name { font-weight: 700; }
-  .conf .booking .who .kid-name { font-size: 12px; color: var(--text-light); font-weight: 500; }
-  .conf .booking .cal { font-size: 11px; color: var(--text-light); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
-  .conf .actions { display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-  .conf button { border: 1px solid var(--line); background: white; color: var(--forest); padding: 10px 16px; border-radius: 10px; font-weight: 700; font-size: 13.5px; }
-  .conf button.primary { background: var(--forest-dark); color: white; border-color: var(--forest-dark); }
-  .conf button.primary:hover { background: var(--forest); }
-  .conf button:hover { background: var(--sage-light); }
+    .screen { display: none; }
+    .screen.active { display: block; }
 
-  /* System note */
-  .system-note { margin-top: 30px; padding: 16px 18px; background: rgba(16,101,60,0.05); border-left: 3px solid var(--forest); border-radius: 8px; font-size: 13px; color: var(--text-body); line-height: 1.55; }
-  .system-note b { color: var(--forest-dark); font-weight: 700; }
-  .system-note code { background: #1d1d1f; color: #b7e2c6; padding: 1px 6px; border-radius: 3px; font-size: 11.5px; font-family: 'SF Mono', Menlo, monospace; }
+    /* Cards */
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 28px 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
 
-  @media (max-width: 720px) {
-    .signin { padding: 28px 24px; }
-    .summary-bar { grid-template-columns: 1fr; }
-    .teacher { grid-template-columns: 1fr; gap: 10px; }
-  }
-</style>
+    .card-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #006B3F;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    /* Fields */
+    .field { margin-bottom: 18px; }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #666;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 16px;
+      font-size: 17px;
+      font-family: 'Montserrat', sans-serif;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: #fafafa;
+    }
+
+    .field input:focus {
+      border-color: #006B3F;
+      box-shadow: 0 0 0 3px rgba(0,107,63,0.1);
+      background: white;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'Montserrat', sans-serif;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      min-height: 50px;
+      transition: opacity 0.15s, transform 0.15s, background 0.15s;
+    }
+
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn:active:not(:disabled) { transform: scale(0.98); }
+
+    .btn-primary {
+      background: #006B3F;
+      color: white;
+      width: 100%;
+      font-size: 16px;
+    }
+    .btn-primary:hover:not(:disabled) { background: #005a34; }
+
+    .btn-book {
+      background: #006B3F;
+      color: white;
+      padding: 10px 20px;
+      font-size: 14px;
+      min-height: 44px;
+    }
+    .btn-book:hover:not(:disabled) { background: #005a34; }
+
+    .btn-cancel {
+      background: #fee;
+      color: #c00;
+      padding: 10px 14px;
+      font-size: 13px;
+      min-height: 44px;
+      border: 1px solid #fcc;
+    }
+    .btn-cancel:hover:not(:disabled) { background: #fdd; }
+
+    .btn-resched {
+      background: #f0f7ff;
+      color: #0066cc;
+      padding: 10px 14px;
+      font-size: 13px;
+      min-height: 44px;
+      border: 1px solid #cce0ff;
+    }
+    .btn-resched:hover:not(:disabled) { background: #e0efff; }
+
+    .btn-outline {
+      background: white;
+      color: #333;
+      border: 2px solid #ddd;
+      padding: 12px 24px;
+    }
+
+    .btn-danger-solid {
+      background: #dc3545;
+      color: white;
+      padding: 12px 24px;
+    }
+
+    /* Alerts */
+    .alert-error {
+      background: #fef2f2;
+      color: #b91c1c;
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      border: 1px solid #fecaca;
+      text-align: center;
+      display: none;
+    }
+    .alert-error.visible { display: block; }
+
+    /* Demo helpers shown subtly under login */
+    .demo-shortcut {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px dashed #e0e0e0;
+      text-align: center;
+    }
+    .demo-shortcut .label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 10px;
+    }
+    .demo-shortcut button {
+      background: #f0faf5;
+      color: #006B3F;
+      border: 1px solid #b7e2c6;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'Montserrat', sans-serif;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 6px;
+      min-height: 42px;
+      transition: background 0.15s;
+    }
+    .demo-shortcut button:hover { background: #e0f4e8; }
+
+    /* Dashboard */
+    .welcome {
+      font-size: 24px;
+      color: #006B3F;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .welcome-sub {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 24px;
+    }
+
+    .child-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .child-header {
+      background: #f8faf9;
+      padding: 16px 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .child-name {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    .child-grade {
+      font-size: 13px;
+      color: #888;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .teacher-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid #f0f0f0;
+      gap: 12px;
+    }
+    .teacher-row:last-child { border-bottom: none; }
+
+    .teacher-info { flex: 1; min-width: 0; }
+
+    .teacher-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .booked-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      color: #006B3F;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .booked-badge::before {
+      content: '\2713';
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      background: #006B3F;
+      color: white;
+      border-radius: 50%;
+      font-size: 11px;
+    }
+
+    .booking-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    /* Teacher section */
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #006B3F;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 28px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #e8f5ee;
+    }
+
+    .teacher-booking-card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+      border-left: 4px solid #006B3F;
+    }
+    .tb-when {
+      font-size: 13px;
+      font-weight: 700;
+      color: #006B3F;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .tb-student {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-top: 4px;
+    }
+    .tb-family {
+      font-size: 13px;
+      color: #666;
+      margin-top: 2px;
+    }
+    .tb-meta {
+      font-size: 13px;
+      color: #444;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .tb-meta div { margin-top: 3px; }
+    .tb-meta .label { color: #888; font-weight: 500; display: inline-block; min-width: 60px; }
+
+    .tb-note {
+      background: #f8faf9;
+      border-left: 3px solid #006B3F;
+      padding: 8px 12px;
+      border-radius: 0 6px 6px 0;
+      margin-top: 10px;
+      font-size: 13px;
+      color: #333;
+    }
+
+    .tb-format-inperson {
+      display: inline-block;
+      background: #fffbeb;
+      color: #b45309;
+      border: 1px solid #fde68a;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    /* Admin */
+    .admin-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .admin-stat-card {
+      background: white;
+      padding: 14px 12px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .admin-stat-num {
+      font-size: 22px;
+      font-weight: 700;
+      color: #006B3F;
+    }
+    .admin-stat-label {
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-top: 2px;
+    }
+    .admin-day-header {
+      font-size: 14px;
+      font-weight: 700;
+      color: #006B3F;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 20px 0 10px;
+      padding: 10px 14px;
+      background: #f0faf5;
+      border-radius: 10px;
+      border-left: 4px solid #006B3F;
+    }
+    .admin-booking {
+      background: white;
+      padding: 12px 16px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .admin-booking .row1 {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .admin-booking .time {
+      font-weight: 700;
+      color: #006B3F;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .admin-booking .teacher {
+      font-weight: 600;
+      color: #333;
+    }
+    .admin-booking .details {
+      color: #555;
+      margin-top: 4px;
+    }
+    .admin-booking .details .label {
+      color: #888;
+      font-size: 12px;
+    }
+    .admin-note {
+      background: #f8faf9;
+      border-left: 3px solid #006B3F;
+      padding: 6px 10px;
+      border-radius: 0 6px 6px 0;
+      margin-top: 6px;
+      font-size: 12px;
+      color: #333;
+    }
+
+    .empty-teacher {
+      text-align: center;
+      padding: 20px;
+      color: #888;
+      font-size: 14px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+    }
+
+    .signout {
+      text-align: center;
+      margin-top: 28px;
+    }
+    .signout button {
+      color: #999;
+      font-size: 14px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      padding: 8px 16px;
+      min-height: 44px;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .signout button:hover { color: #555; }
+
+    /* Slot picker */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #006B3F;
+      font-size: 14px;
+      font-weight: 600;
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-bottom: 20px;
+      padding: 8px 0;
+      min-height: 44px;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .picker-header { margin-bottom: 24px; }
+    .picker-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+    .picker-subtitle {
+      font-size: 14px;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    .date-group { margin-bottom: 24px; }
+    .date-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #006B3F;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e8f5ee;
+    }
+
+    .slots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap: 8px;
+    }
+
+    .slot-btn {
+      padding: 14px 8px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'Montserrat', sans-serif;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      color: #333;
+      cursor: pointer;
+      min-height: 48px;
+      text-align: center;
+      transition: opacity 0.15s, transform 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .slot-btn:hover:not(:disabled) {
+      border-color: #006B3F;
+      background: #f0faf5;
+      color: #006B3F;
+    }
+    .slot-btn:active:not(:disabled) { transform: scale(0.96); }
+    .slot-btn.selected {
+      background: #006B3F;
+      color: white;
+      border-color: #006B3F;
+    }
+    .slot-btn:disabled {
+      background: #f5f5f5;
+      color: #bbb;
+      border-color: #eee;
+      cursor: not-allowed;
+      text-decoration: line-through;
+    }
+
+    .confirm-panel {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      border: 2px solid #006B3F;
+    }
+    .confirm-panel h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #006B3F;
+      margin-bottom: 16px;
+    }
+    .confirm-detail {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 4px;
+    }
+    .confirm-detail strong { color: #1a1a1a; }
+
+    .confirm-note {
+      width: 100%;
+      padding: 12px;
+      font-size: 14px;
+      font-family: 'Montserrat', sans-serif;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      resize: vertical;
+      min-height: 60px;
+      margin-top: 6px;
+      outline: none;
+    }
+    .confirm-note:focus { border-color: #006B3F; }
+
+    .confirm-note-label {
+      font-size: 12px;
+      color: #888;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 16px;
+      margin-bottom: 6px;
+    }
+
+    .inperson-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      cursor: pointer;
+      margin: 16px 0;
+      background: white;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .inperson-check:hover {
+      border-color: #006B3F;
+      background: #f8faf9;
+    }
+    .inperson-check input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin: 2px 0 0 0;
+      cursor: pointer;
+      accent-color: #006B3F;
+      flex-shrink: 0;
+    }
+    .inperson-check:has(input:checked) {
+      border-color: #006B3F;
+      background: #f0faf5;
+    }
+    .inperson-text { display: flex; flex-direction: column; gap: 3px; }
+    .inperson-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1a1a1a;
+      line-height: 1.3;
+    }
+    .inperson-sub {
+      font-size: 12px;
+      color: #777;
+      line-height: 1.4;
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .confirm-actions .btn { flex: 1; }
+    .btn-back {
+      background: white;
+      color: #666;
+      border: 2px solid #ddd;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(2px);
+    }
+    .modal-overlay.visible { display: flex; }
+
+    .modal {
+      background: white;
+      border-radius: 20px;
+      padding: 28px;
+      margin: 20px;
+      max-width: 340px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+    .modal h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .modal p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    .modal-buttons { display: flex; gap: 10px; }
+    .modal-buttons .btn { flex: 1; }
+
+    .start-over { text-align: center; margin-top: 16px; }
+    .start-over button {
+      color: #999;
+      font-size: 13px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px 16px;
+      min-height: 44px;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .start-over button:hover { color: #555; }
+
+    .toast {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #006B3F;
+      color: white;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      z-index: 200;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      max-width: 90%;
+      text-align: center;
+      animation: toastIn 0.3s ease;
+    }
+    .toast.error { background: #dc3545; }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+  </style>
 </head>
 <body>
 
-<div class="topbar">
-  <a class="back" href="../../index.html" onclick="if(window.history.length>1){event.preventDefault();window.history.back();}">Back to portfolio</a>
-  <div class="logo">Pardes PTC Scheduling</div>
-  <span class="demo-label">Live demo</span>
-</div>
-
-<div class="wrap">
-
-  <div class="steps" id="stepsEl"></div>
-
-  <div id="screen"></div>
-
-  <div class="system-note">
-    <b>What you are demoing:</b> Parents sign in with last name plus last 4 of phone, see every one of their kids' teachers on one dashboard, and book 15-minute slots. The real web app has three views behind the same URL (parent, teacher, admin) controlled by a <code>?view=</code> query parameter plus session auth. It handles script locking so two parents cannot grab the same slot, brute-force rate limiting on sign-in, and sends branded confirmation emails with Google Calendar invites. This demo walks through the parent flow with a fake family of 3 kids.
+  <div class="portfolio-bar">
+    <a href="../../index.html">&#8592; Back to portfolio</a>
+    <span class="demo-badge">Interactive Demo</span>
   </div>
-</div>
+
+  <div class="header">
+    <div class="logo-badge">
+      <div class="logo-text"><span class="star">&#10022;</span>Pardes</div>
+    </div>
+    <h1>Pardes Day School</h1>
+    <div class="subtitle">Parent-Teacher Conferences</div>
+  </div>
+
+  <div class="container">
+
+    <!-- LOGIN -->
+    <div id="screen-login" class="screen active">
+      <div class="card">
+        <div class="card-title">Welcome</div>
+        <div id="login-error" class="alert-error" style="margin-bottom:18px;"></div>
+
+        <div id="login-step-1">
+          <div class="field">
+            <label for="input-lastname">Family Last Name</label>
+            <input type="text" id="input-lastname" placeholder="Last name" autocomplete="family-name" autocapitalize="words">
+          </div>
+          <div class="field">
+            <label for="input-phone4">Last 4 Digits of Phone</label>
+            <input type="tel" id="input-phone4" placeholder="4 digits" maxlength="4" inputmode="numeric" pattern="[0-9]*">
+          </div>
+          <button class="btn btn-primary" id="btn-login" onclick="handleLogin()">Find My Family</button>
+
+          <div class="demo-shortcut">
+            <div class="label">Demo shortcuts</div>
+            <button type="button" onclick="demoSignIn('parent')">Sign in as demo family (Cohen)</button>
+            <button type="button" onclick="demoSignIn('teacher')">Switch to teacher view (Mrs. Levi)</button>
+            <button type="button" onclick="demoSignIn('admin')">Switch to admin view</button>
+          </div>
+        </div>
+
+        <div id="login-step-fullphone" style="display:none;">
+          <div class="field">
+            <label for="input-fullphone">Full Phone Number</label>
+            <input type="tel" id="input-fullphone" placeholder="Full phone number" inputmode="tel">
+          </div>
+          <button class="btn btn-primary" onclick="handleFullPhoneLogin()">Continue</button>
+          <div class="start-over"><button type="button" onclick="resetLogin()">Start over</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="screen-dashboard" class="screen">
+      <div class="welcome" id="welcome-msg"></div>
+      <div class="welcome-sub" id="welcome-sub">Tap "Book" to schedule a conference</div>
+      <div id="admin-section"></div>
+      <div id="dashboard-content"></div>
+      <div id="teacher-section"></div>
+      <div class="signout"><button type="button" onclick="handleLogout()">Sign out</button></div>
+    </div>
+
+    <!-- SLOT PICKER -->
+    <div id="screen-slots" class="screen">
+      <button type="button" class="back-btn" onclick="showDashboard()">&#8592; Back</button>
+      <div class="picker-header">
+        <div class="picker-title" id="picker-teacher"></div>
+        <div class="picker-subtitle" id="picker-student"></div>
+      </div>
+      <div id="slots-content"></div>
+      <div id="confirm-panel" class="confirm-panel" style="display:none;">
+        <h3>Confirm Your Booking</h3>
+        <div id="confirm-details"></div>
+        <label class="inperson-check">
+          <input type="checkbox" id="inperson-checkbox">
+          <span class="inperson-text">
+            <span class="inperson-title">I'd like to request this be in person</span>
+            <span class="inperson-sub">Subject to teacher availability. The teacher will reach out to confirm.</span>
+          </span>
+        </label>
+        <div class="confirm-note-label">Anything you'd like the teacher to know? (optional)</div>
+        <textarea id="confirm-note" class="confirm-note" placeholder="Any special requests or topics to discuss" maxlength="500"></textarea>
+        <div class="confirm-actions">
+          <button type="button" class="btn btn-back" onclick="clearSlotSelection()">Pick Another Time</button>
+          <button type="button" class="btn btn-primary" id="btn-confirm-book" onclick="confirmBooking()" style="flex:2;">Confirm Booking</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANCEL MODAL -->
+  <div class="modal-overlay" id="cancel-modal">
+    <div class="modal">
+      <h3>Cancel Conference?</h3>
+      <p id="cancel-modal-text"></p>
+      <div class="modal-buttons">
+        <button class="btn btn-outline" onclick="closeCancelModal()">Keep It</button>
+        <button class="btn btn-danger-solid" id="btn-confirm-cancel" onclick="confirmCancel()">Cancel It</button>
+      </div>
+    </div>
+  </div>
 
 <script>
-(function(){
-  const FAMILY = {
-    name: 'The Demo Family',
-    lastName: 'Demo',
-    phone: '1234',
-    kids: [
-      { id: 'a', name: 'Demo A', grade: '1st Grade', avatarV: 1, teachers: [
-        { id: 'alpha', name: 'Morah Alpha', role: '1st Grade Judaic' },
-        { id: 'beta', name: 'Morah Beta', role: '1st Grade General Studies' }
-      ]},
-      { id: 'b', name: 'Demo B', grade: '3rd Grade', avatarV: 2, teachers: [
-        { id: 'gamma', name: 'Morah Gamma', role: '3rd Grade Judaic' },
-        { id: 'delta', name: 'Morah Delta', role: '3rd Grade General Studies' }
-      ]},
-      { id: 'c', name: 'Demo C', grade: '5th Grade', avatarV: 3, teachers: [
-        { id: 'epsilon', name: 'Rabbi Epsilon', role: '5th Grade Judaic (AM)' },
-        { id: 'zeta', name: 'Morah Zeta', role: '5th Grade Judaic (PM)' },
-        { id: 'eta', name: 'Ms. Eta', role: '5th Grade General Studies' }
-      ]}
+  /* =========================================================
+     Demo data — fixed sample family + teachers + slot grid.
+     Stays in memory; reloading the page resets state.
+     ========================================================= */
+
+  // Three demo dates (Mon May 11, Wed May 13, Thu May 14, 2026)
+  var DEMO_DATES = [
+    { date: '2026-05-11', label: 'Mon, May 11' },
+    { date: '2026-05-13', label: 'Wed, May 13' },
+    { date: '2026-05-14', label: 'Thu, May 14' }
+  ];
+
+  // Generate 4:00–5:00 PM slots in 15-min increments per teacher per date
+  function buildSlotGrid() {
+    var times = ['4:00 PM','4:15 PM','4:30 PM','4:45 PM','5:00 PM','5:15 PM'];
+    var endMap = {'4:00 PM':'4:15 PM','4:15 PM':'4:30 PM','4:30 PM':'4:45 PM','4:45 PM':'5:00 PM','5:00 PM':'5:15 PM','5:15 PM':'5:30 PM'};
+    var teachers = ['Mrs. Levi','Mrs. Rothman','Mr. Stein','Ms. Friedman','Mr. Cohen','Mrs. Klein','Mr. Berg','Ms. Goldberg','Mrs. Shapiro'];
+    var grid = {};
+    teachers.forEach(function(t) {
+      grid[t] = [];
+      DEMO_DATES.forEach(function(d) {
+        times.forEach(function(time, i) {
+          grid[t].push({
+            slot_id: t + '|' + d.date + '|' + time,
+            teacher_name: t,
+            date: d.date,
+            start_time: time,
+            end_time: endMap[time],
+            taken: false
+          });
+        });
+      });
+    });
+    // Mark a couple of "taken" slots for realism
+    var markTaken = [
+      'Mrs. Levi|2026-05-11|4:30 PM',
+      'Mrs. Levi|2026-05-13|4:00 PM',
+      'Mr. Stein|2026-05-13|4:15 PM',
+      'Ms. Friedman|2026-05-11|4:45 PM',
+      'Mr. Cohen|2026-05-14|5:00 PM',
+      'Ms. Goldberg|2026-05-13|4:30 PM' // pre-booked for David
+    ];
+    Object.keys(grid).forEach(function(t) {
+      grid[t].forEach(function(s) {
+        if (markTaken.indexOf(s.slot_id) !== -1) s.taken = true;
+      });
+    });
+    return grid;
+  }
+
+  var SLOT_GRID = buildSlotGrid();
+
+  var ROOMS = ['Room 12','Room 7','Room 14','Room 3','Library','Room 9','Room 21','Room 5','Room 17'];
+  function roomFor(teacher) {
+    var idx = Math.abs((teacher || '').split('').reduce(function(a, c) { return a + c.charCodeAt(0); }, 0)) % ROOMS.length;
+    return ROOMS[idx];
+  }
+
+  var TEACHER_PHONES = {
+    'Mrs. Levi':    '(216) 555-0101',
+    'Mrs. Rothman': '(216) 555-0102',
+    'Mr. Stein':    '(216) 555-0103',
+    'Ms. Friedman': '(216) 555-0104',
+    'Mr. Cohen':    '(216) 555-0105',
+    'Mrs. Klein':   '(216) 555-0106',
+    'Mr. Berg':     '(216) 555-0107',
+    'Ms. Goldberg': '(216) 555-0108',
+    'Mrs. Shapiro': '(216) 555-0109'
+  };
+
+  // Cohen family — 3 children, varied teachers
+  var FAMILY = {
+    family_id: 'cohen-001',
+    family_name: 'Cohen Family',
+    children: [
+      { name: 'Alef',     grade: '1st', teachers: ['Mrs. Levi','Mrs. Rothman','Mr. Stein'] },
+      { name: 'Shoshana', grade: '3rd', teachers: ['Ms. Friedman','Mr. Cohen','Mrs. Klein','Mr. Stein'] },
+      { name: 'David',    grade: '5th', teachers: ['Mr. Berg','Ms. Goldberg','Mrs. Shapiro'] }
     ]
   };
 
-  // Generate slots per teacher
-  const DAYS = [
-    { key: 'night1', label: 'Conference Night 1', short: 'Night 1' },
-    { key: 'night2', label: 'Conference Night 2', short: 'Night 2' }
-  ];
-  const SLOTS_PER_DAY = [
-    '3:30 PM', '3:45 PM', '4:00 PM', '4:15 PM', '4:30 PM', '4:45 PM',
-    '5:00 PM', '5:15 PM', '5:30 PM', '5:45 PM', '6:00 PM', '6:15 PM'
+  // In-memory bookings list. Pre-seed one so the cancel/reschedule UI is visible immediately.
+  var BOOKINGS = [
+    {
+      booking_id: 'bk-seed-1',
+      teacher_name: 'Ms. Goldberg',
+      student_name: 'David',
+      date: '2026-05-13',
+      start_time: '4:30 PM',
+      end_time: '4:45 PM',
+      family_name: 'Cohen Family',
+      parent_phone: '(216) 555-0411',
+      parent_note: '',
+      conference_format: 'Phone Call'
+    }
   ];
 
-  // Make some slots randomly "taken" (by other families) so the demo feels real
-  function buildTeacherSlots(seed) {
-    const slots = {};
-    DAYS.forEach((day, di) => {
-      slots[day.key] = SLOTS_PER_DAY.map((s, si) => {
-        // Deterministic-ish "taken" based on seed
-        const taken = ((seed * 7 + di * 13 + si * 17) % 10) < 3;
-        return { time: s, taken, booked: false };
+  // Other families that exist for the admin view (mocked)
+  var OTHER_BOOKINGS = [
+    { booking_id: 'bk-x1', teacher_name: 'Mrs. Levi',    student_name: 'Yael',    family_name: 'Friedman Family',
+      date: '2026-05-11', start_time: '4:30 PM', end_time: '4:45 PM',
+      parent_phone: '(216) 555-0212', parent_note: 'Wants to discuss reading progress.', conference_format: 'In-Person Requested' },
+    { booking_id: 'bk-x2', teacher_name: 'Mrs. Levi',    student_name: 'Noam',    family_name: 'Katz Family',
+      date: '2026-05-13', start_time: '4:00 PM', end_time: '4:15 PM',
+      parent_phone: '(216) 555-0314', parent_note: '', conference_format: 'Phone Call' },
+    { booking_id: 'bk-x3', teacher_name: 'Mr. Stein',    student_name: 'Eli',     family_name: 'Roth Family',
+      date: '2026-05-13', start_time: '4:15 PM', end_time: '4:30 PM',
+      parent_phone: '(216) 555-0518', parent_note: '', conference_format: 'Phone Call' },
+    { booking_id: 'bk-x4', teacher_name: 'Ms. Friedman', student_name: 'Maya',    family_name: 'Levi Family',
+      date: '2026-05-11', start_time: '4:45 PM', end_time: '5:00 PM',
+      parent_phone: '(216) 555-0719', parent_note: 'Concerned about homework volume.', conference_format: 'In-Person Requested' },
+    { booking_id: 'bk-x5', teacher_name: 'Mr. Cohen',    student_name: 'Aviva',   family_name: 'Goldstein Family',
+      date: '2026-05-14', start_time: '5:00 PM', end_time: '5:15 PM',
+      parent_phone: '(216) 555-0823', parent_note: '', conference_format: 'Phone Call' },
+    { booking_id: 'bk-x6', teacher_name: 'Mrs. Shapiro', student_name: 'Dov',     family_name: 'Berman Family',
+      date: '2026-05-14', start_time: '4:30 PM', end_time: '4:45 PM',
+      parent_phone: '(216) 555-0931', parent_note: '', conference_format: 'Phone Call' }
+  ];
+
+  /* =========================================================
+     App state
+     ========================================================= */
+  var currentRole = null;       // 'parent' | 'teacher' | 'admin'
+  var currentTeacherName = null;
+  var pendingCancelId = null;
+  var currentPickerTeacher = null;
+  var currentPickerStudent = null;
+  var currentPickerBookingId = null;
+  var selectedSlotId = null;
+  var selectedSlotDate = null;
+  var selectedSlotTime = null;
+  var selectedSlotEnd = null;
+
+  /* =========================================================
+     Helpers
+     ========================================================= */
+  function el(id) { return document.getElementById(id); }
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    el('screen-' + id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function formatDate(dateStr) {
+    if (!dateStr) return '';
+    try {
+      var d = new Date(dateStr + 'T12:00:00');
+      return new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).format(d);
+    } catch (e) { return dateStr; }
+  }
+  function formatDateLong(dateStr) {
+    if (!dateStr) return '';
+    try {
+      var d = new Date(dateStr + 'T12:00:00');
+      return new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).format(d);
+    } catch (e) { return dateStr; }
+  }
+
+  function showToast(msg, isError) {
+    var existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+    var t = document.createElement('div');
+    t.className = 'toast' + (isError ? ' error' : '');
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(function() { t.remove(); }, 3500);
+  }
+
+  function showLoginError(msg) { var e = el('login-error'); e.textContent = msg; e.classList.add('visible'); }
+  function hideLoginError() { el('login-error').classList.remove('visible'); el('login-error').textContent = ''; }
+
+  /* =========================================================
+     Login (demo: lenient)
+     ========================================================= */
+  function handleLogin() {
+    var lastName = el('input-lastname').value.trim();
+    var phone4 = el('input-phone4').value.trim();
+    if (!lastName) { showLoginError('Please enter your last name.'); return; }
+    if (!/^\d{4}$/.test(phone4)) { showLoginError('Please enter exactly 4 digits.'); return; }
+    hideLoginError();
+    // Step 2: full phone
+    el('login-step-1').style.display = 'none';
+    el('login-step-fullphone').style.display = 'block';
+  }
+
+  function handleFullPhoneLogin() {
+    var fullPhone = el('input-fullphone').value.trim();
+    if (!fullPhone || fullPhone.replace(/\D/g, '').length < 7) {
+      showLoginError('Please enter your full phone number.');
+      return;
+    }
+    hideLoginError();
+    // Demo: any phone works → Cohen family
+    demoSignIn('parent');
+  }
+
+  function demoSignIn(role) {
+    currentRole = role;
+    if (role === 'teacher') currentTeacherName = 'Mrs. Levi';
+    else if (role === 'admin') currentTeacherName = null;
+    showDashboard();
+  }
+
+  function handleLogout() {
+    currentRole = null;
+    currentTeacherName = null;
+    resetLogin();
+    showScreen('login');
+  }
+
+  function resetLogin() {
+    el('login-step-1').style.display = 'block';
+    el('login-step-fullphone').style.display = 'none';
+    el('input-lastname').value = '';
+    el('input-phone4').value = '';
+    el('input-fullphone').value = '';
+    hideLoginError();
+  }
+
+  /* =========================================================
+     Dashboard rendering
+     ========================================================= */
+  function showDashboard() {
+    showScreen('dashboard');
+    var welcomeMsg = el('welcome-msg');
+    var welcomeSub = el('welcome-sub');
+
+    el('admin-section').textContent = '';
+    el('dashboard-content').textContent = '';
+    el('teacher-section').textContent = '';
+
+    if (currentRole === 'admin') {
+      welcomeMsg.textContent = 'Welcome, Admin';
+      welcomeSub.textContent = 'Admin view \u2014 all scheduled conferences';
+      renderAdminSection(allBookings());
+    } else if (currentRole === 'teacher') {
+      welcomeMsg.textContent = 'Welcome, ' + currentTeacherName;
+      welcomeSub.textContent = "You're signed in as a teacher.";
+      renderTeacherSection(currentTeacherName, bookingsForTeacher(currentTeacherName));
+    } else {
+      welcomeMsg.textContent = 'Welcome, ' + FAMILY.family_name;
+      welcomeSub.textContent = 'Tap "Book" to schedule a conference';
+      renderParentDashboard();
+    }
+  }
+
+  function allBookings() {
+    return BOOKINGS.concat(OTHER_BOOKINGS);
+  }
+
+  function bookingsForTeacher(teacherName) {
+    return allBookings().filter(function(b) { return b.teacher_name === teacherName; })
+      .sort(function(a, b) {
+        if (a.date !== b.date) return a.date < b.date ? -1 : 1;
+        return a.start_time < b.start_time ? -1 : 1;
       });
-    });
-    return slots;
   }
 
-  FAMILY.kids.forEach((k, ki) => {
-    k.teachers.forEach((t, ti) => {
-      t.slots = buildTeacherSlots(ki * 10 + ti);
-      t.expanded = false;
-      t.booking = null; // { dayKey, time }
-    });
-  });
+  function renderParentDashboard() {
+    var content = el('dashboard-content');
+    FAMILY.children.forEach(function(child) {
+      var card = document.createElement('div');
+      card.className = 'child-card';
 
-  let step = 'signin'; // signin | dashboard | confirm
-  const stepsEl = document.getElementById('stepsEl');
-  const screen = document.getElementById('screen');
+      var header = document.createElement('div');
+      header.className = 'child-header';
+      var cn = document.createElement('div'); cn.className = 'child-name'; cn.textContent = child.name;
+      var cg = document.createElement('div'); cg.className = 'child-grade'; cg.textContent = 'Grade ' + child.grade;
+      header.appendChild(cn); header.appendChild(cg);
+      card.appendChild(header);
 
-  function renderSteps() {
-    while (stepsEl.firstChild) stepsEl.removeChild(stepsEl.firstChild);
-    const defs = [
-      { key: 'signin', label: 'Sign in' },
-      { key: 'dashboard', label: 'Book conferences' },
-      { key: 'confirm', label: 'Confirm' }
-    ];
-    const order = { signin: 0, dashboard: 1, confirm: 2 };
-    defs.forEach((d, i) => {
-      const s = document.createElement('div');
-      s.className = 'step' + (d.key === step ? ' active' : order[d.key] < order[step] ? ' done' : '');
-      const n = document.createElement('span'); n.className = 'n'; n.textContent = (i + 1);
-      const l = document.createElement('span'); l.textContent = d.label;
-      s.appendChild(n); s.appendChild(l);
-      stepsEl.appendChild(s);
-      if (i < defs.length - 1) {
-        const sep = document.createElement('span'); sep.className = 'sep'; stepsEl.appendChild(sep);
-      }
+      child.teachers.forEach(function(teacher) {
+        var bk = BOOKINGS.find(function(b) { return b.teacher_name === teacher && b.student_name === child.name; });
+        var row = document.createElement('div'); row.className = 'teacher-row';
+        var info = document.createElement('div'); info.className = 'teacher-info';
+        var tn = document.createElement('div'); tn.className = 'teacher-name'; tn.textContent = teacher;
+        info.appendChild(tn);
+
+        if (bk) {
+          var badge = document.createElement('div'); badge.className = 'booked-badge';
+          badge.textContent = formatDate(bk.date) + ' at ' + bk.start_time;
+          info.appendChild(badge);
+          var acts = document.createElement('div'); acts.className = 'booking-actions';
+
+          var rb = document.createElement('button'); rb.className = 'btn btn-resched'; rb.textContent = 'Reschedule';
+          rb.addEventListener('click', (function(id, t, s) { return function() { handleReschedule(id, t, s); }; })(bk.booking_id, teacher, child.name));
+
+          var cb = document.createElement('button'); cb.className = 'btn btn-cancel'; cb.textContent = 'Cancel';
+          cb.addEventListener('click', (function(id, t, st, dt) { return function() { handleCancel(id, t, st, dt); }; })(bk.booking_id, teacher, bk.start_time, bk.date));
+
+          acts.appendChild(rb); acts.appendChild(cb);
+          info.appendChild(acts);
+          row.appendChild(info);
+        } else {
+          row.appendChild(info);
+          var bb = document.createElement('button'); bb.className = 'btn btn-book'; bb.textContent = 'Book';
+          bb.addEventListener('click', (function(t, s) { return function() { openSlotPicker(t, s); }; })(teacher, child.name));
+          row.appendChild(bb);
+        }
+        card.appendChild(row);
+      });
+      content.appendChild(card);
     });
   }
 
-  function renderSignin() {
-    while (screen.firstChild) screen.removeChild(screen.firstChild);
-    const c = document.createElement('div'); c.className = 'signin';
-    const eyebrow = document.createElement('div'); eyebrow.className = 'eyebrow'; eyebrow.textContent = 'Parent-Teacher Conferences';
-    const h = document.createElement('h1'); h.textContent = 'Welcome. Book all your conferences in one place.';
-    const p = document.createElement('p'); p.textContent = 'Enter your last name and the last 4 digits of the phone number on file. You will see every one of your kids\u2019 teachers.';
-    c.appendChild(eyebrow); c.appendChild(h); c.appendChild(p);
-    const f1 = document.createElement('div'); f1.className = 'field';
-    const l1 = document.createElement('label'); l1.textContent = 'Last name'; l1.htmlFor = 'lname';
-    const i1 = document.createElement('input'); i1.id = 'lname'; i1.type = 'text'; i1.placeholder = 'Demo'; i1.value = 'Demo';
-    f1.appendChild(l1); f1.appendChild(i1);
-    const f2 = document.createElement('div'); f2.className = 'field';
-    const l2 = document.createElement('label'); l2.textContent = 'Last 4 digits of phone'; l2.htmlFor = 'phone';
-    const i2 = document.createElement('input'); i2.id = 'phone'; i2.type = 'text'; i2.placeholder = '1234'; i2.value = '1234'; i2.maxLength = 4;
-    f2.appendChild(l2); f2.appendChild(i2);
-    c.appendChild(f1); c.appendChild(f2);
-    const btn = document.createElement('button'); btn.className = 'primary'; btn.textContent = 'Sign in and see my kids\u2019 teachers';
-    btn.addEventListener('click', () => { step = 'dashboard'; renderSteps(); renderDashboard(); });
-    c.appendChild(btn);
-    const n = document.createElement('div'); n.className = 'demo-note';
-    const b = document.createElement('b'); b.textContent = 'Demo mode: '; n.appendChild(b);
-    n.appendChild(document.createTextNode('Any values work. The real app matches family records to authenticate.'));
-    c.appendChild(n);
-    screen.appendChild(c);
-  }
+  function renderAdminSection(bookings) {
+    var container = el('admin-section');
+    container.textContent = '';
 
-  function renderDashboard() {
-    while (screen.firstChild) screen.removeChild(screen.firstChild);
-    const hello = document.createElement('div'); hello.className = 'hello';
-    const eyebrow = document.createElement('div'); eyebrow.className = 'eyebrow'; eyebrow.textContent = 'Welcome, ' + FAMILY.name;
-    const h = document.createElement('h1'); h.textContent = 'All your kids\u2019 teachers. One screen.';
-    const p = document.createElement('p'); p.textContent = 'Tap a time under each teacher to book a 15-minute conference. You can change it later.';
-    hello.appendChild(eyebrow); hello.appendChild(h); hello.appendChild(p);
-    screen.appendChild(hello);
+    var byDay = {};
+    var inPersonCount = 0;
+    bookings.forEach(function(b) {
+      byDay[b.date] = (byDay[b.date] || 0) + 1;
+      if (b.conference_format === 'In-Person Requested') inPersonCount++;
+    });
+    var days = Object.keys(byDay).sort();
 
-    const totalTeachers = FAMILY.kids.reduce((a, k) => a + k.teachers.length, 0);
-    const booked = countBooked();
-    const summary = document.createElement('div'); summary.className = 'summary-bar';
+    var stats = document.createElement('div');
+    stats.className = 'admin-stats';
     [
-      { n: FAMILY.kids.length, l: 'Your kids' },
-      { n: totalTeachers, l: 'Teachers to meet' },
-      { n: booked + ' / ' + totalTeachers, l: 'Booked so far' }
-    ].forEach(item => {
-      const s = document.createElement('div'); s.className = 'summ';
-      const nEl = document.createElement('div'); nEl.className = 'n'; nEl.textContent = item.n;
-      const lEl = document.createElement('div'); lEl.className = 'l'; lEl.textContent = item.l;
-      s.appendChild(nEl); s.appendChild(lEl);
-      summary.appendChild(s);
+      { num: bookings.length, label: 'Total' },
+      { num: days.length, label: 'Days' },
+      { num: inPersonCount, label: 'In-Person Req' }
+    ].forEach(function(s) {
+      var card = document.createElement('div');
+      card.className = 'admin-stat-card';
+      var n = document.createElement('div'); n.className = 'admin-stat-num'; n.textContent = s.num;
+      var l = document.createElement('div'); l.className = 'admin-stat-label'; l.textContent = s.label;
+      card.appendChild(n); card.appendChild(l);
+      stats.appendChild(card);
     });
-    screen.appendChild(summary);
+    container.appendChild(stats);
 
-    FAMILY.kids.forEach(kid => {
-      const k = document.createElement('div'); k.className = 'kid';
-      const head = document.createElement('div'); head.className = 'kid-head';
-      const av = document.createElement('div'); av.className = 'kid-avatar v' + kid.avatarV; av.textContent = kid.name.split(' ').map(w => w[0]).join('').slice(0, 2);
-      head.appendChild(av);
-      const info = document.createElement('div');
-      const nm = document.createElement('div'); nm.className = 'kid-name'; nm.textContent = kid.name;
-      const gr = document.createElement('div'); gr.className = 'kid-grade'; gr.textContent = kid.grade + ' \u00B7 ' + kid.teachers.length + ' teachers';
-      info.appendChild(nm); info.appendChild(gr);
-      head.appendChild(info);
-      k.appendChild(head);
+    if (!bookings.length) {
+      var empty = document.createElement('div');
+      empty.className = 'empty-teacher';
+      empty.textContent = 'No bookings yet.';
+      container.appendChild(empty);
+      return;
+    }
 
-      const tchs = document.createElement('div'); tchs.className = 'teachers';
-      kid.teachers.forEach(t => {
-        const row = document.createElement('div'); row.className = 'teacher' + (t.booking ? ' booked' : '');
-        const left = document.createElement('div');
-        const tn = document.createElement('div'); tn.className = 'tname'; tn.textContent = t.name;
-        const tr = document.createElement('div'); tr.className = 'trole'; tr.textContent = t.role;
-        left.appendChild(tn); left.appendChild(tr);
-        if (t.booking) {
-          const st = document.createElement('div'); st.className = 'status';
-          const day = DAYS.find(d => d.key === t.booking.dayKey);
-          st.appendChild(document.createTextNode(' Booked ' + day.label + ' at ' + t.booking.time));
-          left.appendChild(st);
+    days.forEach(function(date) {
+      var header = document.createElement('div');
+      header.className = 'admin-day-header';
+      var dayBookings = bookings.filter(function(b) { return b.date === date; })
+        .sort(function(a, b) { return a.start_time < b.start_time ? -1 : 1; });
+      header.textContent = formatDateLong(date) + '  \u00b7  ' + dayBookings.length + ' booking' + (dayBookings.length === 1 ? '' : 's');
+      container.appendChild(header);
+
+      dayBookings.forEach(function(bk) {
+        var card = document.createElement('div');
+        card.className = 'admin-booking';
+
+        var row1 = document.createElement('div');
+        row1.className = 'row1';
+        var time = document.createElement('span'); time.className = 'time'; time.textContent = bk.start_time;
+        var teacher = document.createElement('span'); teacher.className = 'teacher'; teacher.textContent = bk.teacher_name;
+        row1.appendChild(time);
+        row1.appendChild(teacher);
+        if (bk.conference_format === 'In-Person Requested') {
+          var badge = document.createElement('span');
+          badge.className = 'tb-format-inperson';
+          badge.textContent = 'IN-PERSON';
+          row1.appendChild(badge);
         }
-        const right = document.createElement('div');
-        const expand = document.createElement('button'); expand.className = 'expand-btn';
-        expand.textContent = t.booking ? 'Change' : 'See times';
-        expand.addEventListener('click', () => { t.expanded = !t.expanded; renderDashboard(); });
-        right.appendChild(expand);
-        row.appendChild(left); row.appendChild(right);
+        card.appendChild(row1);
 
-        if (t.expanded || t.booking) {
-          const tray = document.createElement('div'); tray.className = 'slot-tray show';
-          tray.style.gridColumn = '1 / -1';
-          DAYS.forEach(day => {
-            const d = document.createElement('div'); d.className = 'tray-day';
-            const dl = document.createElement('div'); dl.className = 'day-label'; dl.textContent = day.label;
-            d.appendChild(dl);
-            const grid = document.createElement('div'); grid.className = 'slots';
-            t.slots[day.key].forEach((sl, si) => {
-              const sb = document.createElement('button'); sb.className = 'slot-btn';
-              sb.textContent = sl.time;
-              const isMyBooking = t.booking && t.booking.dayKey === day.key && t.booking.time === sl.time;
-              if (isMyBooking) { sb.style.background = 'var(--forest-dark)'; sb.style.color = 'white'; sb.style.borderColor = 'var(--forest-dark)'; }
-              else if (sl.taken) { sb.classList.add('taken'); sb.disabled = true; }
-              sb.addEventListener('click', () => {
-                if (sl.taken) return;
-                t.booking = { dayKey: day.key, time: sl.time };
-                t.expanded = false;
-                renderDashboard();
-              });
-              grid.appendChild(sb);
-            });
-            d.appendChild(grid);
-            tray.appendChild(d);
-          });
-          row.appendChild(tray);
+        var details = document.createElement('div');
+        details.className = 'details';
+        details.textContent = bk.student_name + ' \u2014 ' + bk.family_name;
+        card.appendChild(details);
+
+        if (bk.parent_phone) {
+          var phone = document.createElement('div');
+          phone.className = 'details';
+          var lbl = document.createElement('span'); lbl.className = 'label'; lbl.textContent = 'Parent phone: ';
+          phone.appendChild(lbl);
+          phone.appendChild(document.createTextNode(bk.parent_phone));
+          card.appendChild(phone);
         }
 
-        tchs.appendChild(row);
+        if (bk.parent_note) {
+          var note = document.createElement('div');
+          note.className = 'admin-note';
+          note.textContent = bk.parent_note;
+          card.appendChild(note);
+        }
+
+        container.appendChild(card);
       });
-      k.appendChild(tchs);
-      screen.appendChild(k);
     });
-
-    // CTA
-    const cta = document.createElement('div');
-    cta.style.cssText = 'margin-top:18px; text-align:center;';
-    const finish = document.createElement('button');
-    finish.className = 'primary';
-    finish.style.cssText = 'background: var(--forest-dark); color: white; border: none; border-radius: 10px; padding: 13px 26px; font-weight: 700; font-size: 14px; letter-spacing: 0.02em; cursor: pointer; font-family: inherit;';
-    finish.textContent = booked === 0 ? 'Book at least one to confirm' : 'Confirm all ' + booked + ' bookings';
-    if (booked === 0) finish.disabled = true, finish.style.opacity = 0.5, finish.style.cursor = 'not-allowed';
-    finish.addEventListener('click', () => { if (booked > 0) { step = 'confirm'; renderSteps(); renderConfirm(); } });
-    cta.appendChild(finish);
-    screen.appendChild(cta);
   }
 
-  function countBooked() {
-    let c = 0;
-    FAMILY.kids.forEach(k => k.teachers.forEach(t => { if (t.booking) c++; }));
-    return c;
-  }
+  function renderTeacherSection(teacherName, bookings) {
+    var container = el('teacher-section');
+    container.textContent = '';
 
-  function renderConfirm() {
-    while (screen.firstChild) screen.removeChild(screen.firstChild);
-    const c = document.createElement('div'); c.className = 'conf';
-    const ch = document.createElement('div'); ch.className = 'check'; ch.textContent = '\u2713';
-    c.appendChild(ch);
-    const h = document.createElement('h1'); h.textContent = 'You\u2019re booked.'; c.appendChild(h);
-    const count = countBooked();
-    const p = document.createElement('p');
-    p.textContent = count + ' conference' + (count === 1 ? '' : 's') + ' confirmed. A branded email is on its way with a calendar invite for each one. You can come back any time to make changes.';
-    c.appendChild(p);
+    var title = document.createElement('div');
+    title.className = 'section-title';
+    title.textContent = 'My conferences (' + teacherName + ')';
+    container.appendChild(title);
 
-    const list = document.createElement('div'); list.className = 'booking-list';
-    const all = [];
-    FAMILY.kids.forEach(k => k.teachers.forEach(t => {
-      if (t.booking) {
-        const day = DAYS.find(d => d.key === t.booking.dayKey);
-        all.push({ day, time: t.booking.time, teacher: t.name, kid: k.name + ' \u00B7 ' + k.grade });
+    if (!bookings.length) {
+      var empty = document.createElement('div');
+      empty.className = 'empty-teacher';
+      empty.textContent = 'No bookings yet. They will appear here as families book.';
+      container.appendChild(empty);
+      return;
+    }
+
+    bookings.forEach(function(bk) {
+      var card = document.createElement('div');
+      card.className = 'teacher-booking-card';
+
+      var when = document.createElement('div');
+      when.className = 'tb-when';
+      when.textContent = formatDate(bk.date) + ' \u00b7 ' + bk.start_time + ' \u2013 ' + bk.end_time;
+      card.appendChild(when);
+
+      var studentLine = document.createElement('div');
+      studentLine.className = 'tb-student';
+      studentLine.appendChild(document.createTextNode(bk.student_name));
+      if (bk.conference_format === 'In-Person Requested') {
+        var badge = document.createElement('span');
+        badge.className = 'tb-format-inperson';
+        badge.textContent = 'IN-PERSON REQUESTED';
+        studentLine.appendChild(badge);
       }
-    }));
-    // Sort by day then time
-    all.sort((a, b) => (a.day.key + a.time).localeCompare(b.day.key + b.time));
-    all.forEach(b => {
-      const row = document.createElement('div'); row.className = 'booking';
-      const t = document.createElement('div'); t.className = 'time';
-      t.textContent = b.day.short + ' ' + b.time;
-      const who = document.createElement('div'); who.className = 'who';
-      const tn = document.createElement('span'); tn.className = 'teacher-name'; tn.textContent = b.teacher;
-      const kn = document.createElement('div'); kn.className = 'kid-name'; kn.textContent = 'for ' + b.kid;
-      who.appendChild(tn); who.appendChild(kn);
-      const cal = document.createElement('div'); cal.className = 'cal'; cal.textContent = '+ Calendar';
-      row.appendChild(t); row.appendChild(who); row.appendChild(cal);
-      list.appendChild(row);
-    });
-    c.appendChild(list);
+      card.appendChild(studentLine);
 
-    const actions = document.createElement('div'); actions.className = 'actions';
-    const back = document.createElement('button'); back.textContent = 'Change bookings';
-    back.addEventListener('click', () => { step = 'dashboard'; renderSteps(); renderDashboard(); });
-    const restart = document.createElement('button'); restart.className = 'primary'; restart.textContent = 'Reset demo';
-    restart.addEventListener('click', () => {
-      FAMILY.kids.forEach(k => k.teachers.forEach(t => { t.booking = null; t.expanded = false; }));
-      step = 'signin'; renderSteps(); renderSignin();
+      var family = document.createElement('div');
+      family.className = 'tb-family';
+      family.textContent = bk.family_name;
+      card.appendChild(family);
+
+      var meta = document.createElement('div');
+      meta.className = 'tb-meta';
+      if (bk.parent_phone) {
+        var phoneRow = document.createElement('div');
+        var phoneLabel = document.createElement('span');
+        phoneLabel.className = 'label';
+        phoneLabel.textContent = 'Phone:';
+        phoneRow.appendChild(phoneLabel);
+        phoneRow.appendChild(document.createTextNode(' ' + bk.parent_phone));
+        meta.appendChild(phoneRow);
+      }
+      card.appendChild(meta);
+
+      if (bk.parent_note) {
+        var note = document.createElement('div');
+        note.className = 'tb-note';
+        note.textContent = bk.parent_note;
+        card.appendChild(note);
+      }
+
+      container.appendChild(card);
     });
-    actions.appendChild(back); actions.appendChild(restart);
-    c.appendChild(actions);
-    screen.appendChild(c);
   }
 
-  renderSteps();
-  renderSignin();
-})();
-</script>
+  /* =========================================================
+     Slot picker
+     ========================================================= */
+  function openSlotPicker(teacher, student, rescheduleId) {
+    currentPickerTeacher = teacher;
+    currentPickerStudent = student;
+    currentPickerBookingId = rescheduleId || null;
+    selectedSlotId = null;
+    var cb = el('inperson-checkbox');
+    if (cb) cb.checked = false;
+    showScreen('slots');
+    el('picker-teacher').textContent = teacher;
+    el('picker-student').textContent = (currentPickerBookingId ? 'Reschedule for ' : 'Select a time for ') + student;
+    el('confirm-panel').style.display = 'none';
+    renderSlots(SLOT_GRID[teacher] || []);
+  }
 
+  function renderSlots(slots) {
+    var content = el('slots-content');
+    content.textContent = '';
+    if (!slots || slots.length === 0) {
+      var ns = document.createElement('div');
+      ns.style.cssText = 'color:#999;font-size:15px;padding:32px 20px;text-align:center;background:white;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06);';
+      ns.textContent = 'No available times for this teacher.';
+      content.appendChild(ns);
+      return;
+    }
+
+    var grouped = {};
+    slots.forEach(function(s) {
+      if (!grouped[s.date]) grouped[s.date] = [];
+      grouped[s.date].push(s);
+    });
+
+    Object.keys(grouped).sort().forEach(function(date) {
+      var g = document.createElement('div'); g.className = 'date-group';
+      var lbl = document.createElement('div'); lbl.className = 'date-label';
+      lbl.textContent = formatDateLong(date);
+      g.appendChild(lbl);
+      var grid = document.createElement('div'); grid.className = 'slots-grid';
+      grouped[date].forEach(function(slot) {
+        var btn = document.createElement('button');
+        btn.className = 'slot-btn';
+        btn.textContent = slot.start_time;
+        btn.setAttribute('data-slot-id', slot.slot_id);
+        if (slot.taken) {
+          btn.disabled = true;
+          btn.title = 'Taken';
+        } else {
+          btn.addEventListener('click', (function(sid, d, st, et) {
+            return function() { handleBookSlot(sid, d, st, et); };
+          })(slot.slot_id, slot.date, slot.start_time, slot.end_time));
+        }
+        grid.appendChild(btn);
+      });
+      g.appendChild(grid); content.appendChild(g);
+    });
+  }
+
+  function handleBookSlot(slotId, date, time, endTime) {
+    selectedSlotId = slotId;
+    selectedSlotDate = date;
+    selectedSlotTime = time;
+    selectedSlotEnd = endTime;
+
+    document.querySelectorAll('.slot-btn').forEach(function(b) { b.classList.remove('selected'); });
+    var selected = document.querySelector('[data-slot-id="' + slotId + '"]');
+    if (selected) selected.classList.add('selected');
+
+    var details = el('confirm-details');
+    details.textContent = '';
+
+    var lines = [
+      ['Teacher', currentPickerTeacher],
+      ['Student', currentPickerStudent],
+      ['Date', formatDateLong(date)],
+      ['Time', time + ' \u2013 ' + endTime],
+      ['Location', roomFor(currentPickerTeacher)]
+    ];
+    lines.forEach(function(pair) {
+      var d = document.createElement('div');
+      d.className = 'confirm-detail';
+      var s = document.createElement('strong');
+      s.textContent = pair[1];
+      d.textContent = pair[0] + ': ';
+      d.appendChild(s);
+      details.appendChild(d);
+    });
+
+    el('confirm-note').value = '';
+    el('btn-confirm-book').disabled = false;
+    el('btn-confirm-book').textContent = currentPickerBookingId ? 'Confirm Reschedule' : 'Confirm Booking';
+
+    el('confirm-panel').style.display = 'block';
+    el('confirm-panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function clearSlotSelection() {
+    selectedSlotId = null;
+    document.querySelectorAll('.slot-btn').forEach(function(b) { b.classList.remove('selected'); });
+    el('confirm-panel').style.display = 'none';
+  }
+
+  function confirmBooking() {
+    if (!selectedSlotId) return;
+    var inPerson = el('inperson-checkbox').checked;
+    var note = el('confirm-note').value.trim();
+    var formatLabel = inPerson ? 'In-Person Requested' : 'Phone Call';
+
+    if (currentPickerBookingId) {
+      // Reschedule: remove old booking, free old slot
+      var old = BOOKINGS.find(function(b) { return b.booking_id === currentPickerBookingId; });
+      if (old) {
+        freeSlot(old.teacher_name, old.date, old.start_time);
+        BOOKINGS = BOOKINGS.filter(function(b) { return b.booking_id !== currentPickerBookingId; });
+      }
+    }
+
+    // Mark slot as taken
+    var slot = (SLOT_GRID[currentPickerTeacher] || []).find(function(s) { return s.slot_id === selectedSlotId; });
+    if (slot) slot.taken = true;
+
+    BOOKINGS.push({
+      booking_id: 'bk-' + Date.now(),
+      teacher_name: currentPickerTeacher,
+      student_name: currentPickerStudent,
+      date: selectedSlotDate,
+      start_time: selectedSlotTime,
+      end_time: selectedSlotEnd,
+      family_name: FAMILY.family_name,
+      parent_phone: '(216) 555-0411',
+      parent_note: note,
+      conference_format: formatLabel
+    });
+
+    showToast(currentPickerBookingId ? 'Conference rescheduled' : 'Conference booked');
+    showDashboard();
+  }
+
+  function freeSlot(teacher, date, time) {
+    var list = SLOT_GRID[teacher] || [];
+    list.forEach(function(s) {
+      if (s.date === date && s.start_time === time) s.taken = false;
+    });
+  }
+
+  /* =========================================================
+     Cancel
+     ========================================================= */
+  function handleCancel(id, teacher, time, date) {
+    pendingCancelId = id;
+    el('cancel-modal-text').textContent = 'Cancel your conference with ' + teacher + ' on ' + formatDateLong(date) + ' at ' + time + '?';
+    el('cancel-modal').classList.add('visible');
+  }
+
+  function closeCancelModal() {
+    pendingCancelId = null;
+    el('cancel-modal').classList.remove('visible');
+  }
+
+  function confirmCancel() {
+    if (!pendingCancelId) return;
+    var bk = BOOKINGS.find(function(b) { return b.booking_id === pendingCancelId; });
+    if (bk) {
+      freeSlot(bk.teacher_name, bk.date, bk.start_time);
+      BOOKINGS = BOOKINGS.filter(function(b) { return b.booking_id !== pendingCancelId; });
+    }
+    closeCancelModal();
+    showToast('Conference cancelled');
+    showDashboard();
+  }
+
+  function handleReschedule(id, teacher, student) {
+    openSlotPicker(teacher, student, id);
+  }
+
+  /* =========================================================
+     Keyboard niceties
+     ========================================================= */
+  el('input-lastname').addEventListener('keydown', function(e) { if (e.key === 'Enter') el('input-phone4').focus(); });
+  el('input-phone4').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleLogin(); });
+  el('input-phone4').addEventListener('input', function(e) { e.target.value = e.target.value.replace(/\D/g, ''); });
+  el('input-fullphone').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleFullPhoneLogin(); });
+</script>
 </body>
 </html>

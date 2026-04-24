@@ -3,662 +3,1875 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SIS Dashboard Demo &middot; AI Inside a Small School</title>
+<title>Pardes SIS Demo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
+  /* ============================================================
+     Pardes SIS — static port matching the live React app.
+     Brand colors, Montserrat headings, DM Sans body.
+     ============================================================ */
   :root {
-    --forest: #10653c;
-    --forest-dark: #0a4a2b;
-    --forest-soft: #b7e2c6;
     --navy: #343e85;
-    --cream: #f8f4ed;
-    --sage-light: #f0f4ee;
-    --white: #ffffff;
-    --text-dark: #1d1d1f;
-    --text-body: #424245;
-    --text-light: #86868b;
-    --line: rgba(16, 101, 60, 0.14);
-    --line-soft: rgba(0, 0, 0, 0.06);
-    --amber: #d4940a;
-    --warn: #b8620a;
-    --danger: #8b2c1a;
+    --navy-light: #4a5298;
+    --navy-dark: #2a3270;
+    --green: #10653c;
+    --green-light: #148a4f;
+    --brown: #5e3b1d;
+    --offwhite: #f8f9fc;
+    --warning: #d97706;
+    --danger: #dc2626;
+    --text-primary: #1a1a2e;
+    --text-secondary: #6b7280;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --emerald-50: #ecfdf5;
+    --emerald-500: #10b981;
+    --emerald-600: #059669;
+    --emerald-700: #047857;
+    --red-50: #fef2f2;
+    --red-100: #fee2e2;
+    --red-500: #ef4444;
+    --red-600: #dc2626;
+    --red-700: #b91c1c;
+    --yellow-50: #fefce8;
+    --yellow-100: #fef9c3;
+    --yellow-500: #eab308;
+    --yellow-700: #a16207;
+    --yellow-800: #854d0e;
+    --amber-100: #fef3c7;
+    --amber-800: #92400e;
+    --blue-50: #eff6ff;
+    --blue-400: #60a5fa;
+    --blue-500: #3b82f6;
+    --pink-400: #f472b6;
   }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: 'Montserrat', system-ui, -apple-system, sans-serif; background: #f7f7f5; color: var(--text-body); -webkit-font-smoothing: antialiased; min-height: 100vh; }
-  h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; color: var(--text-dark); margin: 0; letter-spacing: -0.02em; }
-  a { color: var(--forest); text-decoration: none; }
-  button { font-family: inherit; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    background-color: var(--offwhite);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    color: var(--gray-900);
+  }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; padding: 0; }
+  input, textarea { font-family: inherit; }
+  a { color: inherit; text-decoration: none; }
 
-  .topbar { background: var(--white); border-bottom: 1px solid var(--line-soft); padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
-  .topbar .back { font-size: 13px; font-weight: 600; color: var(--forest); display: inline-flex; align-items: center; gap: 6px; }
-  .topbar .back::before { content: "\2190"; }
-  .topbar .logo { font-family: 'Caveat', cursive; color: var(--forest); font-size: 22px; font-weight: 600; }
-  .topbar .demo-label { font-size: 11px; font-weight: 700; color: var(--forest); letter-spacing: 0.14em; text-transform: uppercase; padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; }
+  ::selection { background-color: rgba(52, 62, 133, 0.15); }
+  :focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; border-radius: 4px; }
 
-  .app { display: grid; grid-template-columns: 300px 1fr; height: calc(100vh - 49px); }
+  /* ----------- Layout ----------- */
+  .app-shell { min-height: 100vh; background: var(--offwhite); }
+  .sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0;
+    width: 240px; z-index: 40;
+    background: linear-gradient(180deg, #343e85 0%, #2a3270 60%, #1e2654 100%);
+    display: flex; flex-direction: column;
+  }
+  .sidebar-logo {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .sidebar-logo-icon {
+    width: 40px; height: 40px;
+    background: rgba(255,255,255,0.95);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+    color: var(--green);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800; font-size: 18px;
+  }
+  .sidebar-logo h2 {
+    color: white; font-size: 13px; font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .sidebar-logo p { color: rgba(255,255,255,0.4); font-size: 11px; margin: 0; }
+  .sidebar-nav {
+    flex: 1; padding: 16px 12px; overflow-y: auto;
+  }
+  .sidebar-nav-item {
+    width: 100%; display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; border-radius: 12px; margin-bottom: 2px;
+    font-size: 14px; font-weight: 500;
+    color: rgba(255,255,255,0.6);
+    transition: all 0.15s ease; text-align: left;
+  }
+  .sidebar-nav-item:hover { background: rgba(255,255,255,0.08); color: white; }
+  .sidebar-nav-item.active {
+    background: rgba(255,255,255,0.15); color: white;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    border-left: 3px solid var(--green);
+    padding-left: 9px;
+  }
+  .sidebar-nav-item svg { flex-shrink: 0; }
+  .sidebar-user {
+    padding: 16px; border-top: 1px solid rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.1);
+  }
+  .sidebar-user-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .sidebar-user-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--green);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 12px; font-weight: 700;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.18);
+  }
+  .sidebar-user-name { color: white; font-size: 13px; font-weight: 600; }
+  .sidebar-user-role { color: rgba(255,255,255,0.4); font-size: 11px; text-transform: capitalize; }
+  .sidebar-signout {
+    width: 100%; display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; border-radius: 12px;
+    color: rgba(255,255,255,0.5);
+    font-size: 13px; transition: all 0.15s ease; text-align: left;
+  }
+  .sidebar-signout:hover { color: white; background: rgba(255,255,255,0.1); }
 
-  /* Sidebar */
-  .sidebar { background: var(--white); border-right: 1px solid var(--line-soft); overflow-y: auto; }
-  .class-picker { padding: 18px 20px 14px; border-bottom: 1px solid var(--line-soft); }
-  .class-picker .label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-light); margin-bottom: 6px; }
-  .class-picker .class-name { font-size: 16px; color: var(--text-dark); font-weight: 700; }
-  .class-picker .teacher { font-size: 12.5px; color: var(--text-body); margin-top: 2px; }
-  .student-search { padding: 12px 20px; border-bottom: 1px solid var(--line-soft); }
-  .student-search input { width: 100%; border: 1px solid var(--line-soft); border-radius: 10px; padding: 9px 12px; font-family: inherit; font-size: 13px; outline: none; background: #fafafa; }
-  .student-search input:focus { border-color: var(--forest); background: white; }
-  .student-list { padding: 8px; }
-  .student-item { display: grid; grid-template-columns: 36px 1fr auto; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; cursor: pointer; transition: background 0.12s ease; text-align: left; border: none; background: transparent; width: 100%; font-family: inherit; }
-  .student-item:hover { background: var(--sage-light); }
-  .student-item.active { background: var(--sage-light); }
-  .student-item.active .name { color: var(--forest); }
-  .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #10653c, #343e85); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 13px; font-family: 'Montserrat', sans-serif; flex-shrink: 0; }
-  .avatar.v1 { background: linear-gradient(135deg, #10653c, #343e85); }
-  .avatar.v2 { background: linear-gradient(135deg, #0a4a2b, #10653c); }
-  .avatar.v3 { background: linear-gradient(135deg, #343e85, #0a4a2b); }
-  .avatar.v4 { background: linear-gradient(135deg, #d4940a, #10653c); }
-  .avatar.v5 { background: linear-gradient(135deg, #8b2c1a, #343e85); }
-  .student-item .name { font-size: 13.5px; font-weight: 600; color: var(--text-dark); }
-  .student-item .sub { font-size: 11px; color: var(--text-light); margin-top: 1px; }
-  .flag { font-size: 10px; font-weight: 700; padding: 3px 6px; border-radius: 5px; letter-spacing: 0.06em; }
-  .flag.good { background: #e7f4ec; color: var(--forest); }
-  .flag.watch { background: #fdf3e1; color: var(--warn); }
+  .main-area { margin-left: 240px; }
+  .topbar {
+    position: sticky; top: 0; z-index: 30;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--gray-200);
+    height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px;
+  }
+  .topbar h1 {
+    font-size: 18px; font-weight: 700; color: var(--gray-900);
+  }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .topbar-name { font-size: 12px; color: var(--gray-400); }
 
-  /* Main */
-  .main { overflow-y: auto; padding: 20px 28px 60px; }
+  .back-portfolio {
+    font-size: 12px; font-weight: 600; color: var(--green);
+    display: inline-flex; align-items: center; gap: 4px;
+    margin-right: 18px;
+  }
+  .back-portfolio:hover { text-decoration: underline; }
 
-  .student-header { display: flex; align-items: center; gap: 18px; padding: 18px 22px; background: white; border: 1px solid var(--line-soft); border-radius: 16px; margin-bottom: 16px; }
-  .student-header .avatar { width: 52px; height: 52px; font-size: 18px; }
-  .student-header .name { font-size: 22px; font-weight: 800; color: var(--text-dark); letter-spacing: -0.02em; }
-  .student-header .meta { font-size: 13px; color: var(--text-light); margin-top: 2px; }
-  .quick-stats { margin-left: auto; display: flex; gap: 24px; }
-  .quick-stats .q .n { font-size: 20px; font-weight: 800; color: var(--forest); line-height: 1; letter-spacing: -0.02em; }
-  .quick-stats .q .l { font-size: 10.5px; color: var(--text-light); margin-top: 4px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+  main.page {
+    padding: 24px;
+    padding-bottom: 60px;
+    max-width: 1152px;
+    margin: 0 auto;
+    animation: fade-in 0.2s ease-out;
+  }
 
-  /* AI Summary */
-  .ai-card { background: linear-gradient(180deg, #ffffff 0%, #f5faf2 100%); border: 1px solid rgba(16, 101, 60, 0.3); border-radius: 16px; padding: 20px 22px; margin-bottom: 16px; position: relative; }
-  .ai-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--forest); border-radius: 4px 0 0 4px; }
-  .ai-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
-  .ai-head .title { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: var(--forest-dark); letter-spacing: 0.04em; text-transform: uppercase; }
-  .ai-badge { background: var(--forest); color: white; padding: 3px 8px; border-radius: 999px; font-size: 10px; font-weight: 800; letter-spacing: 0.08em; }
-  .ai-date { font-size: 11px; color: var(--text-light); font-weight: 600; }
-  .ai-body { font-size: 15px; color: var(--text-dark); line-height: 1.55; }
+  /* ----------- Reusable components ----------- */
+  .card {
+    background: white;
+    border: 1px solid var(--gray-100);
+    border-radius: 16px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    padding: 24px;
+    transition: box-shadow 0.2s ease;
+  }
+  .card-hover { cursor: pointer; }
+  .card-hover:hover {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.04);
+    border-color: var(--gray-200);
+  }
+  .card-hover:active { transform: scale(0.99); }
+  .card-padding-sm { padding: 16px; }
 
-  /* Card grid */
-  .grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 16px; margin-bottom: 16px; }
-  .grid.three { grid-template-columns: repeat(3, 1fr); }
-  .panel { background: white; border: 1px solid var(--line-soft); border-radius: 14px; padding: 18px 20px; }
-  .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-  .panel-head h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-light); }
-  .panel-head .src { font-size: 10.5px; font-weight: 600; color: var(--forest); display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; background: var(--sage-light); border-radius: 999px; }
-  .panel-head .src::before { content: "\2192"; }
+  .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .card-header-title { font-size: 18px; font-weight: 600; color: var(--gray-900); }
+  .card-header-subtitle { font-size: 14px; color: var(--gray-500); margin-top: 2px; }
 
-  /* Subject grades */
-  .subject-row { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line-soft); font-size: 14px; }
-  .subject-row:last-child { border-bottom: none; }
-  .subject-row .sub-name { color: var(--text-dark); font-weight: 500; }
-  .subject-row .trend { font-size: 11px; color: var(--text-light); font-weight: 600; }
-  .subject-row .trend.up { color: var(--forest); }
-  .subject-row .trend.down { color: var(--danger); }
-  .grade-pill { font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: 8px; letter-spacing: 0.02em; min-width: 40px; text-align: center; font-family: 'Montserrat', sans-serif; }
-  .g-a { background: #e7f4ec; color: var(--forest-dark); }
-  .g-b { background: #e8edf5; color: var(--navy); }
-  .g-c { background: #fdf3e1; color: var(--warn); }
-  .g-d { background: #f5e1dd; color: var(--danger); }
+  .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .page-header h1 { font-size: 24px; font-weight: 700; color: var(--gray-900); }
+  .page-header p { font-size: 14px; color: var(--gray-500); margin: 2px 0 0; }
 
-  /* Kriah progress */
-  .kriah-level { font-size: 15px; color: var(--text-dark); font-weight: 600; margin-bottom: 2px; }
-  .kriah-sub { font-size: 12px; color: var(--text-light); margin-bottom: 14px; }
-  .progress-bar { height: 8px; background: var(--sage-light); border-radius: 999px; overflow: hidden; margin-bottom: 6px; }
-  .progress-bar .fill { height: 100%; background: var(--forest); border-radius: 999px; transition: width 0.6s ease; }
-  .progress-row { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--text-light); font-weight: 600; }
-  .progress-group { margin-bottom: 14px; }
-  .progress-group:last-child { margin-bottom: 0; }
-  .progress-group .label { font-size: 11px; color: var(--text-body); font-weight: 600; margin-bottom: 6px; letter-spacing: 0.04em; text-transform: uppercase; }
-  .kriah-chart { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line-soft); }
-  .kriah-chart .mini-label { font-size: 10.5px; color: var(--text-light); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
-  .spark { width: 100%; height: 50px; display: block; }
+  .badge {
+    display: inline-flex; align-items: center;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12px; font-weight: 500;
+  }
+  .badge-navy { background: rgba(52,62,133,0.10); color: var(--navy); }
+  .badge-green { background: rgba(16,101,60,0.10); color: var(--green); }
+  .badge-brown { background: var(--amber-100); color: var(--amber-800); }
+  .badge-red { background: var(--red-100); color: var(--red-700); }
+  .badge-yellow { background: var(--yellow-100); color: var(--yellow-800); }
+  .badge-gray { background: var(--gray-100); color: var(--gray-600); }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 8px; font-weight: 500; border-radius: 8px;
+    padding: 8px 16px; font-size: 14px;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .btn-primary { background: var(--navy); color: white; }
+  .btn-primary:hover { background: var(--navy-dark); }
+  .btn-secondary { background: white; color: var(--gray-700); border: 1px solid var(--gray-300); }
+  .btn-secondary:hover { background: var(--gray-50); }
+  .btn-ghost { background: transparent; color: var(--gray-600); }
+  .btn-ghost:hover { background: var(--gray-100); }
+  .btn-sm { padding: 6px 12px; font-size: 13px; }
+  .btn-justify-start { justify-content: flex-start; }
+
+  /* Stat card */
+  .stat-card {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+    cursor: pointer;
+  }
+  .stat-icon {
+    padding: 8px; border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .stat-icon-navy { background: rgba(52,62,133,0.10); color: var(--navy); }
+  .stat-icon-green { background: rgba(16,101,60,0.10); color: var(--green); }
+  .stat-icon-brown { background: var(--amber-100); color: var(--amber-800); }
+  .stat-icon-gray { background: var(--gray-100); color: var(--gray-600); }
+  .stat-value { font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 700; color: var(--gray-900); line-height: 1.1; }
+  .stat-label { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+
+  /* Grids */
+  .grid-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin-bottom: 24px;
+  }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+  @media (max-width: 768px) {
+    .grid-stats { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .grid-3 { grid-template-columns: 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+
+  /* Staff status widget */
+  .status-bar {
+    display: flex; height: 12px;
+    border-radius: 999px; overflow: hidden;
+    background: var(--gray-100);
+    margin-bottom: 16px;
+  }
+  .status-bar > div { transition: all 0.4s ease; }
+  .status-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 8px; border-radius: 8px;
+  }
+  .status-row:hover { background: var(--gray-50); }
+  .status-row-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .status-name { font-size: 14px; color: var(--gray-800); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .status-row-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .status-time { font-size: 12px; color: var(--gray-500); }
+  .status-label { font-size: 12px; font-weight: 500; }
+
+  /* Quick actions */
+  .quick-actions-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+
+  /* Birthday */
+  .birthday-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 8px; border-radius: 8px;
+    background: var(--yellow-50);
+    margin-bottom: 8px;
+  }
+  .birthday-row svg { color: var(--yellow-500); flex-shrink: 0; }
+  .birthday-row .name { font-size: 14px; font-weight: 500; color: var(--gray-800); }
+  .birthday-row .badge { margin-left: auto; }
+
+  /* Gender */
+  .gender-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .gender-row:last-child { margin-bottom: 0; }
+  .gender-row-left { display: flex; align-items: center; gap: 8px; }
+  .gender-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .gender-male { background: var(--blue-400); }
+  .gender-female { background: var(--pink-400); }
+  .gender-label { font-size: 14px; color: var(--gray-700); }
+  .gender-count { font-size: 14px; font-weight: 600; color: var(--gray-900); }
+
+  /* Search */
+  .searchbar {
+    position: relative; width: 100%; margin-bottom: 12px;
+  }
+  .searchbar svg.icon-search {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: var(--gray-400);
+  }
+  .searchbar input {
+    width: 100%;
+    padding: 10px 40px;
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    font-size: 16px;
+    background: white;
+    outline: none;
+    transition: all 0.15s ease;
+  }
+  .searchbar input:focus {
+    border-color: var(--navy);
+    box-shadow: 0 0 0 2px rgba(52,62,133,0.2);
+  }
+
+  /* Grade filter pills */
+  .grade-filter-wrap { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .grade-divisions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .grade-pill {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px; font-weight: 500;
+    background: var(--gray-100);
+    color: var(--gray-600);
+    transition: background 0.15s ease;
+  }
+  .grade-pill:hover { background: var(--gray-200); }
+  .grade-pill.active { background: var(--navy); color: white; }
+  .grade-pills {
+    display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px;
+  }
+  .grade-pill-sm {
+    padding: 8px 4px;
+    border-radius: 8px;
+    font-size: 12px; font-weight: 500;
+    text-align: center;
+    background: var(--gray-100);
+    color: var(--gray-600);
+    transition: background 0.15s ease;
+  }
+  .grade-pill-sm:hover { background: var(--gray-200); }
+  .grade-pill-sm.active { background: var(--navy); color: white; }
+  @media (max-width: 768px) { .grade-pills { grid-template-columns: repeat(5, 1fr); } }
+
+  /* Table */
+  .table-wrap { overflow-x: auto; }
+  .data-table { width: 100%; font-size: 14px; border-collapse: collapse; }
+  .data-table thead tr { border-bottom: 1px solid var(--gray-200); }
+  .data-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--gray-600);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+  .data-table th:hover { color: var(--gray-900); }
+  .data-table th svg { vertical-align: middle; color: var(--gray-300); }
+  .data-table tbody tr {
+    border-bottom: 1px solid var(--gray-100);
+    cursor: pointer;
+    transition: background 0.1s ease;
+  }
+  .data-table tbody tr:hover { background: var(--gray-50); }
+  .data-table td { padding: 12px 16px; }
+  .data-table .name-cell { font-weight: 500; color: var(--gray-900); }
+
+  /* Login screen */
+  .login-screen {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 16px; position: relative; overflow: hidden;
+    background: linear-gradient(135deg, #343e85 0%, #2a3270 40%, #10653c 100%);
+  }
+  .login-blob {
+    position: absolute; border-radius: 50%; background: rgba(255,255,255,0.05);
+    pointer-events: none;
+  }
+  .login-blob.b1 { top: -96px; right: -96px; width: 384px; height: 384px; }
+  .login-blob.b2 { bottom: -128px; left: -128px; width: 500px; height: 500px; }
+  .login-blob.b3 { top: 33%; right: 25%; width: 256px; height: 256px; background: rgba(255,255,255,0.03); }
+
+  .login-card {
+    width: 100%; max-width: 384px; position: relative; z-index: 10;
+  }
+  .login-logo {
+    text-align: center; margin-bottom: 32px;
+  }
+  .login-logo-box {
+    width: 128px; height: 128px; margin: 0 auto 16px;
+    background: white; border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--green);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800; font-size: 56px;
+  }
+  .login-logo h1 { color: white; font-size: 24px; font-weight: 700; }
+  .login-logo p { color: rgba(255,255,255,0.6); font-size: 14px; margin: 4px 0 0; }
+
+  .login-box {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+    padding: 32px;
+  }
+  .login-box h2 {
+    font-size: 20px; font-weight: 700;
+    text-align: center; margin-bottom: 8px;
+  }
+  .login-box .subtitle {
+    text-align: center; color: var(--gray-500); font-size: 14px; margin-bottom: 24px;
+  }
+  .role-button {
+    width: 100%;
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px;
+    border: 2px solid var(--gray-200);
+    border-radius: 14px;
+    background: var(--gray-50);
+    margin-bottom: 12px;
+    transition: all 0.15s ease;
+    text-align: left;
+  }
+  .role-button:hover {
+    border-color: var(--navy);
+    background: white;
+    box-shadow: 0 4px 8px rgba(52,62,133,0.12);
+  }
+  .role-button .role-avatar {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; flex-shrink: 0;
+  }
+  .role-button.admin .role-avatar { background: var(--navy); }
+  .role-button.teacher .role-avatar { background: var(--green); }
+  .role-button .role-info { flex: 1; }
+  .role-button .role-info .title { font-weight: 700; color: var(--gray-900); font-size: 15px; }
+  .role-button .role-info .desc { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+  .role-button .role-arrow { color: var(--gray-400); }
+
+  .login-footer { text-align: center; color: rgba(255,255,255,0.4); font-size: 12px; margin-top: 24px; }
+
+  .login-back {
+    position: absolute; top: 16px; left: 16px;
+    color: white; font-size: 12px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 8px 12px; border-radius: 8px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(4px);
+    z-index: 11;
+  }
+  .login-back:hover { background: rgba(255,255,255,0.15); }
+
+  /* Ask SIS card */
+  .ask-card {
+    background: linear-gradient(135deg, rgba(52,62,133,0.04), rgba(16,101,60,0.04));
+    border: 1px solid rgba(52,62,133,0.15);
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 24px;
+  }
+  .ask-card label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11px; font-weight: 700;
+    color: var(--navy); text-transform: uppercase; letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+  .ask-input-row {
+    display: flex; gap: 8px;
+  }
+  .ask-input-row input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    font-size: 14px;
+    background: white;
+    outline: none;
+  }
+  .ask-input-row input:focus { border-color: var(--navy); box-shadow: 0 0 0 2px rgba(52,62,133,0.15); }
+  .ask-response {
+    margin-top: 14px;
+    padding: 14px 16px;
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    font-size: 14px;
+    color: var(--gray-700);
+    line-height: 1.55;
+    animation: fade-in 0.25s ease-out;
+  }
+  .ask-response strong { color: var(--navy); }
+
+  /* Profile */
+  .profile-back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 14px; color: var(--gray-500);
+    margin-bottom: 20px;
+  }
+  .profile-back:hover { color: var(--navy); }
+
+  .profile-header {
+    display: flex; align-items: flex-start; gap: 16px;
+    margin-bottom: 20px;
+  }
+  .profile-avatar {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-family: 'Montserrat', sans-serif;
+    font-weight: 700; font-size: 28px;
+    box-shadow: 0 6px 12px rgba(52,62,133,0.3);
+    flex-shrink: 0;
+  }
+  .profile-name {
+    font-size: 26px; font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 6px;
+  }
+  .profile-meta-row {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+
+  /* Tabs */
+  .tab-bar {
+    display: inline-flex; gap: 4px;
+    background: var(--gray-100);
+    padding: 4px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  .tab-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px; font-weight: 500;
+    color: var(--gray-600);
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--gray-900); background: var(--gray-200); }
+  .tab-btn.active {
+    background: var(--navy);
+    color: white;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+
+  /* Progress bar */
+  .progress-track {
+    height: 8px; background: var(--gray-100);
+    border-radius: 999px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; border-radius: 999px;
+    background: var(--green-light);
+    transition: width 0.5s ease;
+  }
+  .progress-label-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  /* Heatmap */
+  .heatmap-grid {
+    display: grid; grid-template-columns: repeat(15, 1fr); gap: 4px;
+    margin-top: 12px;
+  }
+  .heat-cell {
+    aspect-ratio: 1;
+    border-radius: 4px;
+    cursor: default;
+  }
+  .heat-present { background: var(--emerald-500); }
+  .heat-absent { background: var(--red-500); }
+  .heat-tardy { background: var(--yellow-500); }
+  .heat-none { background: var(--gray-100); }
+
+  .heat-legend {
+    display: flex; gap: 12px;
+    margin-top: 12px;
+    font-size: 12px; color: var(--gray-500);
+  }
+  .heat-legend-item { display: flex; align-items: center; gap: 4px; }
+  .heat-legend-swatch { width: 10px; height: 10px; border-radius: 3px; }
+
+  /* Connected systems badges */
+  .connected-row {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    margin-top: 12px;
+  }
+  .system-badge {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px;
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--gray-700);
+    font-weight: 500;
+  }
+  .system-badge .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--emerald-500);
+    flex-shrink: 0;
+  }
 
   /* Observations */
-  .obs-item { padding: 12px 0; border-bottom: 1px solid var(--line-soft); }
+  .obs-item {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
   .obs-item:last-child { border-bottom: none; }
-  .obs-head { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-light); font-weight: 600; margin-bottom: 4px; }
-  .obs-head .teacher { color: var(--forest-dark); font-weight: 700; }
-  .obs-text { font-size: 13.5px; color: var(--text-dark); line-height: 1.5; }
+  .obs-meta {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--gray-500);
+    margin-bottom: 4px;
+  }
+  .obs-author { font-weight: 600; color: var(--gray-700); }
+  .obs-text { font-size: 14px; color: var(--gray-700); line-height: 1.5; }
 
-  /* Attendance */
-  .attend-big { font-size: 36px; font-weight: 800; color: var(--forest); letter-spacing: -0.03em; line-height: 1; }
-  .attend-sub { font-size: 12px; color: var(--text-light); font-weight: 600; margin-top: 4px; letter-spacing: 0.04em; }
-  .attend-dots { display: grid; grid-template-columns: repeat(20, 1fr); gap: 3px; margin-top: 16px; }
-  .attend-dots .d { aspect-ratio: 1; border-radius: 3px; background: var(--sage-light); }
-  .attend-dots .d.here { background: var(--forest); }
-  .attend-dots .d.absent { background: var(--danger); opacity: 0.55; }
-  .attend-dots .d.late { background: var(--amber); opacity: 0.75; }
-  .legend { display: flex; gap: 14px; margin-top: 10px; font-size: 10.5px; color: var(--text-light); font-weight: 600; }
-  .legend .chip { display: inline-flex; align-items: center; gap: 5px; }
-  .legend .dot { width: 8px; height: 8px; border-radius: 2px; }
+  /* Date nav (attendance) */
+  .date-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 10px 16px;
+    margin-bottom: 20px;
+  }
+  .date-nav-title { font-weight: 600; color: var(--gray-900); }
+  .date-nav-arrow {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gray-600);
+    background: var(--gray-100);
+  }
+  .date-nav-arrow:hover { background: var(--gray-200); }
 
-  /* Math (Waggle) */
-  .waggle-top { display: flex; align-items: flex-end; gap: 12px; margin-bottom: 10px; }
-  .waggle-num { font-size: 30px; font-weight: 800; color: var(--forest); letter-spacing: -0.02em; line-height: 1; }
-  .waggle-sub { font-size: 12px; color: var(--text-light); font-weight: 600; padding-bottom: 4px; }
-  .waggle-gain { display: inline-flex; align-items: center; gap: 5px; background: #e7f4ec; color: var(--forest-dark); padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 700; margin-bottom: 12px; }
-  .waggle-gain::before { content: "\2191"; font-weight: 800; }
-  .waggle-detail { font-size: 12.5px; color: var(--text-body); line-height: 1.55; }
+  /* Animations */
+  @keyframes fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 0.2s ease-out; }
 
-  /* Connected systems */
-  .systems-card { background: white; border: 1px solid var(--line-soft); border-radius: 14px; padding: 18px 20px; margin-top: 4px; }
-  .systems-card h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-light); margin-bottom: 14px; }
-  .systems-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
-  .sys { text-align: center; padding: 14px 10px; border: 1px solid var(--line-soft); border-radius: 10px; background: #fafbfa; }
-  .sys-icon { width: 36px; height: 36px; margin: 0 auto 8px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; font-size: 12px; }
-  .sys-1 { background: linear-gradient(135deg, #10653c, #343e85); }
-  .sys-2 { background: linear-gradient(135deg, #d4940a, #10653c); }
-  .sys-3 { background: linear-gradient(135deg, #343e85, #10653c); }
-  .sys-4 { background: linear-gradient(135deg, #0a4a2b, #343e85); }
-  .sys-5 { background: linear-gradient(135deg, #343e85, #d4940a); }
-  .sys-name { font-size: 12px; font-weight: 700; color: var(--text-dark); }
-  .sys-role { font-size: 10.5px; color: var(--text-light); margin-top: 2px; font-weight: 500; }
+  /* Helper utilities */
+  .mb-2 { margin-bottom: 8px; }
+  .mb-3 { margin-bottom: 12px; }
+  .mb-4 { margin-bottom: 16px; }
+  .mb-6 { margin-bottom: 24px; }
+  .mt-2 { margin-top: 8px; }
+  .mt-4 { margin-top: 16px; }
+  .text-sm { font-size: 14px; }
+  .text-xs { font-size: 12px; }
+  .text-gray-500 { color: var(--gray-500); }
+  .text-gray-700 { color: var(--gray-700); }
+  .text-gray-900 { color: var(--gray-900); }
+  .text-navy { color: var(--navy); }
+  .text-green { color: var(--green); }
+  .font-bold { font-weight: 700; }
+  .font-semibold { font-weight: 600; }
+  .font-medium { font-weight: 500; }
+  .border-l-green { border-left: 4px solid var(--green); }
+  .flex { display: flex; }
+  .items-center { align-items: center; }
+  .justify-between { justify-content: space-between; }
+  .gap-2 { gap: 8px; }
+  .gap-3 { gap: 12px; }
+  .flex-wrap { flex-wrap: wrap; }
+  .divide-y > * + * { border-top: 1px solid var(--gray-100); }
+  .px-3 { padding-left: 12px; padding-right: 12px; }
+  .py-2 { padding-top: 8px; padding-bottom: 8px; }
+  .p-3 { padding: 12px; }
+  .p-4 { padding: 16px; }
+  .rounded-lg { border-radius: 8px; }
+  .rounded-full { border-radius: 999px; }
+  .text-center { text-align: center; }
 
-  /* Ask SIS */
-  .ask-card { background: linear-gradient(135deg, #0a4a2b 0%, #10653c 100%); color: white; border-radius: 16px; padding: 20px 22px; margin-bottom: 16px; }
-  .ask-card h3 { color: white; font-size: 16px; margin-bottom: 4px; }
-  .ask-card .sub { font-size: 12.5px; color: rgba(255,255,255,0.8); margin-bottom: 14px; }
-  .ask-input-wrap { display: flex; gap: 8px; }
-  .ask-input-wrap input { flex: 1; border: none; border-radius: 10px; padding: 10px 14px; font-family: inherit; font-size: 14px; outline: none; background: rgba(255,255,255,0.95); color: var(--text-dark); }
-  .ask-input-wrap button { background: white; color: var(--forest-dark); border: none; border-radius: 10px; padding: 10px 18px; font-weight: 700; cursor: pointer; font-size: 13.5px; }
-  .ask-input-wrap button:hover { background: var(--forest-soft); }
-  .ask-suggestions { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
-  .ask-sugg { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: white; padding: 5px 10px; border-radius: 999px; font-size: 11.5px; cursor: pointer; font-family: inherit; font-weight: 500; }
-  .ask-sugg:hover { background: rgba(255,255,255,0.25); }
-  .ask-answer { margin-top: 14px; padding: 14px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; font-size: 13.5px; line-height: 1.55; display: none; }
-  .ask-answer.show { display: block; animation: slideDown 0.3s ease; }
-  @keyframes slideDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
-  .ask-answer strong { color: var(--forest-soft); font-weight: 700; }
-
+  /* Responsive: collapse sidebar to icon-only on small screens */
   @media (max-width: 900px) {
-    .app { grid-template-columns: 1fr; height: auto; }
-    .sidebar { max-height: 260px; }
-    .grid, .grid.three { grid-template-columns: 1fr; }
-    .systems-grid { grid-template-columns: repeat(2, 1fr); }
-    .student-header { flex-wrap: wrap; }
-    .quick-stats { margin-left: 0; width: 100%; }
+    .sidebar { width: 64px; }
+    .sidebar-logo p,
+    .sidebar-logo h2,
+    .sidebar-nav-item span,
+    .sidebar-user-row > div:not(.sidebar-user-avatar),
+    .sidebar-signout span { display: none; }
+    .sidebar-logo { padding: 16px 12px; justify-content: center; }
+    .sidebar-nav-item { justify-content: center; padding: 10px 0; }
+    .sidebar-nav-item.active { padding-left: 0; border-left: none; border-bottom: 3px solid var(--green); border-radius: 8px; }
+    .sidebar-user { padding: 12px; }
+    .sidebar-user-row { justify-content: center; }
+    .sidebar-signout { justify-content: center; }
+    .main-area { margin-left: 64px; }
+  }
+  @media (max-width: 600px) {
+    main.page { padding: 16px; }
+    .topbar { padding: 0 16px; }
+    .grid-stats { grid-template-columns: repeat(2, 1fr); }
   }
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <a class="back" href="../../index.html" onclick="if(window.history.length>1){event.preventDefault();window.history.back();}">Back to portfolio</a>
-  <div class="logo">The Pardes SIS</div>
-  <span class="demo-label">Live demo &middot; Safe data</span>
-</div>
-
-<div class="app">
-
-  <aside class="sidebar">
-    <div class="class-picker">
-      <div class="label">Pardes Elementary &middot; K-5</div>
-      <div class="class-name">2nd Grade &middot; Sapphires</div>
-      <div class="teacher">Admin view &middot; role-based nav shown</div>
-    </div>
-    <div class="student-search">
-      <input type="text" id="searchInput" placeholder="Search students">
-    </div>
-    <div class="student-list" id="studentList"></div>
-  </aside>
-
-  <main class="main" id="mainPanel"></main>
-</div>
+<div id="app"></div>
 
 <script>
-(function(){
+/* ==========================================================
+   PARDES SIS DEMO — single-file static port
+   Vanilla JS click routing, fake data, no backend.
+   ========================================================== */
 
-  const STUDENTS = [
-    { id: 'alef', initials: 'AC', avatarVariant: 1, name: 'Alef Cohen', grade: '2nd Grade', pronouns: 'he/him', attendance: 96, avgGrade: 'A-', flag: 'good', kriahLevel: 'Lashon HaTorah Aleph, Unit 2', lettersMastered: 20, nekudosMastered: 8, fluency: 92, fluencyWeekly: [82, 86, 88, 92], lastAbsences: [], mathLevel: 'Grade 2.8', mathGain: '+0.9 grade levels', mathDetail: 'Strong with multi-digit addition. Moving into place value (hundreds) this week.', subjects: [
-      { name: 'Tefillah', grade: 'A', trend: 'steady', trendLabel: 'Steady' },
-      { name: 'Chumash', grade: 'A-', trend: 'up', trendLabel: '+0.3 this term' },
-      { name: 'Kriah', grade: 'B+', trend: 'up', trendLabel: 'Improving' },
-      { name: 'Math (Waggle)', grade: 'A', trend: 'up', trendLabel: '+0.9 levels' },
-      { name: 'ELA', grade: 'A-', trend: 'steady', trendLabel: 'Steady' }
-    ], observations: [
-      { date: 'Apr 18', teacher: 'Morah Demo', text: 'Led a Chumash discussion on Lech Lecha with confidence. Raised a thoughtful question about why Avraham listened immediately.' },
-      { date: 'Apr 11', teacher: 'Morah Sample', text: 'Math intervention is paying off. Completed 15-minute Waggle session independently and chose a second one during free time.' }
-    ], aiSummary: 'Alef had a strong week. Chumash participation is up and kriah fluency just crossed 92 percent. Math growth continues on the Waggle side, now tracking at grade level 2.8. Recommend: pair with a kriah partner for Wednesday reading time.', attendanceData: generateAttendance(96, 0) },
+// Fake roster (matches the spec exactly)
+const STUDENTS = [
+  { id: 'alef',   first: 'Alef',    last: 'Cohen',    grade: 2, family: 'Cohen',    gender: 'F', parentPhone: '(305) 555-0101', parentEmail: 'family@example.com', dob: '2017-11-03', waggleLevel: '2.4', kriahPct: 78, attendancePct: 96, aiSummary: 'Alef had a strong week. Kriah fluency climbed to 42 wpm, above her September baseline of 31. Math Waggle sessions averaged 18 minutes, accuracy 94%. Mrs. Levi noted meaningful improvement in reading aloud during morning Tefillah.' },
+  { id: 'bet',    first: 'Bet',     last: 'Levi',     grade: 2, family: 'Levi',     gender: 'M', parentPhone: '(305) 555-0102', dob: '2017-08-22', waggleLevel: '2.2', kriahPct: 65, attendancePct: 92, aiSummary: 'Steady week for Bet. Kriah fluency holding at 38 wpm. Math Waggle accuracy dipped slightly to 82% — suggest checking on fractions unit.' },
+  { id: 'gimmel', first: 'Gimmel',  last: 'Friedman', grade: 2, family: 'Friedman', gender: 'M', parentPhone: '(305) 555-0103', dob: '2017-05-14', waggleLevel: '2.6', kriahPct: 88, attendancePct: 100, aiSummary: 'Gimmel continues to excel. Above-grade-level on Waggle (2.6). Kriah fluency 51 wpm. Mrs. Levi recommends enrichment work in reading comprehension.' },
+  { id: 'dalet',  first: 'Dalet',   last: 'Goldberg', grade: 2, family: 'Goldberg', gender: 'F', parentPhone: '(305) 555-0104', dob: '2017-12-01', waggleLevel: '1.9', kriahPct: 55, attendancePct: 88, aiSummary: 'Dalet missed 2 days this week (cold). Returning to class Monday. Kriah practice was limited. Recommend extra small-group review next week.' },
+  { id: 'hei',    first: 'Hei',     last: 'Shapiro',  grade: 2, family: 'Shapiro',  gender: 'F', parentPhone: '(305) 555-0105', dob: '2017-07-19', waggleLevel: '2.3', kriahPct: 72, attendancePct: 94, aiSummary: 'Hei showed a breakthrough on Tuesday — first time reading a full pasuk without prompting. Teacher noted she was beaming.' },
+  { id: 'vav',    first: 'Vav',     last: 'Stein',    grade: 2, family: 'Stein',    gender: 'M', parentPhone: '(305) 555-0106', dob: '2017-02-28', waggleLevel: '2.1', kriahPct: 69, attendancePct: 98, aiSummary: 'Vav had a quiet, strong week. Consistent Waggle effort, 20 mins/day average. Social note: paired up well with Zayin on chavruta.' },
+  { id: 'zayin',  first: 'Zayin',   last: 'Rosen',    grade: 2, family: 'Rosen',    gender: 'M', parentPhone: '(305) 555-0107', dob: '2017-09-05', waggleLevel: '2.5', kriahPct: 82, attendancePct: 92, aiSummary: 'Zayin finished the Aleph Unit 2 workbook this week. Ready for Unit 3. Math accuracy 91% — strong.' },
+  { id: 'chet',   first: 'Chet',    last: 'Klein',    grade: 2, family: 'Klein',    gender: 'F', parentPhone: '(305) 555-0108', dob: '2017-04-17', waggleLevel: '2.0', kriahPct: 61, attendancePct: 90, aiSummary: 'Chet is making slow, steady progress. Kriah fluency inching up. Suggest continuing the current intervention schedule.' },
+  { id: 'tet',    first: 'Tet',     last: 'Katz',     grade: 2, family: 'Katz',     gender: 'M', parentPhone: '(305) 555-0109', dob: '2017-10-30', waggleLevel: '2.4', kriahPct: 75, attendancePct: 96, aiSummary: 'Tet participated enthusiastically in class discussions this week. Kriah fluency 44 wpm.' },
+  { id: 'yud',    first: 'Yud',     last: 'Berg',     grade: 2, family: 'Berg',     gender: 'F', parentPhone: '(305) 555-0110', dob: '2017-06-12', waggleLevel: '2.3', kriahPct: 71, attendancePct: 94, aiSummary: 'Yud started the new Kriah workbook unit. Good start. Math Waggle time was below target — suggest a nudge.' },
+];
 
-    { id: 'bet', initials: 'BL', avatarVariant: 2, name: 'Bet Levi', grade: '2nd Grade', pronouns: 'she/her', attendance: 91, avgGrade: 'B+', flag: 'good', kriahLevel: 'Lashon HaTorah Aleph, Unit 1', lettersMastered: 17, nekudosMastered: 6, fluency: 78, fluencyWeekly: [70, 72, 75, 78], lastAbsences: ['Apr 14'], mathLevel: 'Grade 2.4', mathGain: '+0.6 grade levels', mathDetail: 'Solid subtraction skills. Word problems are her edge right now. Teacher has flagged for small-group support.', subjects: [
-      { name: 'Tefillah', grade: 'A-', trend: 'steady', trendLabel: 'Steady' },
-      { name: 'Chumash', grade: 'B', trend: 'up', trendLabel: 'Improving' },
-      { name: 'Kriah', grade: 'B', trend: 'up', trendLabel: '+0.4 this term' },
-      { name: 'Math (Waggle)', grade: 'B+', trend: 'up', trendLabel: '+0.6 levels' },
-      { name: 'ELA', grade: 'A', trend: 'steady', trendLabel: 'Consistent' }
-    ], observations: [
-      { date: 'Apr 17', teacher: 'Morah Demo', text: 'Beautiful creative writing piece about Shabbos at her grandparents. Asked to share it with the class.' }
-    ], aiSummary: 'Bet is on a gentle upward trend. Kriah went from 70 to 78 percent fluency in four weeks. Math word problems are the only area to watch. Recommend: pair her with Alef for reading partners this week; both would benefit.', attendanceData: generateAttendance(91, 1) },
+// Demo staff for status widget
+const STAFF = [
+  { name: 'Mrs. Levi',     status: 'Present', clockIn: '7:52a' },
+  { name: 'Mr. Goldstein', status: 'Present', clockIn: '7:48a' },
+  { name: 'Ms. Rabinowitz', status: 'Present', clockIn: '8:01a' },
+  { name: 'Mrs. Sasson',   status: 'Present', clockIn: '7:55a' },
+  { name: 'Mrs. Mizrahi',  status: 'Late',    clockIn: '8:14a' },
+  { name: 'Mr. Salzman',   status: 'Present', clockIn: '7:50a' },
+  { name: 'Mrs. Eichberg', status: 'Present', clockIn: '7:46a' },
+  { name: 'Ms. Klein',     status: 'Present', clockIn: '7:58a' },
+  { name: 'Mr. Cohen',     status: 'Late',    clockIn: '8:21a' },
+  { name: 'Mrs. Friedman', status: 'Present', clockIn: '7:53a' },
+  { name: 'Mrs. Horowitz', status: 'Present', clockIn: '7:49a' },
+  { name: 'Ms. Berg',      status: 'Present', clockIn: '7:54a' },
+  { name: 'Mr. Stein',     status: 'Present', clockIn: '7:57a' },
+  { name: 'Mrs. Rosen',    status: 'Present', clockIn: '7:51a' },
+  { name: 'Ms. Shapiro',   status: 'Present', clockIn: '7:59a' },
+  { name: 'Mr. Katz',      status: 'Present', clockIn: '7:47a' },
+  { name: 'Mrs. Green',    status: 'Present', clockIn: '7:55a' },
+  { name: 'Mr. Sandler',   status: 'Present', clockIn: '8:00a' },
+  { name: 'Ms. Druin',     status: 'Remote',  clockIn: '—' },
+  { name: 'Rabbi Shulman', status: 'Remote',  clockIn: '—' },
+  { name: 'Ms. Adler',     status: 'Absent',  clockIn: '—' },
+  { name: 'Mr. Weiss',     status: 'Absent',  clockIn: '—' },
+];
 
-    { id: 'gimmel', initials: 'GF', avatarVariant: 3, name: 'Gimmel Friedman', grade: '2nd Grade', pronouns: 'he/him', attendance: 88, avgGrade: 'C+', flag: 'watch', kriahLevel: 'Pre-Aleph, Letter Review', lettersMastered: 12, nekudosMastered: 3, fluency: 58, fluencyWeekly: [48, 52, 54, 58], lastAbsences: ['Apr 12', 'Apr 5'], mathLevel: 'Grade 1.9', mathGain: '+0.3 grade levels', mathDetail: 'Gimmel is behind on kriah and that is now slowing down Chumash. Waggle math is steady at 1.9. Intervention conference scheduled with parents.', subjects: [
-      { name: 'Tefillah', grade: 'B', trend: 'steady', trendLabel: 'Steady' },
-      { name: 'Chumash', grade: 'C+', trend: 'down', trendLabel: 'Watch' },
-      { name: 'Kriah', grade: 'C', trend: 'up', trendLabel: 'Slow gains' },
-      { name: 'Math (Waggle)', grade: 'C+', trend: 'up', trendLabel: '+0.3 levels' },
-      { name: 'ELA', grade: 'B-', trend: 'steady', trendLabel: 'Steady' }
-    ], observations: [
-      { date: 'Apr 16', teacher: 'Morah Sample', text: 'Had a better day today. Stayed with his small kriah group for the full 15 minutes and knocked out the Patach page.' },
-      { date: 'Apr 9', teacher: 'Morah Demo', text: 'Flagging for review. Kriah is limiting his ability to engage with Chumash. Parent meeting needed.' }
-    ], aiSummary: 'Gimmel needs attention. Kriah is the root issue. Every other subject downstream is being held back. The small-group pull-outs this week are helping. Recommend: schedule a parent meeting, increase Kriah Coach sessions to daily, celebrate small wins loudly.', attendanceData: generateAttendance(88, 2) },
+// App state
+const state = {
+  page: 'login',     // 'login' | 'dashboard' | 'students' | 'profile' | 'attendance'
+  role: 'admin',     // 'admin' | 'teacher'
+  studentId: null,
+  studentTab: 'overview',
+  searchQuery: '',
+  selectedGrade: null,  // null = all
+  askResponse: null,
+  attendanceDate: 'Today, Apr 24',
+};
 
-    { id: 'dalet', initials: 'DG', avatarVariant: 4, name: 'Dalet Goldberg', grade: '2nd Grade', pronouns: 'she/her', attendance: 99, avgGrade: 'A', flag: 'good', kriahLevel: 'Lashon HaTorah Aleph, Unit 3', lettersMastered: 22, nekudosMastered: 11, fluency: 97, fluencyWeekly: [92, 94, 96, 97], lastAbsences: [], mathLevel: 'Grade 3.2', mathGain: '+1.4 grade levels', mathDetail: 'Dalet is working above grade level. Waggle has her in 3rd grade content. Consider enrichment in math and advanced kriah.', subjects: [
-      { name: 'Tefillah', grade: 'A', trend: 'steady', trendLabel: 'Excellent' },
-      { name: 'Chumash', grade: 'A', trend: 'steady', trendLabel: 'Leading peers' },
-      { name: 'Kriah', grade: 'A', trend: 'up', trendLabel: 'At top of class' },
-      { name: 'Math (Waggle)', grade: 'A', trend: 'up', trendLabel: '+1.4 levels' },
-      { name: 'ELA', grade: 'A', trend: 'steady', trendLabel: 'Excellent' }
-    ], observations: [
-      { date: 'Apr 18', teacher: 'Morah Demo', text: 'Helping Gimmel with his kriah during partner time. Patient and encouraging. A natural leader.' }
-    ], aiSummary: 'Dalet is ready for more challenge. Math is at grade 3.2, kriah fluency hit 97. Consider: pull her into the 3rd grade math block, offer her a leadership role tutoring kriah partners. She will rise to it.', attendanceData: generateAttendance(99, 0) },
+// ----------- ICON LIBRARY (inline SVG, lucide-style) -----------
+const ICONS = {
+  home: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+  users: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  building: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>',
+  clock: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  calendar: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>',
+  book: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>',
+  alert: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
+  shield: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>',
+  settings: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>',
+  graduation: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>',
+  homeIcon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+  usersIcon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  userCheck: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>',
+  search: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>',
+  cake: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3"/><path d="M12 8v3"/><path d="M17 8v3"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg>',
+  chevronRight: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>',
+  arrowLeft: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>',
+  signOut: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
+  sparkle: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>',
+  send: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>',
+  folder: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>',
+  chevronDown: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
+  chevronUp: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>',
+  arrowRight: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>',
+  brain: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18.75 a4 4 0 0 0 0-13.75Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18.75"/></svg>',
+};
 
-    { id: 'hei', initials: 'HS', avatarVariant: 5, name: 'Hei Shapiro', grade: '2nd Grade', pronouns: 'he/him', attendance: 93, avgGrade: 'B', flag: 'good', kriahLevel: 'Lashon HaTorah Aleph, Unit 1', lettersMastered: 18, nekudosMastered: 7, fluency: 74, fluencyWeekly: [68, 70, 72, 74], lastAbsences: [], mathLevel: 'Grade 2.3', mathGain: '+0.5 grade levels', mathDetail: 'Steady improvement across the board. Kriah coming along. Math word problems are strong; computation is where to push next.', subjects: [
-      { name: 'Tefillah', grade: 'B+', trend: 'steady', trendLabel: 'Steady' },
-      { name: 'Chumash', grade: 'B', trend: 'steady', trendLabel: 'Steady' },
-      { name: 'Kriah', grade: 'B-', trend: 'up', trendLabel: 'Improving' },
-      { name: 'Math (Waggle)', grade: 'B', trend: 'up', trendLabel: '+0.5 levels' },
-      { name: 'ELA', grade: 'B+', trend: 'up', trendLabel: 'Improving' }
-    ], observations: [
-      { date: 'Apr 15', teacher: 'Morah Demo', text: 'Quiet but steady. His Chumash notebook is one of the neatest in the class.' }
-    ], aiSummary: 'Hei is a steady grower. Nothing dramatic, just one or two percentage points of kriah fluency each week. That adds up. Keep doing what is working.', attendanceData: generateAttendance(93, 1) },
+// Nav config (admin sees more items than teacher)
+const NAV_ADMIN = [
+  { key: 'home',       label: 'Home',           icon: 'home',       page: 'dashboard' },
+  { key: 'students',   label: 'Students',       icon: 'users',      page: 'students' },
+  { key: 'staff',      label: 'Staff Directory', icon: 'building',  page: 'staff' },
+  { key: 'staffclock', label: 'Staff Clock',    icon: 'clock',      page: 'staffclock' },
+  { key: 'attendance', label: 'Attendance',     icon: 'calendar',   page: 'attendance' },
+  { key: 'academics',  label: 'Academics',      icon: 'book',       page: 'academics' },
+  { key: 'incidents',  label: 'Incidents',      icon: 'alert',      page: 'incidents' },
+  { key: 'accounts',   label: 'Accounts',       icon: 'shield',     page: 'accounts' },
+  { key: 'resources',  label: 'Resources',      icon: 'folder',     page: 'resources' },
+  { key: 'settings',   label: 'Settings',       icon: 'settings',   page: 'settings' },
+];
 
-    { id: 'vav', initials: 'VS', avatarVariant: 1, name: 'Vav Stein', grade: '2nd Grade', pronouns: 'she/her', attendance: 85, avgGrade: 'B-', flag: 'watch', kriahLevel: 'Pre-Aleph, Nekudos Intro', lettersMastered: 16, nekudosMastered: 4, fluency: 64, fluencyWeekly: [58, 60, 62, 64], lastAbsences: ['Apr 15', 'Apr 8', 'Mar 27'], mathLevel: 'Grade 2.0', mathGain: '+0.2 grade levels', mathDetail: 'Attendance is the main driver. When Vav is here, she engages well. Missed days are compounding the kriah gap.', subjects: [
-      { name: 'Tefillah', grade: 'B', trend: 'steady', trendLabel: 'Steady' },
-      { name: 'Chumash', grade: 'C+', trend: 'down', trendLabel: 'Watch' },
-      { name: 'Kriah', grade: 'C', trend: 'up', trendLabel: 'Slow' },
-      { name: 'Math (Waggle)', grade: 'B-', trend: 'steady', trendLabel: 'At grade level' },
-      { name: 'ELA', grade: 'B', trend: 'steady', trendLabel: 'Steady' }
-    ], observations: [
-      { date: 'Apr 16', teacher: 'Morah Demo', text: 'Came back from absence ready to catch up. Sat with Morah Sample for a 10-minute kriah review during snack.' }
-    ], aiSummary: 'Vav is held back by attendance, not ability. Every day she is here she makes gains. Recommend: reach out to the family about the pattern, explore whether there are barriers we can help with. Schedule a makeup kriah session per absence.', attendanceData: generateAttendance(85, 3) },
+const NAV_TEACHER = [
+  { key: 'home',       label: 'Home',          icon: 'home',     page: 'dashboard' },
+  { key: 'students',   label: 'My Students',   icon: 'users',    page: 'students' },
+  { key: 'clock',      label: 'My Clock',      icon: 'clock',    page: 'clock' },
+  { key: 'incidents',  label: 'Incidents',     icon: 'alert',    page: 'incidents' },
+  { key: 'attendance', label: 'Attendance',    icon: 'calendar', page: 'attendance' },
+  { key: 'academics',  label: 'Academics',     icon: 'book',     page: 'academics' },
+  { key: 'resources',  label: 'Resources',     icon: 'folder',   page: 'resources' },
+  { key: 'settings',   label: 'Settings',      icon: 'settings', page: 'settings' },
+];
 
-    { id: 'zayin', initials: 'ZR', avatarVariant: 2, name: 'Zayin Rosen', grade: '2nd Grade', pronouns: 'he/him', attendance: 97, avgGrade: 'A-', flag: 'good', kriahLevel: 'Lashon HaTorah Aleph, Unit 2', lettersMastered: 21, nekudosMastered: 9, fluency: 89, fluencyWeekly: [82, 85, 87, 89], lastAbsences: [], mathLevel: 'Grade 2.7', mathGain: '+0.8 grade levels', mathDetail: 'Strong in every area. Not the fastest, but the most consistent. Puts in the full practice time without being asked.', subjects: [
-      { name: 'Tefillah', grade: 'A', trend: 'steady', trendLabel: 'Excellent' },
-      { name: 'Chumash', grade: 'A-', trend: 'up', trendLabel: 'Improving' },
-      { name: 'Kriah', grade: 'B+', trend: 'up', trendLabel: '+0.5 this term' },
-      { name: 'Math (Waggle)', grade: 'A-', trend: 'up', trendLabel: '+0.8 levels' },
-      { name: 'ELA', grade: 'A-', trend: 'steady', trendLabel: 'Steady' }
-    ], observations: [
-      { date: 'Apr 14', teacher: 'Morah Sample', text: 'Finished his kriah goal a week early. Asked to start the next unit now.' }
-    ], aiSummary: 'Zayin is quietly crushing it. 89 percent kriah fluency, strong Chumash participation, Waggle math up nearly a full grade level. Recommend: start him on Unit 3 kriah now, ahead of the class, so he is not bored.', attendanceData: generateAttendance(97, 0) },
+// ----------- Renderer / router -----------
+function navigate(page, opts = {}) {
+  state.page = page;
+  if (opts.studentId) state.studentId = opts.studentId;
+  if (opts.tab) state.studentTab = opts.tab;
+  if (page !== 'profile') state.studentTab = 'overview';
+  if (page !== 'dashboard') state.askResponse = null;
+  render();
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
 
-    { id: 'chet', initials: 'CK', avatarVariant: 3, name: 'Chet Klein', grade: '2nd Grade', pronouns: 'she/her', attendance: 92, avgGrade: 'B', flag: 'good', kriahLevel: 'Lashon HaTorah Aleph, Unit 1', lettersMastered: 18, nekudosMastered: 6, fluency: 71, fluencyWeekly: [63, 66, 69, 71], lastAbsences: ['Apr 10'], mathLevel: 'Grade 2.2', mathGain: '+0.4 grade levels', mathDetail: 'Loves math. Engages with the Waggle games enthusiastically. Writing fluency in ELA is the growth area.', subjects: [
-      { name: 'Tefillah', grade: 'B+', trend: 'steady', trendLabel: 'Steady' },
-      { name: 'Chumash', grade: 'B', trend: 'up', trendLabel: 'Improving' },
-      { name: 'Kriah', grade: 'B-', trend: 'up', trendLabel: 'Improving' },
-      { name: 'Math (Waggle)', grade: 'B+', trend: 'up', trendLabel: '+0.4 levels' },
-      { name: 'ELA', grade: 'B', trend: 'steady', trendLabel: 'Steady' }
-    ], observations: [
-      { date: 'Apr 17', teacher: 'Morah Sample', text: 'Hit 70 percent kriah fluency this week, a real milestone. She was so proud.' }
-    ], aiSummary: 'Chet just crossed the 70 percent kriah fluency mark. Big moment. Math is going well. Next push: start building ELA writing stamina with a daily 5-minute journal.', attendanceData: generateAttendance(92, 1) },
+function setRole(role) {
+  state.role = role;
+  state.page = 'dashboard';
+  render();
+}
 
-    { id: 'tet', initials: 'TK', avatarVariant: 4, name: 'Tet Katz', grade: '2nd Grade', pronouns: 'he/him', attendance: 94, avgGrade: 'A-', flag: 'good', kriahLevel: 'Lashon HaTorah Aleph, Unit 2', lettersMastered: 22, nekudosMastered: 10, fluency: 94, fluencyWeekly: [88, 90, 92, 94], lastAbsences: ['Apr 7'], mathLevel: 'Grade 2.9', mathGain: '+1.1 grade levels', mathDetail: 'Waggle has Tet nearly at 3rd grade level. One of the two biggest math gainers in the class alongside Dalet.', subjects: [
-      { name: 'Tefillah', grade: 'A-', trend: 'steady', trendLabel: 'Steady' },
-      { name: 'Chumash', grade: 'A-', trend: 'up', trendLabel: 'Improving' },
-      { name: 'Kriah', grade: 'A-', trend: 'up', trendLabel: 'Excellent' },
-      { name: 'Math (Waggle)', grade: 'A', trend: 'up', trendLabel: '+1.1 levels' },
-      { name: 'ELA', grade: 'B+', trend: 'up', trendLabel: 'Improving' }
-    ], observations: [
-      { date: 'Apr 13', teacher: 'Morah Demo', text: 'Asked me to explain why the mem sofit looks different. Great curiosity.' }
-    ], aiSummary: 'Tet is one of the strongest kriah students in the class at 94 percent fluency. Waggle math is almost a full grade above level. Recommend: partner him with Gimmel or Vav for peer tutoring. He is patient and they will benefit.', attendanceData: generateAttendance(94, 1) },
+function render() {
+  const root = document.getElementById('app');
+  if (state.page === 'login') {
+    root.innerHTML = renderLogin();
+  } else {
+    root.innerHTML = renderShell(renderPage());
+  }
+  attachListeners();
+}
 
-    { id: 'yud', initials: 'YB', avatarVariant: 5, name: 'Yud Berg', grade: '2nd Grade', pronouns: 'she/her', attendance: 90, avgGrade: 'B+', flag: 'good', kriahLevel: 'Lashon HaTorah Aleph, Unit 1', lettersMastered: 19, nekudosMastered: 7, fluency: 81, fluencyWeekly: [74, 76, 79, 81], lastAbsences: ['Apr 16'], mathLevel: 'Grade 2.5', mathGain: '+0.7 grade levels', mathDetail: 'Chumash comprehension is excellent. Computation speed is where to focus next on Waggle.', subjects: [
-      { name: 'Tefillah', grade: 'A-', trend: 'steady', trendLabel: 'Steady' },
-      { name: 'Chumash', grade: 'A', trend: 'up', trendLabel: 'Excellent' },
-      { name: 'Kriah', grade: 'B+', trend: 'up', trendLabel: 'Improving' },
-      { name: 'Math (Waggle)', grade: 'B+', trend: 'up', trendLabel: '+0.7 levels' },
-      { name: 'ELA', grade: 'A-', trend: 'steady', trendLabel: 'Steady' }
-    ], observations: [
-      { date: 'Apr 11', teacher: 'Morah Demo', text: 'Remembered a detail from last week\'s Parsha unprompted. Connected it to the new one perfectly.' }
-    ], aiSummary: 'Yud is a deep thinker. Chumash comprehension is ahead of most peers. Kriah fluency climbing nicely. Recommend: lean into her love for stories; give her Tanach context reading in English alongside Chumash.', attendanceData: generateAttendance(90, 1) }
+function userDisplay() {
+  return state.role === 'admin'
+    ? { name: 'Dr. Druin', initial: 'D', roleLabel: 'Admin' }
+    : { name: 'Mrs. Levi', initial: 'M', roleLabel: 'Teacher' };
+}
+
+function pageTitle() {
+  switch (state.page) {
+    case 'dashboard': return 'Home';
+    case 'students':  return state.role === 'admin' ? 'Students' : 'My Students';
+    case 'profile':   return 'Student Profile';
+    case 'attendance': return 'Attendance';
+    case 'staff':     return 'Staff Directory';
+    case 'staffclock': return 'Staff Clock';
+    case 'academics': return 'Academics';
+    case 'incidents': return 'Incidents';
+    case 'accounts':  return 'Accounts';
+    case 'resources': return 'Resources';
+    case 'settings':  return 'Settings';
+    case 'clock':     return 'My Clock';
+    default: return 'Pardes SIS';
+  }
+}
+
+// ----------- LAYOUT (shell) -----------
+function renderShell(inner) {
+  const u = userDisplay();
+  const navItems = state.role === 'admin' ? NAV_ADMIN : NAV_TEACHER;
+  const activePage = state.page === 'profile' ? 'students' : state.page;
+
+  return `
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-icon">P</div>
+          <div>
+            <h2>Pardes SIS</h2>
+            <p>Dashboard</p>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          ${navItems.map(item => `
+            <button class="sidebar-nav-item ${activePage === item.page ? 'active' : ''}"
+              data-page="${item.page}"
+              title="${item.label}">
+              ${ICONS[item.icon]}
+              <span>${item.label}</span>
+            </button>
+          `).join('')}
+        </nav>
+        <div class="sidebar-user">
+          <div class="sidebar-user-row">
+            <div class="sidebar-user-avatar">${u.initial}</div>
+            <div>
+              <div class="sidebar-user-name">${u.name}</div>
+              <div class="sidebar-user-role">${state.role}</div>
+            </div>
+          </div>
+          <button class="sidebar-signout" data-action="logout">
+            ${ICONS.signOut}
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </aside>
+
+      <div class="main-area">
+        <header class="topbar">
+          <div style="display:flex; align-items:center;">
+            <a class="back-portfolio" href="../../index.html" data-action="portfolio-back">
+              ${ICONS.arrowLeft} Back to portfolio
+            </a>
+            <h1>${pageTitle()}</h1>
+          </div>
+          <div class="topbar-right">
+            <span class="topbar-name">${u.name}</span>
+            <span class="badge ${state.role === 'admin' ? 'badge-green' : 'badge-navy'}">${u.roleLabel}</span>
+          </div>
+        </header>
+        <main class="page">
+          ${inner}
+        </main>
+      </div>
+    </div>
+  `;
+}
+
+// ----------- LOGIN -----------
+function renderLogin() {
+  return `
+    <div class="login-screen">
+      <a class="login-back" href="../../index.html" data-action="portfolio-back">
+        ${ICONS.arrowLeft} Back to portfolio
+      </a>
+      <div class="login-blob b1"></div>
+      <div class="login-blob b2"></div>
+      <div class="login-blob b3"></div>
+
+      <div class="login-card">
+        <div class="login-logo">
+          <div class="login-logo-box">P</div>
+          <h1>Pardes Day School</h1>
+          <p>Staff Dashboard</p>
+        </div>
+
+        <div class="login-box">
+          <h2>Welcome back</h2>
+          <p class="subtitle">Choose a demo role to continue</p>
+
+          <button class="role-button admin" data-action="login-admin">
+            <div class="role-avatar">${ICONS.shield}</div>
+            <div class="role-info">
+              <div class="title">Sign in as Admin</div>
+              <div class="desc">Dr. Druin · Principal · See everything</div>
+            </div>
+            <div class="role-arrow">${ICONS.chevronRight}</div>
+          </button>
+
+          <button class="role-button teacher" data-action="login-teacher">
+            <div class="role-avatar">${ICONS.usersIcon}</div>
+            <div class="role-info">
+              <div class="title">Sign in as Teacher</div>
+              <div class="desc">Mrs. Levi · 2nd Grade · See your roster</div>
+            </div>
+            <div class="role-arrow">${ICONS.chevronRight}</div>
+          </button>
+        </div>
+
+        <p class="login-footer">5786 (2025-2026) School Year — Demo</p>
+      </div>
+    </div>
+  `;
+}
+
+// ----------- PAGE ROUTER -----------
+function renderPage() {
+  switch (state.page) {
+    case 'dashboard':  return state.role === 'admin' ? renderAdminDashboard() : renderTeacherDashboard();
+    case 'students':   return renderStudents();
+    case 'profile':    return renderProfile();
+    case 'attendance': return renderAttendance();
+    case 'staff':      return renderStubPage('Staff Directory', 'Full staff roster, profiles, hire dates, role assignments. Click into any staff member to see their schedule, PTO history, and clock-in record.');
+    case 'staffclock': return renderStubPage('Staff Clock', 'Live clock-in board. Mrs. Mizrahi is late by 14 minutes. Mr. Cohen clocked in at 8:21a (5 min late). 18 staff on time.');
+    case 'academics':  return renderAcademicsStub();
+    case 'incidents':  return renderStubPage('Incidents', 'File and review behavior incidents. Connects to the Master Discipline Log. Last entry: Tuesday, lunch room.');
+    case 'accounts':   return renderStubPage('Accounts', 'Manage staff and parent SIS accounts. Reset passwords. Provision Drive folders.');
+    case 'resources':  return renderStubPage('Resources', 'Curriculum docs, school calendar, faculty handbook, parent handbook.');
+    case 'settings':   return renderStubPage('Settings', 'School year, grading scale, default observation tags, role permissions.');
+    case 'clock':      return renderStubPage('My Clock', 'Punch in / punch out. Today: in at 7:55a. PTO balance: 4 days.');
+    default: return '';
+  }
+}
+
+// ----------- ADMIN DASHBOARD -----------
+function renderAdminDashboard() {
+  // Staff status counts
+  const counts = STAFF.reduce((acc, s) => { acc[s.status] = (acc[s.status]||0)+1; return acc; }, {});
+  const total = STAFF.length;
+  const inCount = counts['Present'] || 0;
+  const lateCount = counts['Late'] || 0;
+  const remoteCount = counts['Remote'] || 0;
+  const absentCount = counts['Absent'] || 0;
+
+  // Group for the list
+  const staffOrder = ['Late', 'Remote', 'Absent', 'Present'];
+  const grouped = {};
+  STAFF.forEach(s => { (grouped[s.status] = grouped[s.status] || []).push(s); });
+
+  const askBlock = state.askResponse ? `
+    <div class="ask-response">${state.askResponse}</div>
+  ` : '';
+
+  return `
+    <div class="page-header">
+      <div>
+        <h1>Dashboard</h1>
+        <p>115 students enrolled · ${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+      </div>
+    </div>
+
+    <div class="ask-card">
+      <label>${ICONS.sparkle} Ask the SIS</label>
+      <div class="ask-input-row">
+        <input id="ask-input" type="text" placeholder="Ask me anything about a student..." value="" />
+        <button class="btn btn-primary btn-sm" data-action="ask-submit">${ICONS.send} Ask</button>
+      </div>
+      ${askBlock}
+    </div>
+
+    <div class="grid-stats">
+      ${statCard('usersIcon', 'navy',  'Total Students', '115', 'students')}
+      ${statCard('userCheck', 'green', 'Total Staff',    '22',  'staff')}
+      ${statCard('graduation','brown', 'Grades',         'K–5', 'attendance')}
+      ${statCard('homeIcon',  'gray',  'Families',       '68',  'students')}
+    </div>
+
+    <div class="card mb-6 card-hover" data-page="staffclock">
+      <div class="card-header">
+        <div>
+          <div class="card-header-title">Staff Status</div>
+          <div class="card-header-subtitle">${inCount} on time, ${lateCount} late, ${remoteCount} remote, ${absentCount} absent</div>
+        </div>
+        ${ICONS.chevronRight}
+      </div>
+      <div class="status-bar">
+        <div style="width:${(inCount/total)*100}%; background: var(--emerald-500);"></div>
+        <div style="width:${(lateCount/total)*100}%; background: var(--yellow-500);"></div>
+        <div style="width:${(remoteCount/total)*100}%; background: var(--blue-500);"></div>
+        <div style="width:${(absentCount/total)*100}%; background: var(--gray-300);"></div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:2px; max-height:280px; overflow-y:auto;">
+        ${staffOrder.map(status => (grouped[status]||[]).map(s => {
+          const cfg = STATUS_CFG[status] || STATUS_CFG['Present'];
+          return `
+            <div class="status-row">
+              <div class="status-row-left">
+                <div class="status-dot" style="background:${cfg.dot}"></div>
+                <div class="status-name">${s.name}</div>
+              </div>
+              <div class="status-row-right">
+                ${s.clockIn !== '—' ? `<span class="status-time">${s.clockIn}</span>` : ''}
+                <span class="status-label" style="color:${cfg.text}">${cfg.label}</span>
+              </div>
+            </div>
+          `;
+        }).join('')).join('')}
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-header"><div><div class="card-header-title">Birthdays Today</div></div></div>
+        <div class="birthday-row">
+          ${ICONS.cake}
+          <div class="name">Alef Cohen turns 8 today!</div>
+          <span class="badge badge-gray">Student</span>
+        </div>
+        <p class="text-xs text-gray-500" style="margin-top:8px;">2nd Grade · Mrs. Levi's class</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div><div class="card-header-title">Gender Breakdown</div></div></div>
+        <div class="gender-row">
+          <div class="gender-row-left"><span class="gender-dot gender-male"></span><span class="gender-label">Male</span></div>
+          <span class="gender-count">59 (51%)</span>
+        </div>
+        <div class="gender-row">
+          <div class="gender-row-left"><span class="gender-dot gender-female"></span><span class="gender-label">Female</span></div>
+          <span class="gender-count">56 (49%)</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div><div class="card-header-title">Quick Actions</div></div></div>
+        <div class="quick-actions-grid">
+          <button class="btn btn-secondary btn-sm btn-justify-start" data-page="incidents">${ICONS.alert} File Incident</button>
+          <button class="btn btn-secondary btn-sm btn-justify-start" data-page="attendance">${ICONS.calendar} Attendance</button>
+          <button class="btn btn-secondary btn-sm btn-justify-start" data-page="students">${ICONS.usersIcon} Students</button>
+          <button class="btn btn-secondary btn-sm btn-justify-start" data-page="academics">${ICONS.book} Reports</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+const STATUS_CFG = {
+  'Present': { dot: 'var(--emerald-500)', text: 'var(--emerald-700)', label: 'On Time' },
+  'Late':    { dot: 'var(--yellow-500)',  text: 'var(--yellow-700)',  label: 'Late' },
+  'Remote':  { dot: 'var(--blue-500)',    text: 'var(--blue-500)',    label: 'Remote' },
+  'Absent':  { dot: 'var(--gray-400)',    text: 'var(--gray-600)',    label: 'Absent' },
+};
+
+function statCard(iconKey, color, label, value, target) {
+  return `
+    <div class="card stat-card card-hover" data-page="${target}">
+      <div class="stat-icon stat-icon-${color}">${ICONS[iconKey]}</div>
+      <div>
+        <div class="stat-value">${value}</div>
+        <div class="stat-label">${label}</div>
+      </div>
+    </div>
+  `;
+}
+
+// ----------- TEACHER DASHBOARD -----------
+function renderTeacherDashboard() {
+  return `
+    <div class="page-header">
+      <div>
+        <h1>Welcome, Devorah!</h1>
+        <p>You have 14 students</p>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-6">
+      <div class="card">
+        <div class="card-header"><div><div class="card-header-title">My Students</div></div></div>
+        <p style="font-family:'Montserrat'; font-size:32px; font-weight:700; color:var(--navy); margin: 4px 0 12px;">14</p>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          <span class="badge badge-navy">2nd Grade</span>
+          <span class="badge badge-navy">Kindergarten</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div><div class="card-header-title">Quick Actions</div></div></div>
+        <div class="quick-actions-grid">
+          <button class="btn btn-secondary btn-sm btn-justify-start" data-page="clock">${ICONS.clock} Clock In</button>
+          <button class="btn btn-secondary btn-sm btn-justify-start" data-page="attendance">${ICONS.calendar} Attendance</button>
+          <button class="btn btn-secondary btn-sm btn-justify-start" data-page="incidents">${ICONS.alert} File Incident</button>
+          <button class="btn btn-secondary btn-sm btn-justify-start" data-page="resources">${ICONS.folder} Resources</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-l-green mb-6">
+      <div class="card-header"><div><div class="card-header-title">Today's Attendance</div><div class="card-header-subtitle">At a glance</div></div></div>
+      <div class="grid-3" style="gap:12px;">
+        <div class="text-center p-3 rounded-lg" style="background: var(--emerald-50);">
+          <p style="font-size:22px; font-weight:700; color:var(--emerald-700); margin:0;">12</p>
+          <p style="font-size:12px; color:var(--emerald-600); margin:0;">Here</p>
+        </div>
+        <div class="text-center p-3 rounded-lg" style="background: var(--red-50);">
+          <p style="font-size:22px; font-weight:700; color:var(--red-700); margin:0;">1</p>
+          <p style="font-size:12px; color:var(--red-600); margin:0;">Absent</p>
+        </div>
+        <div class="text-center p-3 rounded-lg" style="background: var(--yellow-50);">
+          <p style="font-size:22px; font-weight:700; color:var(--yellow-700); margin:0;">1</p>
+          <p style="font-size:12px; color:var(--yellow-700); margin:0;">Tardy</p>
+        </div>
+      </div>
+      <p class="text-sm" style="margin-top:12px; color:var(--gray-600);">
+        <span style="font-weight:500; color:var(--red-700);">Absent today:</span> Dalet Goldberg
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-header-title">Student Roster</div>
+          <div class="card-header-subtitle">10 students · 2nd Grade</div>
+        </div>
+      </div>
+      <div class="divide-y">
+        ${STUDENTS.map(s => `
+          <div class="status-row" style="padding: 10px 4px; cursor:pointer;" data-student="${s.id}">
+            <div class="status-row-left" style="gap:12px;">
+              <div style="width:32px; height:32px; border-radius:50%; background:rgba(52,62,133,0.10); color:var(--navy); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; flex-shrink:0;">
+                ${s.first[0]}${s.last[0]}
+              </div>
+              <div>
+                <div style="font-size:14px; font-weight:500; color:var(--gray-900);">${s.first} ${s.last}</div>
+                <div style="font-size:12px; color:var(--gray-500);">2nd Grade</div>
+              </div>
+            </div>
+            <div class="status-row-right" style="color:var(--gray-400);">${ICONS.chevronRight}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// ----------- STUDENTS PAGE -----------
+function renderStudents() {
+  const grades = ['K', '1', '2', '3', '4', '5'];
+  const q = (state.searchQuery || '').toLowerCase().trim();
+  const filtered = STUDENTS.filter(s => {
+    if (state.selectedGrade && state.selectedGrade !== String(s.grade)) return false;
+    if (q && !`${s.first} ${s.last}`.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  const isAdmin = state.role === 'admin';
+
+  return `
+    <div class="page-header">
+      <div>
+        <h1>${isAdmin ? 'Students' : 'My Class Roster'}</h1>
+        <p>${isAdmin ? 'All enrolled students' : 'Your students'}</p>
+      </div>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <div class="searchbar">
+        <span class="icon-search">${ICONS.search}</span>
+        <input id="student-search" type="text" placeholder="Search students by name..." value="${state.searchQuery || ''}" />
+      </div>
+      <div class="grade-filter-wrap">
+        <div class="grade-divisions">
+          <button class="grade-pill ${!state.selectedGrade ? 'active' : ''}" data-grade="">All</button>
+          <button class="grade-pill" data-grade="">Gan Katan</button>
+          <button class="grade-pill ${state.selectedGrade && grades.includes(state.selectedGrade) ? 'active' : ''}" data-grade="">Elementary</button>
+        </div>
+        <div class="grade-pills">
+          ${grades.map(g => `
+            <button class="grade-pill-sm ${state.selectedGrade === g ? 'active' : ''}" data-grade="${g}">
+              ${g === 'K' ? 'K' : g + (g==='1'?'st':g==='2'?'nd':g==='3'?'rd':'th')}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <p class="text-sm text-gray-500 mb-3">Showing ${filtered.length} of ${STUDENTS.length} students</p>
+
+    <div class="card" style="padding:0;">
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Name ${ICONS.chevronDown}</th>
+              <th>Grade ${ICONS.chevronDown}</th>
+              ${isAdmin ? '<th>Gender</th><th>Family</th>' : ''}
+              <th>Parent contact</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filtered.map(s => `
+              <tr data-student="${s.id}">
+                <td class="name-cell">${s.last}, ${s.first}</td>
+                <td><span class="badge badge-navy">${s.grade === 'K' ? 'Kindergarten' : s.grade + (s.grade==1?'st':s.grade==2?'nd':s.grade==3?'rd':'th') + ' Grade'}</span></td>
+                ${isAdmin ? `<td>${s.gender}</td><td>${s.family}</td>` : ''}
+                <td style="color: var(--navy);">${s.parentPhone}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+      ${filtered.length === 0 ? `<div class="text-center" style="padding:40px 16px; color: var(--gray-500);">No matching students. Try adjusting your search or grade filters.</div>` : ''}
+    </div>
+  `;
+}
+
+// ----------- STUDENT PROFILE -----------
+function renderProfile() {
+  const s = STUDENTS.find(x => x.id === state.studentId);
+  if (!s) return '<p>Student not found.</p>';
+  const tabs = [
+    { key: 'overview',     label: 'Overview',     icon: 'usersIcon' },
+    { key: 'academics',    label: 'Academics',    icon: 'book' },
+    { key: 'attendance',   label: 'Attendance',   icon: 'calendar' },
+    { key: 'observations', label: 'Observations', icon: 'sparkle' },
+    { key: 'kriah',        label: 'Kriah',        icon: 'book' },
   ];
 
-  function generateAttendance(pct, absenceClusters) {
-    // Generate 60-day attendance grid
-    const days = 60;
-    const targetAbsences = Math.round(days * (1 - pct / 100));
-    const arr = new Array(days).fill('here');
-    let placed = 0;
-    while (placed < targetAbsences) {
-      const i = Math.floor(Math.random() * days);
-      if (arr[i] === 'here') { arr[i] = Math.random() < 0.15 ? 'late' : 'absent'; placed++; }
+  // Body of the tab
+  let body = '';
+  if (state.studentTab === 'overview') body = renderProfileOverview(s);
+  else if (state.studentTab === 'academics') body = renderProfileAcademics(s);
+  else if (state.studentTab === 'attendance') body = renderProfileAttendance(s);
+  else if (state.studentTab === 'observations') body = renderProfileObservations(s);
+  else if (state.studentTab === 'kriah') body = renderProfileKriah(s);
+
+  return `
+    <a class="profile-back" data-page="students">${ICONS.arrowLeft} Back to Students</a>
+
+    <div class="card mb-4">
+      <div class="profile-header">
+        <div class="profile-avatar">${s.first[0]}</div>
+        <div style="flex:1; min-width:0;">
+          <div class="profile-name">${s.first} ${s.last}</div>
+          <div class="profile-meta-row">
+            <span class="badge badge-navy">2nd Grade</span>
+            <span class="badge badge-brown">Elementary</span>
+            <span class="badge badge-gray">${s.gender === 'F' ? 'Female' : 'Male'}</span>
+            <span class="badge badge-gray">${s.family} Family</span>
+            <span class="badge badge-green">Active</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-bar">
+      ${tabs.map(t => `
+        <button class="tab-btn ${state.studentTab === t.key ? 'active' : ''}" data-tab="${t.key}">
+          ${ICONS[t.icon]} ${t.label}
+        </button>
+      `).join('')}
+    </div>
+
+    ${body}
+  `;
+}
+
+function renderProfileOverview(s) {
+  // Build attendance heatmap (last 30 days, weekday-only would be too sparse so do 30 cells)
+  const heat = Array.from({ length: 30 }, (_, i) => {
+    const r = (s.id.charCodeAt(0) + i * 7) % 100;
+    if (r < (100 - s.attendancePct) * 0.4) return 'absent';
+    if (r < (100 - s.attendancePct)) return 'tardy';
+    return 'present';
+  });
+
+  return `
+    <div class="grid-2 mb-4">
+      <div class="card">
+        <div class="card-header"><div><div class="card-header-title">${ICONS.brain} Weekly AI Summary</div><div class="card-header-subtitle">Generated this morning</div></div></div>
+        <p style="font-size:14px; color:var(--gray-700); line-height:1.6;">
+          ${s.aiSummary}
+        </p>
+        <p style="font-size:14px; color:var(--gray-700); line-height:1.6; margin-top:12px;">
+          Recommended next step: keep current routines steady and check in with parent at next pickup.
+          Engagement is good. Look for a moment to celebrate the win publicly in class on Monday.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div><div class="card-header-title">Snapshot</div></div></div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px;">
+          <div>
+            <div class="text-xs text-gray-500 font-medium" style="text-transform:uppercase; letter-spacing:0.06em;">Grade</div>
+            <div style="font-size:18px; font-weight:700; color:var(--gray-900);">2nd</div>
+          </div>
+          <div>
+            <div class="text-xs text-gray-500 font-medium" style="text-transform:uppercase; letter-spacing:0.06em;">Attendance</div>
+            <div style="font-size:18px; font-weight:700; color:${s.attendancePct >= 95 ? 'var(--emerald-600)' : s.attendancePct >= 90 ? 'var(--gray-900)' : 'var(--red-600)'};">${s.attendancePct}%</div>
+          </div>
+          <div>
+            <div class="text-xs text-gray-500 font-medium" style="text-transform:uppercase; letter-spacing:0.06em;">Waggle Math</div>
+            <div style="font-size:18px; font-weight:700; color:var(--gray-900);">Level ${s.waggleLevel}</div>
+          </div>
+          <div>
+            <div class="text-xs text-gray-500 font-medium" style="text-transform:uppercase; letter-spacing:0.06em;">Family</div>
+            <div style="font-size:14px; font-weight:600; color:var(--gray-900);">${s.family}</div>
+          </div>
+        </div>
+        <div style="margin-top:18px;">
+          <div class="progress-label-row">
+            <span style="font-size:13px; font-weight:500; color:var(--gray-700);">Kriah progress</span>
+            <span style="font-size:13px; font-weight:600; color:var(--green);">${s.kriahPct}%</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width: ${s.kriahPct}%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header"><div><div class="card-header-title">Attendance · Last 30 days</div><div class="card-header-subtitle">${s.attendancePct}% present</div></div></div>
+      <div class="heatmap-grid">
+        ${heat.map(c => `<div class="heat-cell heat-${c}"></div>`).join('')}
+      </div>
+      <div class="heat-legend">
+        <span class="heat-legend-item"><span class="heat-legend-swatch heat-present"></span>Present</span>
+        <span class="heat-legend-item"><span class="heat-legend-swatch heat-tardy"></span>Tardy</span>
+        <span class="heat-legend-item"><span class="heat-legend-swatch heat-absent"></span>Absent</span>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header"><div><div class="card-header-title">Teacher Observations</div><div class="card-header-subtitle">Last 4 entries</div></div></div>
+      <div class="obs-item">
+        <div class="obs-meta"><span class="obs-author">Mrs. Levi</span><span>·</span><span>Wed Apr 23</span></div>
+        <p class="obs-text">Helped a friend with the Aleph Bet card sort during free time. Showed real leadership.</p>
+      </div>
+      <div class="obs-item">
+        <div class="obs-meta"><span class="obs-author">Mrs. Levi</span><span>·</span><span>Mon Apr 21</span><span class="badge badge-green">Parent Contacted</span></div>
+        <p class="obs-text">Called mom to share the strong reading week. She was thrilled. Will share with grandparents tonight.</p>
+      </div>
+      <div class="obs-item">
+        <div class="obs-meta"><span class="obs-author">Ms. Klein (Specialist)</span><span>·</span><span>Fri Apr 18</span></div>
+        <p class="obs-text">Math intervention session went well. Worked on number bonds to 20. ${s.first} caught on quickly.</p>
+      </div>
+      <div class="obs-item">
+        <div class="obs-meta"><span class="obs-author">Mrs. Levi</span><span>·</span><span>Thu Apr 17</span></div>
+        <p class="obs-text">Quiet morning. Eating lunch alone — keep an eye on social side this week.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div><div class="card-header-title">Connected Systems</div><div class="card-header-subtitle">Live data sources for this student</div></div></div>
+      <div class="connected-row">
+        <div class="system-badge"><span class="dot"></span>Master Student DB</div>
+        <div class="system-badge"><span class="dot"></span>Attendance V2</div>
+        <div class="system-badge"><span class="dot"></span>Waggle (Curriculum Associates)</div>
+        <div class="system-badge"><span class="dot"></span>Drive (Report Cards)</div>
+        <div class="system-badge"><span class="dot"></span>Claude (Weekly Summary)</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderProfileAcademics(s) {
+  return `
+    <div class="grid-2 mb-4">
+      <div class="card">
+        <div class="card-header"><div><div class="card-header-title">Waggle Math</div><div class="card-header-subtitle">Curriculum Associates</div></div></div>
+        <div style="font-family:'Montserrat'; font-size:36px; font-weight:700; color:var(--green);">Level ${s.waggleLevel}</div>
+        <p class="text-sm text-gray-500" style="margin-top:6px;">${parseFloat(s.waggleLevel) >= 2.4 ? 'Above grade level' : parseFloat(s.waggleLevel) >= 2.0 ? 'On grade level' : 'Below grade level — extra support'}</p>
+        <div class="mt-4">
+          <div class="progress-label-row">
+            <span class="text-sm">Accuracy this week</span><span class="text-sm font-semibold" style="color:var(--green);">${88 + ((s.id.charCodeAt(0))%10)}%</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:${88 + ((s.id.charCodeAt(0))%10)}%"></div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div><div class="card-header-title">Kriah Progress</div><div class="card-header-subtitle">Aleph Beis Bet · Stage 2</div></div></div>
+        <div class="progress-label-row">
+          <span class="text-sm">Stage mastery</span>
+          <span class="text-sm font-semibold" style="color:var(--green);">${s.kriahPct}%</span>
+        </div>
+        <div class="progress-track mb-4"><div class="progress-fill" style="width:${s.kriahPct}%"></div></div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          ${['Vowel sounds', 'Letter recognition', 'Two-letter blends', 'Three-letter words', 'Pasuk fluency'].map((lvl, i) => {
+            const mastered = i < Math.floor(s.kriahPct / 22);
+            return `
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 10px; border-radius:8px; background:${mastered ? 'var(--emerald-50)' : 'var(--gray-50)'};">
+                <span class="text-sm" style="color:${mastered ? 'var(--gray-900)' : 'var(--gray-500)'};">${lvl}</span>
+                ${mastered ? '<span class="badge badge-green">Mastered</span>' : '<span class="text-xs text-gray-400">In progress</span>'}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div><div class="card-header-title">Report Card History</div></div></div>
+      <div class="divide-y">
+        <div class="status-row" style="padding:12px 4px;">
+          <div class="status-row-left">${ICONS.folder}<div class="status-name">Q3 Report Card 2025-26.pdf</div></div>
+          <div class="status-row-right"><span class="text-xs text-gray-500">Mar 28, 2026</span></div>
+        </div>
+        <div class="status-row" style="padding:12px 4px;">
+          <div class="status-row-left">${ICONS.folder}<div class="status-name">Q2 Report Card 2025-26.pdf</div></div>
+          <div class="status-row-right"><span class="text-xs text-gray-500">Jan 17, 2026</span></div>
+        </div>
+        <div class="status-row" style="padding:12px 4px;">
+          <div class="status-row-left">${ICONS.folder}<div class="status-name">Q1 Report Card 2025-26.pdf</div></div>
+          <div class="status-row-right"><span class="text-xs text-gray-500">Nov 6, 2025</span></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderProfileAttendance(s) {
+  const heat = Array.from({ length: 30 }, (_, i) => {
+    const r = (s.id.charCodeAt(0) + i * 7) % 100;
+    if (r < (100 - s.attendancePct) * 0.4) return 'absent';
+    if (r < (100 - s.attendancePct)) return 'tardy';
+    return 'present';
+  });
+  const present = heat.filter(c => c === 'present').length;
+  const absent  = heat.filter(c => c === 'absent').length;
+  const tardy   = heat.filter(c => c === 'tardy').length;
+
+  return `
+    <div class="grid-stats mb-4">
+      ${[
+        ['Total days','30','var(--gray-900)'],
+        ['On time', present, 'var(--emerald-600)'],
+        ['Absent',  absent,  'var(--red-600)'],
+        ['Late',    tardy,   'var(--yellow-700)'],
+      ].map(([l,v,c]) => `
+        <div class="card text-center">
+          <p style="font-size:24px; font-weight:700; color:${c}; margin:0;">${v}</p>
+          <p class="text-xs text-gray-500" style="margin:2px 0 0;">${l}</p>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header"><div><div class="card-header-title">Last 30 days</div></div></div>
+      <div class="heatmap-grid">${heat.map(c => `<div class="heat-cell heat-${c}"></div>`).join('')}</div>
+      <div class="heat-legend">
+        <span class="heat-legend-item"><span class="heat-legend-swatch heat-present"></span>Present</span>
+        <span class="heat-legend-item"><span class="heat-legend-swatch heat-tardy"></span>Tardy</span>
+        <span class="heat-legend-item"><span class="heat-legend-swatch heat-absent"></span>Absent</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div><div class="card-header-title">Recent Records</div><div class="card-header-subtitle">Newest first</div></div></div>
+      <div class="divide-y">
+        ${heat.slice(0,12).map((cat, i) => {
+          const cfg = cat === 'present'
+            ? { bg: 'var(--emerald-50)', text: 'var(--emerald-700)', dot: 'var(--emerald-500)', label: 'On Time' }
+            : cat === 'tardy'
+              ? { bg: 'var(--yellow-50)', text: 'var(--yellow-700)', dot: 'var(--yellow-500)', label: 'Late' }
+              : { bg: 'var(--red-50)', text: 'var(--red-700)', dot: 'var(--red-500)', label: 'Absent' };
+          const day = new Date(); day.setDate(day.getDate() - i);
+          return `
+            <div class="status-row" style="padding:10px 4px;">
+              <span class="text-sm text-gray-700">${day.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' })}</span>
+              <span class="badge" style="background:${cfg.bg}; color:${cfg.text};">
+                <span style="width:6px; height:6px; border-radius:50%; background:${cfg.dot}; margin-right:6px;"></span>
+                ${cfg.label}
+              </span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderProfileObservations(s) {
+  return `
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-header-title">Communication Log</div><div class="card-header-subtitle">All observations & parent contacts</div></div>
+        <button class="btn btn-primary btn-sm">+ Add Entry</button>
+      </div>
+      <div class="divide-y">
+        <div class="obs-item"><div class="obs-meta"><span class="obs-author">Mrs. Levi</span><span>·</span><span>Wed Apr 23</span></div><p class="obs-text">Helped a friend with the Aleph Bet card sort during free time. Showed real leadership.</p></div>
+        <div class="obs-item"><div class="obs-meta"><span class="obs-author">Mrs. Levi</span><span>·</span><span>Mon Apr 21</span><span class="badge badge-green">Parent Contacted</span></div><p class="obs-text">Called mom to share the strong reading week. She was thrilled.</p></div>
+        <div class="obs-item"><div class="obs-meta"><span class="obs-author">Ms. Klein (Specialist)</span><span>·</span><span>Fri Apr 18</span></div><p class="obs-text">Math intervention session went well. Worked on number bonds to 20.</p></div>
+        <div class="obs-item"><div class="obs-meta"><span class="obs-author">Mrs. Levi</span><span>·</span><span>Thu Apr 17</span></div><p class="obs-text">Quiet morning. Eating lunch alone — keep an eye on social side this week.</p></div>
+        <div class="obs-item"><div class="obs-meta"><span class="obs-author">Mrs. Levi</span><span>·</span><span>Tue Apr 15</span></div><p class="obs-text">Strong participation in morning Tefillah. Volunteered to lead the bracha.</p></div>
+      </div>
+    </div>
+  `;
+}
+
+function renderProfileKriah(s) {
+  const stages = [
+    { name: 'Stage 1: Vowel sounds',     color: '#10653c', total: 8, mastered: Math.min(8, Math.round(s.kriahPct/12)) },
+    { name: 'Stage 2: Letter recognition', color: '#148a4f', total: 22, mastered: Math.min(22, Math.round(s.kriahPct/4)) },
+    { name: 'Stage 3: Two-letter blends', color: '#4a5298', total: 18, mastered: Math.max(0, Math.round((s.kriahPct-50)/3)) },
+    { name: 'Stage 4: Three-letter words',color: '#5e3b1d', total: 14, mastered: Math.max(0, Math.round((s.kriahPct-70)/3)) },
+  ];
+  return `
+    <div class="card mb-4">
+      <div class="card-header"><div><div class="card-header-title">Kriah Mastery · ${s.first} ${s.last}</div><div class="card-header-subtitle">Aleph Beis Bet curriculum, ${s.kriahPct}% overall</div></div></div>
+      ${stages.map(stage => {
+        const pct = stage.total > 0 ? Math.round((stage.mastered/stage.total)*100) : 0;
+        return `
+          <div style="margin-bottom:18px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div style="width:12px; height:12px; border-radius:50%; background:${stage.color};"></div>
+                <span style="font-weight:600; color:var(--gray-900); font-size:14px;">${stage.name}</span>
+              </div>
+              <span class="text-xs text-gray-500 font-medium">${stage.mastered}/${stage.total} mastered (${pct}%)</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width:${pct}%; background:${stage.color};"></div></div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+// ----------- ATTENDANCE PAGE -----------
+function renderAttendance() {
+  const grades = [
+    { grade: 'PK2 (Daisies)',    total: 10, here: 9,  absent: 1, tardy: 0 },
+    { grade: 'PK3 (Sunflowers)', total: 12, here: 11, absent: 1, tardy: 0 },
+    { grade: 'PK4 (Caterpillars)', total: 14, here: 13, absent: 1, tardy: 0 },
+    { grade: 'PK5 (Butterflies)',  total: 13, here: 12, absent: 0, tardy: 1 },
+    { grade: 'Kindergarten',       total: 15, here: 14, absent: 1, tardy: 0 },
+    { grade: '1st Grade',          total: 12, here: 12, absent: 0, tardy: 0 },
+    { grade: '2nd Grade',          total: 14, here: 12, absent: 1, tardy: 1 },
+    { grade: '3rd Grade',          total: 11, here: 10, absent: 1, tardy: 0 },
+    { grade: '4th Grade',          total: 8,  here: 8,  absent: 0, tardy: 0 },
+    { grade: '5th Grade',          total: 6,  here: 5,  absent: 0, tardy: 1 },
+  ];
+  const totals = grades.reduce((acc, g) => ({
+    total: acc.total + g.total, here: acc.here + g.here, absent: acc.absent + g.absent, tardy: acc.tardy + g.tardy,
+  }), { total: 0, here: 0, absent: 0, tardy: 0 });
+
+  return `
+    <div class="page-header">
+      <div>
+        <h1>Attendance</h1>
+        <p>${totals.here} of ${totals.total} students here today</p>
+      </div>
+    </div>
+
+    <div class="date-nav">
+      <button class="date-nav-arrow" title="Previous day">${ICONS.arrowLeft}</button>
+      <div class="date-nav-title">${state.attendanceDate}</div>
+      <button class="date-nav-arrow" title="Next day">${ICONS.arrowRight}</button>
+    </div>
+
+    <div class="grid-3 mb-6">
+      <div class="card text-center" style="border-left:4px solid var(--emerald-500);">
+        <p style="font-family:'Montserrat'; font-size:32px; font-weight:700; color:var(--emerald-700); margin:0;">${totals.here}</p>
+        <p class="text-xs text-gray-500" style="margin:4px 0 0;">Here</p>
+      </div>
+      <div class="card text-center" style="border-left:4px solid var(--red-500);">
+        <p style="font-family:'Montserrat'; font-size:32px; font-weight:700; color:var(--red-700); margin:0;">${totals.absent}</p>
+        <p class="text-xs text-gray-500" style="margin:4px 0 0;">Absent</p>
+      </div>
+      <div class="card text-center" style="border-left:4px solid var(--yellow-500);">
+        <p style="font-family:'Montserrat'; font-size:32px; font-weight:700; color:var(--yellow-700); margin:0;">${totals.tardy}</p>
+        <p class="text-xs text-gray-500" style="margin:4px 0 0;">Tardy</p>
+      </div>
+    </div>
+
+    <div class="card" style="padding:0;">
+      <div style="padding:20px 24px 0;">
+        <div class="card-header-title">By Grade</div>
+        <p class="card-header-subtitle">Click a grade for the student-level view</p>
+      </div>
+      <div class="table-wrap" style="margin-top:12px;">
+        <table class="data-table">
+          <thead><tr>
+            <th>Grade</th><th>Total</th><th>Here</th><th>Absent</th><th>Tardy</th><th>%</th>
+          </tr></thead>
+          <tbody>
+            ${grades.map(g => {
+              const pct = Math.round((g.here / g.total) * 100);
+              return `
+                <tr>
+                  <td class="name-cell">${g.grade}</td>
+                  <td>${g.total}</td>
+                  <td style="color:var(--emerald-700); font-weight:600;">${g.here}</td>
+                  <td style="color:${g.absent ? 'var(--red-600)' : 'var(--gray-400)'};">${g.absent}</td>
+                  <td style="color:${g.tardy ? 'var(--yellow-700)' : 'var(--gray-400)'};">${g.tardy}</td>
+                  <td>${pct}%</td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+// ----------- STUB PAGES (the rest) -----------
+function renderStubPage(title, blurb) {
+  return `
+    <div class="page-header">
+      <div>
+        <h1>${title}</h1>
+        <p>Demo placeholder · live in the real app</p>
+      </div>
+    </div>
+
+    <div class="card text-center" style="padding:48px 24px;">
+      <div style="display:inline-block; padding:16px; background:rgba(52,62,133,0.08); border-radius:50%; color:var(--navy); margin-bottom:16px;">
+        ${ICONS.sparkle}
+      </div>
+      <h3 style="font-size:18px; font-weight:700; color:var(--gray-900); margin-bottom:8px;">${title}</h3>
+      <p class="text-sm text-gray-500" style="max-width:480px; margin:0 auto;">
+        ${blurb}
+      </p>
+      <div style="margin-top:20px; display:inline-flex; gap:8px;">
+        <button class="btn btn-primary btn-sm" data-page="dashboard">${ICONS.arrowLeft} Back to Dashboard</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderAcademicsStub() {
+  return `
+    <div class="page-header">
+      <div><h1>Academics</h1><p>Curriculum, kriah, report cards, and principal reports</p></div>
+    </div>
+
+    <div class="grid-2 mb-4">
+      <div class="card card-hover">
+        <div class="stat-icon stat-icon-navy">${ICONS.book}</div>
+        <h3 style="margin-top:14px; font-size:16px; font-weight:700;">Kriah Progress</h3>
+        <p class="text-sm text-gray-500" style="margin-top:4px;">School-wide Aleph Bet mastery, broken out by grade and student.</p>
+      </div>
+      <div class="card card-hover">
+        <div class="stat-icon stat-icon-green">${ICONS.folder}</div>
+        <h3 style="margin-top:14px; font-size:16px; font-weight:700;">Report Cards</h3>
+        <p class="text-sm text-gray-500" style="margin-top:4px;">Quarterly report card library for every student. Generate, send, archive.</p>
+      </div>
+      <div class="card card-hover">
+        <div class="stat-icon stat-icon-brown">${ICONS.alert}</div>
+        <h3 style="margin-top:14px; font-size:16px; font-weight:700;">Principal Reports</h3>
+        <p class="text-sm text-gray-500" style="margin-top:4px;">Weekly behavior tracking. Green/Blue/Yellow/Red tags. Trend over time.</p>
+      </div>
+      <div class="card card-hover">
+        <div class="stat-icon stat-icon-gray">${ICONS.graduation}</div>
+        <h3 style="margin-top:14px; font-size:16px; font-weight:700;">Curriculum Overview</h3>
+        <p class="text-sm text-gray-500" style="margin-top:4px;">What each grade is learning this week. Pulled from teacher lesson plans.</p>
+      </div>
+    </div>
+  `;
+}
+
+// ----------- ASK SIS RESPONSE -----------
+function askResponse(query) {
+  const q = (query || '').toLowerCase();
+  // Match a student
+  for (const s of STUDENTS) {
+    if (q.includes(s.first.toLowerCase()) || q.includes(s.last.toLowerCase())) {
+      return `
+        <strong>${s.first} ${s.last} · 2nd Grade</strong><br>
+        ${s.aiSummary}
+        <br><br>
+        <em style="font-size:12px; color:var(--gray-500);">Synthesized from Master DB, Attendance V2, Waggle, and Mrs. Levi's observations.</em>
+      `;
     }
-    return arr;
+  }
+  if (q.includes('absent') || q.includes('missing')) {
+    return `<strong>1 student absent today.</strong><br>Dalet Goldberg (2nd Grade · Goldberg family) — mom called in this morning, cold, expected back Monday.`;
+  }
+  if (q.includes('birthday')) {
+    return `<strong>Alef Cohen turns 8 today!</strong> 2nd Grade. Mrs. Levi planned a small classroom birthday circle at 10:30a.`;
+  }
+  if (q.includes('attend')) {
+    return `<strong>Attendance today: 106 of 115 students here</strong> (92%). 7 absent, 2 tardy. Worst grade by attendance % is PK2 (90%).`;
+  }
+  if (q.includes('staff') || q.includes('late')) {
+    return `<strong>2 staff arrived late this morning.</strong> Mrs. Mizrahi (8:14a, +14 min) and Mr. Cohen (8:21a, +21 min). 18 staff on time, 2 working remote, 2 absent.`;
+  }
+  if (q.trim()) {
+    return `I found <strong>3 students matching "${query}"</strong>: Alef Cohen (2nd), Bet Levi (2nd), Gimmel Friedman (2nd). Click any student to see their full profile, or refine your question.`;
+  }
+  return `Try asking about a specific student, today's attendance, or staff status.`;
+}
+
+// ----------- EVENT LISTENERS -----------
+function attachListeners() {
+  // Sidebar nav
+  document.querySelectorAll('[data-page]').forEach(el => {
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      const page = el.dataset.page;
+      navigate(page);
+    });
+  });
+
+  // Login
+  document.querySelectorAll('[data-action="login-admin"]').forEach(el =>
+    el.addEventListener('click', () => setRole('admin')));
+  document.querySelectorAll('[data-action="login-teacher"]').forEach(el =>
+    el.addEventListener('click', () => setRole('teacher')));
+
+  // Sign out
+  document.querySelectorAll('[data-action="logout"]').forEach(el =>
+    el.addEventListener('click', () => { state.page = 'login'; render(); }));
+
+  // Back to portfolio
+  document.querySelectorAll('[data-action="portfolio-back"]').forEach(el =>
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      if (history.length > 1 && document.referrer) history.back();
+      else window.location.href = '../../index.html';
+    }));
+
+  // Student row click
+  document.querySelectorAll('[data-student]').forEach(el =>
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      navigate('profile', { studentId: el.dataset.student });
+    }));
+
+  // Profile tabs
+  document.querySelectorAll('[data-tab]').forEach(el =>
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      state.studentTab = el.dataset.tab;
+      render();
+    }));
+
+  // Search
+  const searchInput = document.getElementById('student-search');
+  if (searchInput) {
+    searchInput.addEventListener('input', e => {
+      state.searchQuery = e.target.value;
+      // re-render only the table portion would be smoother but full render is simple enough
+      render();
+      // restore focus and caret
+      setTimeout(() => {
+        const i = document.getElementById('student-search');
+        if (i) { i.focus(); i.setSelectionRange(state.searchQuery.length, state.searchQuery.length); }
+      }, 0);
+    });
   }
 
-  const mainPanel = document.getElementById('mainPanel');
-  const studentList = document.getElementById('studentList');
-  const searchInput = document.getElementById('searchInput');
-  let currentId = STUDENTS[0].id;
-  let filter = '';
+  // Grade pills
+  document.querySelectorAll('[data-grade]').forEach(el =>
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      const g = el.dataset.grade;
+      state.selectedGrade = (g && state.selectedGrade !== g) ? g : null;
+      render();
+    }));
 
-  function renderStudentList() {
-    while (studentList.firstChild) studentList.removeChild(studentList.firstChild);
-    const matches = STUDENTS.filter(s => s.name.toLowerCase().includes(filter.toLowerCase()));
-    if (!matches.length) {
-      const empty = document.createElement('div');
-      empty.style.cssText = 'padding: 20px; text-align: center; color: #86868b; font-size: 13px;';
-      empty.textContent = 'No students match.';
-      studentList.appendChild(empty);
-      return;
-    }
-    matches.forEach(s => {
-      const item = document.createElement('button');
-      item.className = 'student-item' + (s.id === currentId ? ' active' : '');
-      item.addEventListener('click', () => { currentId = s.id; renderStudentList(); renderMain(); });
-      const av = document.createElement('div');
-      av.className = 'avatar v' + s.avatarVariant;
-      av.textContent = s.initials;
-      const info = document.createElement('div');
-      const name = document.createElement('div');
-      name.className = 'name';
-      name.textContent = s.name;
-      const sub = document.createElement('div');
-      sub.className = 'sub';
-      sub.textContent = 'Kriah ' + s.fluency + '% \u00B7 Math ' + s.mathLevel;
-      info.appendChild(name);
-      info.appendChild(sub);
-      const flag = document.createElement('div');
-      flag.className = 'flag ' + s.flag;
-      flag.textContent = s.flag === 'good' ? 'On track' : 'Watch';
-      item.appendChild(av);
-      item.appendChild(info);
-      item.appendChild(flag);
-      studentList.appendChild(item);
-    });
-  }
+  // Ask SIS
+  document.querySelectorAll('[data-action="ask-submit"]').forEach(el =>
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      const input = document.getElementById('ask-input');
+      const q = input ? input.value.trim() : '';
+      state.askResponse = askResponse(q);
+      render();
+      // restore focus
+      setTimeout(() => {
+        const i = document.getElementById('ask-input');
+        if (i) { i.focus(); i.value = q; }
+      }, 0);
+    }));
 
-  function getStudent() { return STUDENTS.find(s => s.id === currentId); }
-
-  function gradeClass(g) {
-    const l = g.charAt(0).toUpperCase();
-    if (l === 'A') return 'g-a';
-    if (l === 'B') return 'g-b';
-    if (l === 'C') return 'g-c';
-    return 'g-d';
-  }
-
-  function renderMain() {
-    const s = getStudent();
-    while (mainPanel.firstChild) mainPanel.removeChild(mainPanel.firstChild);
-
-    // Student header
-    const header = document.createElement('div');
-    header.className = 'student-header';
-    const av = document.createElement('div');
-    av.className = 'avatar v' + s.avatarVariant;
-    av.textContent = s.initials;
-    header.appendChild(av);
-    const info = document.createElement('div');
-    const name = document.createElement('div'); name.className = 'name'; name.textContent = s.name;
-    const meta = document.createElement('div'); meta.className = 'meta'; meta.textContent = s.grade + ' \u00B7 ' + s.pronouns + ' \u00B7 Sapphires group';
-    info.appendChild(name); info.appendChild(meta);
-    header.appendChild(info);
-    const qs = document.createElement('div'); qs.className = 'quick-stats';
-    [
-      { n: s.attendance + '%', l: 'Attendance' },
-      { n: s.avgGrade, l: 'Avg grade' },
-      { n: s.fluency + '%', l: 'Kriah fluency' },
-      { n: s.mathLevel, l: 'Math level' }
-    ].forEach(q => {
-      const qd = document.createElement('div'); qd.className = 'q';
-      const n = document.createElement('div'); n.className = 'n'; n.textContent = q.n;
-      const l = document.createElement('div'); l.className = 'l'; l.textContent = q.l;
-      qd.appendChild(n); qd.appendChild(l);
-      qs.appendChild(qd);
-    });
-    header.appendChild(qs);
-    mainPanel.appendChild(header);
-
-    // Ask SIS card (stays global but positioned near top)
-    const askCard = buildAskCard();
-    mainPanel.appendChild(askCard);
-
-    // AI Summary
-    const ai = document.createElement('div');
-    ai.className = 'ai-card';
-    const aiHead = document.createElement('div'); aiHead.className = 'ai-head';
-    const aiTitle = document.createElement('div'); aiTitle.className = 'title';
-    const aiBadge = document.createElement('span'); aiBadge.className = 'ai-badge'; aiBadge.textContent = 'AI';
-    aiTitle.appendChild(aiBadge);
-    aiTitle.appendChild(document.createTextNode(' Weekly summary for ' + s.name));
-    const aiDate = document.createElement('div'); aiDate.className = 'ai-date'; aiDate.textContent = 'Generated this morning \u00B7 Week of Apr 14';
-    aiHead.appendChild(aiTitle); aiHead.appendChild(aiDate);
-    const aiBody = document.createElement('div'); aiBody.className = 'ai-body'; aiBody.textContent = s.aiSummary;
-    ai.appendChild(aiHead); ai.appendChild(aiBody);
-    mainPanel.appendChild(ai);
-
-    // Grid row 1: Subjects + Kriah
-    const row1 = document.createElement('div'); row1.className = 'grid';
-
-    const subjPanel = document.createElement('div'); subjPanel.className = 'panel';
-    const subjHead = panelHead('Academic performance', 'Report Card');
-    subjPanel.appendChild(subjHead);
-    s.subjects.forEach(sub => {
-      const r = document.createElement('div'); r.className = 'subject-row';
-      const nm = document.createElement('div'); nm.className = 'sub-name'; nm.textContent = sub.name;
-      const tr = document.createElement('div'); tr.className = 'trend ' + (sub.trend === 'up' ? 'up' : sub.trend === 'down' ? 'down' : ''); tr.textContent = sub.trendLabel;
-      const g = document.createElement('div'); g.className = 'grade-pill ' + gradeClass(sub.grade); g.textContent = sub.grade;
-      r.appendChild(nm); r.appendChild(tr); r.appendChild(g);
-      subjPanel.appendChild(r);
-    });
-    row1.appendChild(subjPanel);
-
-    const kriahPanel = document.createElement('div'); kriahPanel.className = 'panel';
-    const kriahHead = panelHead('Kriah progress', 'Kriah Coach');
-    kriahPanel.appendChild(kriahHead);
-    const kl = document.createElement('div'); kl.className = 'kriah-level'; kl.textContent = s.kriahLevel;
-    const ks = document.createElement('div'); ks.className = 'kriah-sub'; ks.textContent = 'Tracked weekly by the classroom teacher';
-    kriahPanel.appendChild(kl); kriahPanel.appendChild(ks);
-    kriahPanel.appendChild(progressGroup('Letters mastered', s.lettersMastered, 22));
-    kriahPanel.appendChild(progressGroup('Nekudos mastered', s.nekudosMastered, 12));
-    kriahPanel.appendChild(progressGroup('Reading fluency', s.fluency, 100));
-    const chartWrap = document.createElement('div'); chartWrap.className = 'kriah-chart';
-    const chLabel = document.createElement('div'); chLabel.className = 'mini-label'; chLabel.textContent = 'Fluency last 4 weeks';
-    chartWrap.appendChild(chLabel);
-    chartWrap.appendChild(sparkline(s.fluencyWeekly));
-    kriahPanel.appendChild(chartWrap);
-    row1.appendChild(kriahPanel);
-    mainPanel.appendChild(row1);
-
-    // Row 2: Attendance + Math + Observations
-    const row2 = document.createElement('div'); row2.className = 'grid three';
-
-    const atPanel = document.createElement('div'); atPanel.className = 'panel';
-    const atHead = panelHead('Attendance', 'Time Clock');
-    atPanel.appendChild(atHead);
-    const atBig = document.createElement('div'); atBig.className = 'attend-big'; atBig.textContent = s.attendance + '%';
-    const atSub = document.createElement('div'); atSub.className = 'attend-sub'; atSub.textContent = 'Last 60 school days';
-    atPanel.appendChild(atBig); atPanel.appendChild(atSub);
-    const dots = document.createElement('div'); dots.className = 'attend-dots';
-    s.attendanceData.forEach(status => {
-      const d = document.createElement('div'); d.className = 'd ' + status; dots.appendChild(d);
-    });
-    atPanel.appendChild(dots);
-    const legend = document.createElement('div'); legend.className = 'legend';
-    [['here', 'Present'], ['absent', 'Absent'], ['late', 'Late']].forEach(([cls, lbl]) => {
-      const c = document.createElement('span'); c.className = 'chip';
-      const dot = document.createElement('span'); dot.className = 'dot';
-      if (cls === 'here') dot.style.background = 'var(--forest)';
-      if (cls === 'absent') dot.style.background = 'var(--danger)'; dot.style.opacity = cls === 'absent' ? '0.55' : '';
-      if (cls === 'late') { dot.style.background = 'var(--amber)'; dot.style.opacity = '0.75'; }
-      c.appendChild(dot); c.appendChild(document.createTextNode(' ' + lbl));
-      legend.appendChild(c);
-    });
-    atPanel.appendChild(legend);
-    row2.appendChild(atPanel);
-
-    const mathPanel = document.createElement('div'); mathPanel.className = 'panel';
-    const mathHead = panelHead('Math (Waggle)', 'Waggle');
-    mathPanel.appendChild(mathHead);
-    const wt = document.createElement('div'); wt.className = 'waggle-top';
-    const wn = document.createElement('div'); wn.className = 'waggle-num'; wn.textContent = s.mathLevel;
-    const ws = document.createElement('div'); ws.className = 'waggle-sub'; ws.textContent = 'Current level';
-    wt.appendChild(wn); wt.appendChild(ws);
-    mathPanel.appendChild(wt);
-    const wg = document.createElement('div'); wg.className = 'waggle-gain'; wg.textContent = s.mathGain;
-    mathPanel.appendChild(wg);
-    const wd = document.createElement('div'); wd.className = 'waggle-detail'; wd.textContent = s.mathDetail;
-    mathPanel.appendChild(wd);
-    row2.appendChild(mathPanel);
-
-    const obsPanel = document.createElement('div'); obsPanel.className = 'panel';
-    const obsHead = panelHead('Teacher observations', 'Observation');
-    obsPanel.appendChild(obsHead);
-    s.observations.forEach(o => {
-      const it = document.createElement('div'); it.className = 'obs-item';
-      const head = document.createElement('div'); head.className = 'obs-head';
-      const t = document.createElement('span'); t.className = 'teacher'; t.textContent = o.teacher;
-      const d = document.createElement('span'); d.textContent = o.date;
-      head.appendChild(t); head.appendChild(d);
-      const tx = document.createElement('div'); tx.className = 'obs-text'; tx.textContent = o.text;
-      it.appendChild(head); it.appendChild(tx);
-      obsPanel.appendChild(it);
-    });
-    row2.appendChild(obsPanel);
-    mainPanel.appendChild(row2);
-
-    // Systems
-    const sysCard = document.createElement('div'); sysCard.className = 'systems-card';
-    const sysH3 = document.createElement('h3'); sysH3.textContent = 'Real systems feeding the Pardes SIS'; sysCard.appendChild(sysH3);
-    const sysGrid = document.createElement('div'); sysGrid.className = 'systems-grid';
-    [
-      { icon: 'DB', name: 'Master DB Sheet', role: 'Students, Staff, Classes' },
-      { icon: 'AV2', name: 'Attendance V2', role: 'Google Forms intake' },
-      { icon: 'WG', name: 'Waggle (HMH)', role: 'Adaptive math data' },
-      { icon: 'PDF', name: 'Report Card PDFs', role: 'Drive folder' },
-      { icon: 'AI', name: 'Claude', role: 'Weekly summary' }
-    ].forEach((sys, i) => {
-      const w = document.createElement('div'); w.className = 'sys';
-      const icon = document.createElement('div'); icon.className = 'sys-icon sys-' + (i + 1); icon.textContent = sys.icon;
-      const nm = document.createElement('div'); nm.className = 'sys-name'; nm.textContent = sys.name;
-      const rl = document.createElement('div'); rl.className = 'sys-role'; rl.textContent = sys.role;
-      w.appendChild(icon); w.appendChild(nm); w.appendChild(rl);
-      sysGrid.appendChild(w);
-    });
-    sysCard.appendChild(sysGrid);
-    mainPanel.appendChild(sysCard);
-  }
-
-  function panelHead(title, source) {
-    const h = document.createElement('div'); h.className = 'panel-head';
-    const h3 = document.createElement('h3'); h3.textContent = title;
-    const src = document.createElement('div'); src.className = 'src'; src.textContent = source;
-    h.appendChild(h3); h.appendChild(src);
-    return h;
-  }
-
-  function progressGroup(label, value, max) {
-    const g = document.createElement('div'); g.className = 'progress-group';
-    const lb = document.createElement('div'); lb.className = 'label'; lb.textContent = label;
-    const bar = document.createElement('div'); bar.className = 'progress-bar';
-    const fill = document.createElement('div'); fill.className = 'fill';
-    fill.style.width = Math.min(100, (value / max) * 100) + '%';
-    bar.appendChild(fill);
-    const row = document.createElement('div'); row.className = 'progress-row';
-    const a = document.createElement('span'); a.textContent = value + ' / ' + max;
-    const b = document.createElement('span'); b.textContent = Math.round((value / max) * 100) + '%';
-    row.appendChild(a); row.appendChild(b);
-    g.appendChild(lb); g.appendChild(bar); g.appendChild(row);
-    return g;
-  }
-
-  function sparkline(data) {
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('class', 'spark');
-    svg.setAttribute('viewBox', '0 0 200 50');
-    svg.setAttribute('preserveAspectRatio', 'none');
-    const min = Math.min.apply(null, data) - 5;
-    const max = Math.max.apply(null, data) + 2;
-    const range = Math.max(1, max - min);
-    const step = 200 / (data.length - 1);
-    let d = '';
-    data.forEach((v, i) => {
-      const x = i * step;
-      const y = 50 - ((v - min) / range) * 45 - 2;
-      d += (i === 0 ? 'M' : ' L') + x + ',' + y;
-    });
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', d);
-    path.setAttribute('fill', 'none');
-    path.setAttribute('stroke', '#10653c');
-    path.setAttribute('stroke-width', '2.5');
-    path.setAttribute('stroke-linecap', 'round');
-    path.setAttribute('stroke-linejoin', 'round');
-    // Last point dot
-    const last = data[data.length - 1];
-    const lx = (data.length - 1) * step;
-    const ly = 50 - ((last - min) / range) * 45 - 2;
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.setAttribute('cx', lx); circle.setAttribute('cy', ly); circle.setAttribute('r', '3.5'); circle.setAttribute('fill', '#10653c');
-    svg.appendChild(path); svg.appendChild(circle);
-    return svg;
-  }
-
-  function buildAskCard() {
-    const c = document.createElement('div'); c.className = 'ask-card';
-    const h = document.createElement('h3'); h.textContent = 'Ask the SIS';
-    const s = document.createElement('div'); s.className = 'sub'; s.textContent = 'A Claude-powered natural language layer over every connected system.';
-    const wrap = document.createElement('div'); wrap.className = 'ask-input-wrap';
-    const inp = document.createElement('input'); inp.type = 'text'; inp.placeholder = 'Ask in plain English. Who is struggling with kriah? Who is ready for more challenge?';
-    const btn = document.createElement('button'); btn.textContent = 'Ask';
-    wrap.appendChild(inp); wrap.appendChild(btn);
-    const sugg = document.createElement('div'); sugg.className = 'ask-suggestions';
-    const questions = [
-      'Who is struggling with kriah?',
-      'Who is ready for enrichment?',
-      'Which students missed the most days this month?',
-      'How did the class do this week overall?'
-    ];
-    const answerBox = document.createElement('div'); answerBox.className = 'ask-answer';
-    questions.forEach(q => {
-      const b = document.createElement('button'); b.className = 'ask-sugg'; b.textContent = q;
-      b.addEventListener('click', () => { inp.value = q; runQuery(q); });
-      sugg.appendChild(b);
-    });
-    function runQuery(q) {
-      const ql = q.toLowerCase();
-      let answer = '';
-      if (/struggl|behind|low/.test(ql) && /kriah|reading/.test(ql)) {
-        const list = STUDENTS.filter(x => x.fluency < 70).map(x => x.name + ' (' + x.fluency + '%)').join(', ');
-        answer = 'Two students are below 70 percent kriah fluency: ' + list + '. Gimmel is the highest priority. Recommend daily Kriah Coach pull-outs for both and a parent conversation for Gimmel this week.';
-      } else if (/enrich|challenge|ahead|advanced|top/.test(ql)) {
-        const enrichmentIds = ['dalet', 'tet', 'zayin'];
-        const top = STUDENTS.filter(x => enrichmentIds.includes(x.id)).map(x => x.name).join(', ');
-        answer = 'Three students are ready for more challenge: ' + top + '. Dalet and Tet are nearly a full grade level above on Waggle math. Consider enrichment groupings this week.';
-      } else if (/absent|absence|missed|attendance/.test(ql)) {
-        const low = STUDENTS.filter(x => x.attendance < 92).sort((a,b) => a.attendance - b.attendance).map(x => x.name + ' (' + x.attendance + '%)').join(', ');
-        answer = 'Students below 92 percent attendance: ' + low + '. Vav has been out three times in the last month, all on Fridays. Worth a parent outreach.';
-      } else if (/class|overall|this week|summary|week/.test(ql)) {
-        answer = 'Class of 10. Average kriah fluency is 80 percent, up 5 points since last month. Math average on Waggle is grade 2.5, with a +0.7 grade-level gain across the class. Two students flagged for intervention (Gimmel, Vav). Three students ready for enrichment (Dalet, Tet, Zayin). Chumash discussions were especially strong on Tuesday.';
-      } else {
-        answer = 'I searched the connected systems. The class looks healthy overall, 80 percent average kriah fluency and grade 2.5 on Waggle. Try one of the suggested questions for a more specific answer.';
+  const askInput = document.getElementById('ask-input');
+  if (askInput) {
+    askInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const q = askInput.value.trim();
+        state.askResponse = askResponse(q);
+        render();
+        setTimeout(() => {
+          const i = document.getElementById('ask-input');
+          if (i) { i.focus(); i.value = q; }
+        }, 0);
       }
-      answerBox.textContent = '';
-      const prefix = document.createElement('strong');
-      prefix.textContent = 'Answer: ';
-      answerBox.appendChild(prefix);
-      answerBox.appendChild(document.createTextNode(answer));
-      answerBox.classList.add('show');
-    }
-    btn.addEventListener('click', () => runQuery(inp.value || questions[0]));
-    inp.addEventListener('keydown', e => { if (e.key === 'Enter') runQuery(inp.value || questions[0]); });
-    c.appendChild(h); c.appendChild(s); c.appendChild(wrap); c.appendChild(sugg); c.appendChild(answerBox);
-    return c;
+    });
   }
+}
 
-  searchInput.addEventListener('input', e => { filter = e.target.value; renderStudentList(); });
-
-  renderStudentList();
-  renderMain();
-})();
+// ----------- BOOT -----------
+render();
 </script>
-
 </body>
 </html>

@@ -1,525 +1,1866 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Reflect Demo &middot; AI Inside a Small School</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --forest: #10653c;
-    --forest-dark: #0a4a2b;
-    --forest-soft: #b7e2c6;
-    --navy: #343e85;
-    --cream: #f8f4ed;
-    --sage-light: #f0f4ee;
-    --white: #ffffff;
-    --text-dark: #1d1d1f;
-    --text-body: #424245;
-    --text-light: #86868b;
-    --line: rgba(16, 101, 60, 0.14);
-    --line-soft: rgba(0, 0, 0, 0.06);
-    --amber: #d4940a;
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: 'Montserrat', system-ui, -apple-system, sans-serif; background: var(--cream); color: var(--text-body); -webkit-font-smoothing: antialiased; min-height: 100vh; }
-  h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; color: var(--text-dark); margin: 0; letter-spacing: -0.02em; }
-  a { color: var(--forest); text-decoration: none; }
-  button { font-family: inherit; cursor: pointer; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#343e85" />
+  <title>Reflect - Leadership Feedback for School Principals</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ==========================================
+       RESET + BASE
+       ========================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html {
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    body {
+      font-family: 'Source Sans 3', system-ui, -apple-system, sans-serif;
+      color: #111827;
+      background: #ffffff;
+      line-height: 1.5;
+      font-weight: 400;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-weight: normal;
+      letter-spacing: -0.01em;
+    }
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+    a { color: inherit; text-decoration: none; }
 
-  .topbar { background: var(--white); border-bottom: 1px solid var(--line-soft); padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
-  .topbar .back { font-size: 13px; font-weight: 600; color: var(--forest); display: inline-flex; align-items: center; gap: 6px; }
-  .topbar .back::before { content: "\2190"; }
-  .topbar .logo { font-family: 'Caveat', cursive; color: var(--forest); font-size: 22px; font-weight: 600; }
-  .topbar .demo-label { font-size: 11px; font-weight: 700; color: var(--forest); letter-spacing: 0.14em; text-transform: uppercase; padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; }
+    /* ==========================================
+       DESIGN TOKENS
+       ========================================== */
+    :root {
+      --reflect-indigo: #343e85;
+      --teaching-blue: #3b7dd8;
+      --communication-teal: #2a9d8f;
+      --culture-coral: #e76f51;
+      --direction-purple: #8338ec;
+      --people-orange: #fb8500;
+      --mission-indigo: #343e85;
+      --jewish-green: #10653c;
+      --pardes-forest: #1f4e3d;
+    }
 
-  .wrap { max-width: 780px; margin: 0 auto; padding: 40px 24px 80px; }
+    /* ==========================================
+       BACK-TO-PORTFOLIO LINK
+       ========================================== */
+    .back-link {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 100;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: var(--pardes-forest);
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 999px;
+      border: 1px solid rgba(31, 78, 61, 0.15);
+      transition: all 0.2s ease;
+    }
+    .back-link:hover {
+      background: rgba(255, 255, 255, 1);
+      transform: translateX(-2px);
+    }
+    .back-link.on-dark {
+      background: rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.9);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    .back-link.on-dark:hover {
+      background: rgba(255, 255, 255, 0.25);
+      color: #fff;
+    }
 
-  .progress-bar-wrap { height: 4px; background: #eae5d6; border-radius: 99px; overflow: hidden; margin-bottom: 28px; }
-  .progress-bar-fill { height: 100%; background: var(--forest); border-radius: 99px; transition: width 0.4s ease; }
+    /* ==========================================
+       LAYOUT HELPERS
+       ========================================== */
+    .survey-container {
+      min-height: 100vh;
+      background: linear-gradient(to bottom, #f9fafb, #ffffff);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 48px;
+      padding-bottom: 48px;
+    }
+    .survey-content {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 32px 16px;
+      width: 100%;
+    }
+    @media (min-width: 640px) {
+      .survey-content { padding: 48px 16px; }
+    }
 
-  /* Intro */
-  .intro { background: white; border: 1px solid var(--line-soft); border-radius: 18px; padding: 44px 48px; box-shadow: 0 18px 40px -28px rgba(16,101,60,0.18); }
-  .intro .eyebrow { font-family: 'Caveat', cursive; color: var(--forest); font-size: 26px; font-weight: 600; margin-bottom: 8px; }
-  .intro h1 { font-size: 34px; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.03em; line-height: 1.08; }
-  .intro p { font-size: 16px; color: var(--text-body); margin: 0 0 14px; line-height: 1.6; }
+    /* ==========================================
+       BUTTONS
+       ========================================== */
+    .btn-primary {
+      display: inline-block;
+      padding: 12px 24px;
+      background: var(--reflect-indigo);
+      color: white;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: #1e3a8a;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(52, 62, 133, 0.25);
+    }
+    .btn-primary:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .btn-secondary {
+      display: inline-block;
+      padding: 12px 24px;
+      border: 2px solid #d1d5db;
+      color: #374151;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.2s ease;
+      background: white;
+    }
+    .btn-secondary:hover {
+      border-color: #9ca3af;
+      background: #f9fafb;
+    }
+    .btn-secondary:active {
+      transform: scale(0.97);
+    }
+    .btn-ghost {
+      padding: 8px 16px;
+      color: #4b5563;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border-radius: 6px;
+    }
+    .btn-ghost:hover:not(:disabled) {
+      color: #111827;
+      background: #f3f4f6;
+    }
+    .btn-ghost:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
 
-  .form-picker { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line-soft); }
-  .form-picker-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); margin-bottom: 12px; }
-  .forms { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .form-option { padding: 16px 18px; border: 2px solid var(--line-soft); border-radius: 12px; background: white; text-align: left; transition: all 0.15s ease; font-family: inherit; }
-  .form-option:hover:not(.locked) { border-color: var(--forest-soft); background: var(--sage-light); }
-  .form-option.selected { border-color: var(--forest); background: var(--sage-light); }
-  .form-option .nm { font-size: 15px; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; }
-  .form-option .mt { font-size: 12px; color: var(--text-body); line-height: 1.4; }
-  .form-option .tag { display: inline-block; font-size: 10px; font-weight: 700; color: var(--forest); background: var(--sage-light); padding: 2px 8px; border-radius: 4px; margin-top: 6px; letter-spacing: 0.04em; text-transform: uppercase; }
-  .form-option.selected .tag { background: white; }
-  .form-option.locked { opacity: 0.55; cursor: not-allowed; }
+    /* ==========================================
+       SCREENS — SHOW/HIDE
+       ========================================== */
+    .screen {
+      display: none;
+      animation: fadeIn 0.3s ease-out;
+    }
+    .screen.active {
+      display: block;
+    }
 
-  .domains-chip { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
-  .domain-chip { font-size: 11px; font-weight: 700; color: var(--forest-dark); background: var(--sage-light); padding: 5px 10px; border-radius: 999px; border: 1px solid var(--forest-soft); letter-spacing: 0.02em; }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideRight {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideLeft {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes pop {
+      0% { transform: scale(0); opacity: 0; }
+      80% { transform: scale(1.08); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .animate-slide-right { animation: slideRight 0.35s ease-out; }
+    .animate-pop { animation: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
 
-  .intro button.primary { margin-top: 26px; width: 100%; background: var(--forest-dark); color: white; border: none; border-radius: 12px; padding: 15px; font-size: 15.5px; font-weight: 700; }
-  .intro button.primary:hover { background: var(--forest); }
+    /* ==========================================
+       SCREEN 1: LANDING
+       ========================================== */
+    .landing {
+      min-height: 100vh;
+      background: linear-gradient(to bottom, var(--reflect-indigo), #1e3a8a);
+      color: white;
+      display: flex;
+      flex-direction: column;
+    }
+    .landing-nav {
+      max-width: 1080px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 24px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .landing-nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--reflect-indigo);
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .nav-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      font-weight: bold;
+    }
+    .landing-hero {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+    .landing-hero-inner {
+      max-width: 560px;
+      text-align: center;
+      padding: 48px 0;
+      width: 100%;
+    }
+    .hero-logo {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      margin: 0 auto 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pop 0.6s ease-out 0.1s both;
+    }
+    .hero-logo span {
+      font-family: 'DM Serif Display', serif;
+      font-size: 64px;
+      font-weight: bold;
+      color: white;
+    }
+    .hero-title {
+      font-size: 56px;
+      font-weight: bold;
+      margin-bottom: 16px;
+      animation: slideRight 0.6s ease-out 0.2s both;
+      letter-spacing: -0.02em;
+    }
+    @media (min-width: 640px) { .hero-title { font-size: 72px; } }
+    .hero-subtitle {
+      font-size: 22px;
+      font-weight: 300;
+      margin-bottom: 16px;
+      color: rgba(255, 255, 255, 0.92);
+      animation: slideRight 0.6s ease-out 0.3s both;
+    }
+    .hero-desc {
+      font-size: 17px;
+      color: rgba(255, 255, 255, 0.75);
+      margin: 0 auto 48px;
+      max-width: 440px;
+      line-height: 1.6;
+      animation: slideRight 0.6s ease-out 0.4s both;
+    }
+    .hero-ctas {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 32px;
+      animation: slideRight 0.6s ease-out 0.5s both;
+    }
+    @media (min-width: 640px) {
+      .hero-ctas { flex-direction: row; gap: 16px; justify-content: center; }
+    }
+    .hero-cta-primary {
+      padding: 16px 32px;
+      background: white;
+      color: var(--reflect-indigo);
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 17px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+    }
+    .hero-cta-primary:hover {
+      transform: scale(1.04);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+    .hero-cta-secondary {
+      padding: 16px 32px;
+      border: 2px solid white;
+      color: white;
+      background: transparent;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 17px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .hero-cta-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .hero-features {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-top: 64px;
+      padding-top: 48px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      animation: slideRight 0.6s ease-out 0.6s both;
+    }
+    @media (min-width: 640px) {
+      .hero-features { grid-template-columns: repeat(3, 1fr); }
+    }
+    .hero-feature p:nth-child(1) {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    .hero-feature .feature-title {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+    .hero-feature .feature-desc {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .landing-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.2);
+      padding: 32px 16px;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 14px;
+    }
+    .landing-footer p { margin-top: 4px; }
 
-  /* Question card */
-  .qcard { background: white; border: 1px solid var(--line-soft); border-radius: 18px; padding: 36px 44px; }
-  .q-dom { font-family: 'Caveat', cursive; color: var(--forest); font-size: 22px; font-weight: 600; margin-bottom: 4px; }
-  .qnum { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-light); margin-bottom: 14px; }
-  .qtext { font-size: 22px; color: var(--text-dark); font-weight: 700; line-height: 1.3; letter-spacing: -0.015em; margin-bottom: 10px; }
-  .qmeasure { font-size: 13px; color: var(--text-light); margin-bottom: 28px; font-style: italic; }
+    /* ==========================================
+       SCREEN 2: WELCOME
+       ========================================== */
+    .welcome-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--mission-indigo);
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .welcome-logo span {
+      color: white;
+      font-family: 'DM Serif Display', serif;
+      font-size: 32px;
+      font-weight: bold;
+    }
+    .welcome-title {
+      font-size: 40px;
+      font-weight: bold;
+      text-align: center;
+      color: #111827;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+    @media (min-width: 640px) { .welcome-title { font-size: 48px; } }
+    .welcome-subtitle {
+      text-align: center;
+      font-size: 18px;
+      color: #4b5563;
+      margin-bottom: 32px;
+      font-weight: 500;
+    }
+    .info-box {
+      background: #eff6ff;
+      border-left: 4px solid var(--reflect-indigo);
+      padding: 24px;
+      margin-bottom: 32px;
+      border-radius: 4px;
+    }
+    .info-box p {
+      color: #374151;
+      line-height: 1.65;
+      font-size: 15px;
+    }
+    .info-box .accent { font-weight: 600; }
+    .demo-pill-wrap {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .demo-pill {
+      display: inline-block;
+      padding: 4px 12px;
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #92400e;
+      letter-spacing: 0.04em;
+    }
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 32px;
+    }
+    .pill {
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .pill-gray { background: #f3f4f6; color: #374151; }
+    .pill-green { background: #d1fae5; color: #065f46; }
+    .help-text {
+      text-align: center;
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 16px;
+    }
 
-  .scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-  .scale-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 10px; border: 2px solid var(--line-soft); border-radius: 12px; background: white; color: var(--text-body); font-family: inherit; transition: border-color 0.15s ease, background 0.15s ease; }
-  .scale-btn .num { font-size: 22px; font-weight: 800; color: var(--forest); letter-spacing: -0.02em; }
-  .scale-btn .lbl { font-size: 11.5px; color: var(--text-light); font-weight: 600; text-align: center; line-height: 1.25; }
-  .scale-btn:hover { border-color: var(--forest-soft); background: var(--sage-light); }
-  .scale-btn.selected { border-color: var(--forest); background: var(--sage-light); }
-  .scale-btn.selected .lbl { color: var(--text-dark); }
-  .cannot-observe { display: block; width: 100%; margin-top: 10px; padding: 10px 14px; background: transparent; border: 1px dashed var(--line); color: var(--text-light); font-size: 13px; font-weight: 600; border-radius: 10px; font-family: inherit; }
-  .cannot-observe:hover { background: #fafafa; }
-  .cannot-observe.selected { border-style: solid; border-color: var(--forest); background: var(--sage-light); color: var(--forest-dark); }
+    /* ==========================================
+       SCREEN 3: QUESTION CARD
+       ========================================== */
+    .progress-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .progress-track {
+      height: 3px;
+      background: #f3f4f6;
+      width: 100%;
+    }
+    .progress-bar {
+      height: 100%;
+      background: var(--reflect-indigo);
+      transition: width 0.4s ease, background-color 0.3s ease;
+      width: 0;
+    }
+    .question-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+    .domain-name {
+      text-transform: lowercase;
+      letter-spacing: 0.02em;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    .question-counter {
+      color: #6b7280;
+      font-size: 13px;
+    }
+    .domain-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .domain-badge {
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: background-color 0.3s ease;
+    }
+    .question-id {
+      font-family: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+      font-size: 12px;
+      color: #6b7280;
+    }
+    .question-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 26px;
+      font-weight: bold;
+      color: #111827;
+      line-height: 1.3;
+      margin-bottom: 36px;
+      letter-spacing: -0.01em;
+    }
+    @media (min-width: 640px) {
+      .question-text { font-size: 32px; }
+    }
 
-  .text-area { width: 100%; min-height: 110px; border: 1px solid var(--line-soft); border-radius: 12px; padding: 14px 16px; font-family: inherit; font-size: 15px; line-height: 1.5; color: var(--text-dark); outline: none; background: #fafafa; resize: vertical; }
-  .text-area:focus { border-color: var(--forest); background: white; }
-  .char-count { text-align: right; font-size: 11px; color: var(--text-light); margin-top: 4px; font-weight: 500; }
+    /* Likert buttons */
+    .likert-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .likert-btn {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid #d1d5db;
+      border-radius: 10px;
+      background: white;
+      text-align: left;
+      font-weight: 500;
+      font-size: 16px;
+      color: #374151;
+      transition: all 0.18s ease;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    .likert-btn:hover:not(.selected) {
+      border-color: #9ca3af;
+      transform: scale(1.01);
+    }
+    .likert-btn:active { transform: scale(0.99); }
+    .likert-btn.selected {
+      border-color: transparent;
+      color: white;
+    }
+    .likert-num {
+      font-size: 18px;
+      font-weight: 700;
+      margin-right: 14px;
+      width: 22px;
+      flex-shrink: 0;
+    }
+    .cannot-observe-btn {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #d1d5db;
+      border-radius: 10px;
+      background: white;
+      text-align: center;
+      font-weight: 500;
+      font-size: 14px;
+      color: #6b7280;
+      transition: all 0.18s ease;
+      cursor: pointer;
+    }
+    .cannot-observe-btn:hover { border-color: #9ca3af; }
+    .cannot-observe-btn.selected {
+      border-color: #4b5563;
+      color: #111827;
+      background: #f9fafb;
+    }
+    .keyboard-hint {
+      text-align: center;
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 14px;
+    }
 
-  .qnav { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; }
-  .qnav button.secondary { background: transparent; color: var(--text-body); border: 1px solid var(--line-soft); padding: 12px 20px; border-radius: 10px; font-weight: 600; font-size: 14px; }
-  .qnav button.secondary:hover { background: #f3f3f1; }
-  .qnav button.primary { background: var(--forest-dark); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; font-size: 14px; }
-  .qnav button.primary:hover { background: var(--forest); }
-  .qnav button.primary:disabled { opacity: 0.5; cursor: not-allowed; background: var(--forest-dark); }
-  .step-count { font-size: 12px; color: var(--text-light); font-weight: 600; letter-spacing: 0.04em; }
+    /* Open text */
+    .open-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 16px;
+      min-height: 110px;
+      resize: vertical;
+      transition: all 0.2s ease;
+      line-height: 1.6;
+    }
+    .open-input:focus {
+      outline: none;
+      border-color: transparent;
+      box-shadow: 0 0 0 2px var(--reflect-indigo);
+    }
+    .char-counter {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 8px;
+    }
 
-  .processing { background: white; border: 1px solid var(--line-soft); border-radius: 18px; padding: 60px 44px; text-align: center; }
-  .processing .spinner { width: 60px; height: 60px; margin: 0 auto 24px; border: 4px solid var(--sage-light); border-top-color: var(--forest); border-radius: 50%; animation: spin 0.9s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .processing h2 { font-size: 22px; margin-bottom: 10px; }
-  .processing p { font-size: 14px; color: var(--text-light); max-width: 44ch; margin: 0 auto; line-height: 1.55; }
+    /* Question nav */
+    .question-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 24px;
+      margin-top: 28px;
+      border-top: 1px solid #e5e7eb;
+    }
+    .answered-indicator {
+      font-size: 13px;
+      color: #6b7280;
+    }
+    .answered-indicator.checked { color: #047857; font-weight: 500; }
 
-  .report { background: white; border: 1px solid var(--line-soft); border-radius: 18px; padding: 36px 44px; }
-  .report-head { margin-bottom: 28px; padding-bottom: 22px; border-bottom: 1px solid var(--line-soft); }
-  .report-head .eyebrow { font-family: 'Caveat', cursive; color: var(--forest); font-size: 22px; font-weight: 600; }
-  .report-head h1 { font-size: 28px; font-weight: 800; margin: 4px 0 8px; letter-spacing: -0.02em; line-height: 1.15; }
-  .report-head .meta { font-size: 13px; color: var(--text-light); font-weight: 500; }
+    /* ==========================================
+       SCREEN 4: PROCESSING
+       ========================================== */
+    .processing-wrap {
+      min-height: 100vh;
+      background: linear-gradient(to bottom, #f9fafb, #ffffff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .processing-inner {
+      text-align: center;
+      max-width: 440px;
+    }
+    .spinner {
+      width: 64px;
+      height: 64px;
+      border: 4px solid #e5e7eb;
+      border-top-color: var(--reflect-indigo);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+      margin: 0 auto 32px;
+    }
+    .processing-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      font-weight: bold;
+      color: #111827;
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+    .processing-text {
+      font-size: 15px;
+      color: #6b7280;
+      min-height: 24px;
+      transition: opacity 0.4s ease;
+    }
 
-  .section-block { margin-bottom: 28px; }
-  .section-block h2 { font-size: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--forest-dark); margin-bottom: 14px; display: inline-flex; align-items: center; gap: 10px; }
-  .section-block h2::before { content: ""; width: 4px; height: 14px; background: var(--forest); border-radius: 2px; }
-  .section-block .lede { font-size: 14.5px; color: var(--text-body); line-height: 1.55; margin-bottom: 14px; }
+    /* ==========================================
+       SCREEN 5: SAMPLE REPORT
+       ========================================== */
+    .report-page {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
+    .report-header {
+      margin-bottom: 40px;
+    }
+    .report-eyebrow {
+      font-size: 13px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .report-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 48px;
+      color: #111827;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .report-subtitle {
+      font-size: 16px;
+      color: #4b5563;
+    }
+    .section {
+      margin-bottom: 48px;
+    }
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      color: #111827;
+      margin-bottom: 18px;
+      letter-spacing: -0.01em;
+    }
+    .section-eyebrow {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #6b7280;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
 
-  .domain-row { display: grid; grid-template-columns: 180px 1fr 48px; gap: 14px; align-items: center; margin-bottom: 10px; font-size: 13.5px; }
-  .domain-row .nm { font-weight: 700; color: var(--text-dark); font-size: 13px; }
-  .domain-row .bars { position: relative; height: 22px; background: #f3f3f1; border-radius: 5px; }
-  .domain-row .bar { position: absolute; height: 10px; border-radius: 5px; top: 6px; left: 0; }
-  .domain-row .bar.teacher { background: var(--forest); }
-  .domain-row .bar.self { background: var(--navy); opacity: 0.75; height: 4px; top: 9px; }
-  .domain-row .score { font-weight: 800; color: var(--forest-dark); font-size: 14px; text-align: right; font-variant-numeric: tabular-nums; }
-  .legend-row { display: flex; gap: 18px; margin-top: 10px; font-size: 12px; color: var(--text-body); font-weight: 600; }
-  .legend-row .dot { display: inline-block; width: 12px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: middle; }
+    .overall-card {
+      background: linear-gradient(135deg, #fafbff 0%, #f0f4ff 100%);
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    @media (min-width: 640px) {
+      .overall-card { flex-direction: row; text-align: left; gap: 32px; padding: 40px 48px; }
+    }
+    .overall-score {
+      font-family: 'DM Serif Display', serif;
+      font-size: 88px;
+      line-height: 1;
+      color: var(--reflect-indigo);
+      letter-spacing: -0.04em;
+      flex-shrink: 0;
+    }
+    .overall-score-suffix {
+      font-size: 32px;
+      color: #9ca3af;
+    }
+    .overall-text-block .label {
+      font-size: 17px;
+      color: #374151;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .overall-text-block .note {
+      font-size: 13px;
+      color: #6b7280;
+    }
 
-  .johari { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .quad { padding: 16px 18px; border-radius: 12px; border: 1px solid var(--line-soft); background: #fafbfa; }
-  .quad .label { font-size: 10.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); margin-bottom: 8px; }
-  .quad.strength .label { color: var(--forest); }
-  .quad.strength { background: var(--sage-light); border-color: var(--forest-soft); }
-  .quad.blind .label { color: #8b2c1a; }
-  .quad.blind { background: #fdf0ee; border-color: #e5b8ae; }
-  .quad.hidden { background: #fdf8e9; border-color: #e8d48a; }
-  .quad.hidden .label { color: #94670a; }
-  .quad h4 { font-size: 14px; color: var(--text-dark); margin-bottom: 4px; font-weight: 800; letter-spacing: -0.01em; }
-  .quad p { font-size: 12.5px; color: var(--text-body); margin: 0; line-height: 1.5; }
+    /* Domain table */
+    .domain-table-wrap {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .domain-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .domain-table th {
+      text-align: left;
+      padding: 14px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      background: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .domain-table th.center { text-align: center; }
+    .domain-table th.right { text-align: right; }
+    .domain-row {
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .domain-row:hover { background: #f9fafb; }
+    .domain-row td {
+      padding: 14px 16px;
+      font-size: 14px;
+      color: #111827;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    .domain-row td.center { text-align: center; }
+    .domain-row td.right { text-align: right; font-weight: 600; }
+    .domain-row td.label-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .domain-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .chevron {
+      display: inline-block;
+      transition: transform 0.2s ease;
+      color: #9ca3af;
+      font-size: 11px;
+      margin-left: 4px;
+    }
+    .chevron.expanded { transform: rotate(90deg); }
+    .domain-detail-row td {
+      padding: 0;
+      background: #fafbff;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    .domain-detail-inner {
+      padding: 0 24px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+    }
+    .domain-detail-row.open .domain-detail-inner {
+      max-height: 1000px;
+      padding: 24px;
+    }
+    .qbox {
+      padding: 14px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .qbox:last-child { border-bottom: none; padding-bottom: 0; }
+    .qbox:first-child { padding-top: 0; }
+    .qbox-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+    .qbox-id {
+      font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+      font-size: 12px;
+      color: #6b7280;
+    }
+    .qbox-score {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111827;
+    }
+    .qbox-text {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+    .dist-bar {
+      display: flex;
+      gap: 3px;
+      height: 22px;
+      margin-bottom: 4px;
+    }
+    .dist-seg {
+      border-radius: 3px;
+      position: relative;
+      transition: transform 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .dist-seg:hover { transform: translateY(-1px); }
+    .dist-seg-1 { background: #f87171; }
+    .dist-seg-2 { background: #fb923c; }
+    .dist-seg-3 { background: #fbbf24; }
+    .dist-seg-4 { background: #a3e635; }
+    .dist-seg-5 { background: #22c55e; }
+    .dist-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: #9ca3af;
+    }
 
-  .theme-card { padding: 14px 16px; border: 1px solid var(--line-soft); border-radius: 12px; background: #fafbfa; margin-bottom: 10px; }
-  .theme-card .hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-  .theme-card h4 { font-size: 14px; color: var(--text-dark); font-weight: 800; letter-spacing: -0.01em; }
-  .theme-card .count { font-size: 11px; color: var(--text-light); font-weight: 700; }
-  .theme-card .quote { font-size: 12.5px; color: var(--text-body); font-style: italic; line-height: 1.5; padding-left: 10px; border-left: 2px solid var(--forest-soft); }
+    /* Johari grid */
+    .johari-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    @media (min-width: 640px) {
+      .johari-grid { grid-template-columns: 1fr 1fr; gap: 18px; }
+    }
+    .johari-card {
+      padding: 22px 24px;
+      border-radius: 12px;
+      border: 1px solid;
+    }
+    .johari-card h4 {
+      font-family: 'Source Sans 3', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      color: #111827;
+    }
+    .johari-card .sub {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 14px;
+    }
+    .johari-card ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .johari-card li {
+      font-size: 14px;
+      color: #1f2937;
+      padding-left: 18px;
+      position: relative;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .johari-card li::before {
+      content: "\2022";
+      position: absolute;
+      left: 4px;
+      color: #6b7280;
+    }
+    .johari-strengths { background: #f0fdf4; border-color: #bbf7d0; }
+    .johari-blind { background: #fef2f2; border-color: #fecaca; }
+    .johari-hidden { background: #eff6ff; border-color: #bfdbfe; }
+    .johari-mutual { background: #fffbeb; border-color: #fde68a; }
 
-  .kss { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  .kss-col { padding: 14px 16px; border-radius: 12px; border: 1px solid var(--line-soft); background: white; }
-  .kss-col.keep { border-left: 4px solid var(--forest); }
-  .kss-col.start { border-left: 4px solid var(--navy); }
-  .kss-col.stop { border-left: 4px solid #b8620a; }
-  .kss-col .label { font-size: 10.5px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
-  .kss-col.keep .label { color: var(--forest); }
-  .kss-col.start .label { color: var(--navy); }
-  .kss-col.stop .label { color: #b8620a; }
-  .kss-col p { font-size: 12.5px; color: var(--text-body); margin: 0; line-height: 1.5; }
+    /* KSS cards */
+    .kss-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+    @media (min-width: 768px) {
+      .kss-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .kss-card {
+      border-radius: 12px;
+      padding: 22px 24px;
+      border: 1px solid;
+    }
+    .kss-card h4 {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .kss-card ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .kss-card li {
+      font-size: 14px;
+      padding-left: 22px;
+      position: relative;
+      margin-bottom: 12px;
+      line-height: 1.55;
+      color: #1f2937;
+    }
+    .kss-card li::before {
+      position: absolute;
+      left: 0;
+      top: 1px;
+      font-weight: 700;
+    }
+    .kss-keep { background: #f0fdf4; border-color: #bbf7d0; }
+    .kss-keep h4 { color: #047857; }
+    .kss-keep li::before { content: "\2713"; color: #10b981; }
+    .kss-start { background: #eff6ff; border-color: #bfdbfe; }
+    .kss-start h4 { color: #1d4ed8; }
+    .kss-start li::before { content: "+"; color: #3b82f6; }
+    .kss-stop { background: #fef2f2; border-color: #fecaca; }
+    .kss-stop h4 { color: #b91c1c; }
+    .kss-stop li::before { content: "\2212"; color: #ef4444; }
 
-  .actions-row { display: flex; gap: 10px; margin-top: 30px; flex-wrap: wrap; padding-top: 24px; border-top: 1px solid var(--line-soft); }
-  .actions-row button { padding: 12px 18px; border-radius: 10px; font-weight: 700; font-size: 14px; border: 1px solid var(--line); background: white; color: var(--forest); }
-  .actions-row button.primary { background: var(--forest-dark); color: white; border-color: var(--forest-dark); }
-  .actions-row button.primary:hover { background: var(--forest); }
-  .actions-row button:hover { background: var(--sage-light); }
+    /* Open-ended themes */
+    .themes-block {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 28px;
+    }
+    .theme-row { margin-bottom: 22px; }
+    .theme-row:last-child { margin-bottom: 0; }
+    .theme-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 10px;
+    }
+    .word-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .word-chip {
+      padding: 5px 12px;
+      background: #f3f4f6;
+      border-radius: 999px;
+      font-size: 13px;
+      color: #374151;
+      font-weight: 500;
+    }
+    .word-chip.large { font-size: 15px; padding: 6px 14px; font-weight: 600; }
+    .word-chip.small { font-size: 12px; opacity: 0.8; }
+    .quote-block {
+      border-left: 3px solid var(--reflect-indigo);
+      padding: 4px 16px;
+      margin-top: 16px;
+      font-style: italic;
+      color: #4b5563;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .quote-block + .quote-block {
+      margin-top: 12px;
+    }
 
-  .footnote { font-size: 11.5px; color: var(--text-light); font-style: italic; margin-top: 14px; line-height: 1.55; }
+    /* Report footer */
+    .report-footer {
+      margin-top: 56px;
+      padding-top: 28px;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+    }
+    @media (min-width: 640px) {
+      .report-footer { flex-direction: row; justify-content: space-between; }
+    }
+    .download-btn {
+      padding: 10px 18px;
+      background: #f3f4f6;
+      color: #6b7280;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 14px;
+      cursor: not-allowed;
+      border: 1px solid #e5e7eb;
+    }
+    .top-link {
+      font-size: 13px;
+      color: var(--reflect-indigo);
+      font-weight: 500;
+    }
+    .top-link:hover { text-decoration: underline; }
 
-  @media (max-width: 700px) {
-    .intro, .qcard, .processing, .report { padding: 28px 22px; }
-    .intro h1, .report-head h1 { font-size: 24px; }
-    .forms { grid-template-columns: 1fr; }
-    .domain-row { grid-template-columns: 110px 1fr 40px; font-size: 12.5px; }
-    .domain-row .nm { font-size: 12px; }
-    .johari { grid-template-columns: 1fr; }
-    .kss { grid-template-columns: 1fr; }
-    .scale { grid-template-columns: repeat(5, 1fr); gap: 5px; }
-    .scale-btn { padding: 12px 4px; }
-    .scale-btn .lbl { font-size: 10px; }
-  }
-</style>
+    /* Mobile-friendly tweaks for table */
+    @media (max-width: 600px) {
+      .domain-table th:nth-child(2),
+      .domain-table th:nth-child(3),
+      .domain-table th:nth-child(4),
+      .domain-table th:nth-child(5),
+      .domain-row td:nth-child(2),
+      .domain-row td:nth-child(3),
+      .domain-row td:nth-child(4),
+      .domain-row td:nth-child(5) {
+        font-size: 12px;
+        padding: 10px 6px;
+      }
+      .domain-row td.label-cell { gap: 6px; padding: 12px 10px; font-size: 13px; }
+      .report-title { font-size: 36px; }
+      .overall-score { font-size: 64px; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="topbar">
-  <a class="back" href="../../index.html" onclick="if(window.history.length>1){event.preventDefault();window.history.back();}">Back to portfolio</a>
-  <div class="logo">Reflect</div>
-  <span class="demo-label">Live demo</span>
+<!-- Back to portfolio (subtle, fixed top-left) -->
+<a href="javascript:void(0);" id="backLink" class="back-link">
+  <span aria-hidden="true">&larr;</span>
+  <span>Back to portfolio</span>
+</a>
+
+<!-- ============================================
+     SCREEN 1: LANDING
+     ============================================ -->
+<div id="screen-landing" class="screen active">
+  <div class="landing">
+    <nav class="landing-nav">
+      <div class="landing-nav-brand">
+        <div class="nav-logo">R</div>
+        <span class="nav-title">Reflect</span>
+      </div>
+      <a href="#" class="hero-cta-secondary" style="padding: 6px 16px; font-size: 14px;">About</a>
+    </nav>
+
+    <div class="landing-hero">
+      <div class="landing-hero-inner">
+        <div class="hero-logo"><span>R</span></div>
+        <h1 class="hero-title">Reflect</h1>
+        <p class="hero-subtitle">Leadership Feedback for School Principals</p>
+        <p class="hero-desc">
+          Gather honest, anonymous feedback from teachers, parents, and supervisors to
+          strengthen your leadership and impact on your school community.
+        </p>
+        <div class="hero-ctas">
+          <button class="hero-cta-primary" onclick="goToWelcome()">Try Demo Survey</button>
+          <button class="hero-cta-secondary" onclick="goToReport()">View Sample Report</button>
+        </div>
+        <div class="hero-features">
+          <div class="hero-feature">
+            <p>&#10003;</p>
+            <p class="feature-title">Fully Anonymous</p>
+            <p class="feature-desc">Respondents stay completely anonymous</p>
+          </div>
+          <div class="hero-feature">
+            <p>&#9201;</p>
+            <p class="feature-title">4&ndash;9 Minutes</p>
+            <p class="feature-desc">Quick surveys tailored by respondent type</p>
+          </div>
+          <div class="hero-feature">
+            <p>&#128202;</p>
+            <p class="feature-title">Actionable Data</p>
+            <p class="feature-desc">Organized by leadership domain</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="landing-footer">
+      <p>Reflect is designed to strengthen school leadership through honest feedback.</p>
+      <p>&copy; 2026 Reflect. All rights reserved.</p>
+    </div>
+  </div>
 </div>
 
-<div class="wrap">
-  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="pfill" style="width: 0%"></div></div>
-  <div id="screen"></div>
+<!-- ============================================
+     SCREEN 2: WELCOME
+     ============================================ -->
+<div id="screen-welcome" class="screen">
+  <div class="survey-container">
+    <div class="survey-content">
+      <div style="text-align: center; margin-bottom: 32px;">
+        <div class="welcome-logo"><span>R</span></div>
+      </div>
+      <h1 class="welcome-title">Welcome to Reflect</h1>
+      <p class="welcome-subtitle">Leadership Reflection for School Principals</p>
+
+      <div class="info-box">
+        <p>
+          Your responses are <span class="accent">completely anonymous</span>. We do not
+          collect your name, email, or IP address. This survey takes about 6 minutes.
+          Please answer honestly &mdash; your feedback helps your principal grow as a leader.
+        </p>
+      </div>
+
+      <div class="demo-pill-wrap">
+        <span class="demo-pill">PROTOTYPE / DEMO MODE</span>
+      </div>
+
+      <div class="badge-row">
+        <div class="pill pill-gray">About 6 minutes</div>
+        <div class="pill pill-green">Fully Anonymous</div>
+        <div class="pill pill-gray">8 Questions</div>
+      </div>
+
+      <button class="btn-primary" style="width: 100%; padding: 16px; font-size: 17px;" onclick="startSurvey()">
+        Begin Survey
+      </button>
+
+      <p class="help-text">Questions? Contact your school administrator for more information.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     SCREEN 3: QUESTION CARD
+     ============================================ -->
+<div id="screen-question" class="screen">
+  <div class="progress-wrap">
+    <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+  </div>
+  <div class="survey-container" style="padding-top: 24px;">
+    <div class="survey-content" style="padding-top: 16px;">
+      <div class="question-meta-row">
+        <span class="domain-name" id="domainName">teaching &amp; learning</span>
+        <span class="question-counter" id="questionCounter">1 of 8</span>
+      </div>
+      <div class="domain-badge-row">
+        <span class="domain-badge" id="domainBadge">Teaching &amp; Learning</span>
+        <span class="question-id" id="questionId">T1.1</span>
+      </div>
+      <h2 class="question-text" id="questionText">Loading...</h2>
+
+      <div id="questionInput"></div>
+
+      <div class="question-nav">
+        <button class="btn-ghost" id="backBtn" onclick="goBack()">&larr; Back</button>
+        <span class="answered-indicator" id="answeredIndicator">Press 1&ndash;5 to select</span>
+        <button class="btn-primary" id="nextBtn" onclick="goNext()" style="padding: 10px 20px; font-size: 15px;">Next &rarr;</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     SCREEN 4: PROCESSING
+     ============================================ -->
+<div id="screen-processing" class="screen">
+  <div class="processing-wrap">
+    <div class="processing-inner">
+      <div class="spinner"></div>
+      <h2 class="processing-title">Analyzing responses with Claude</h2>
+      <p class="processing-text" id="processingText">Identifying patterns across 6 domains...</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     SCREEN 5: SAMPLE REPORT
+     ============================================ -->
+<div id="screen-report" class="screen">
+  <div class="report-page">
+    <div class="report-header">
+      <p class="report-eyebrow">Pardes Pilot Cycle &middot; Spring 2026 &middot; Anonymous Sample Report</p>
+      <h1 class="report-title">Reflect</h1>
+      <p class="report-subtitle">Leadership feedback synthesis across 4 stakeholder groups</p>
+    </div>
+
+    <!-- (a) Overall card -->
+    <div class="section">
+      <div class="overall-card">
+        <div>
+          <span class="overall-score">4.2</span><span class="overall-score-suffix">/5</span>
+        </div>
+        <div class="overall-text-block">
+          <p class="label">Overall leadership score across 6 domains</p>
+          <p class="note">n=18 respondents across 4 stakeholder groups &middot; 96% completion rate</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- (b) Domain summary -->
+    <div class="section">
+      <h2 class="section-title">Domain Summary</h2>
+      <p style="font-size: 13px; color: #6b7280; margin-bottom: 14px;">Click any row to expand item-level distributions.</p>
+      <div class="domain-table-wrap">
+        <table class="domain-table" id="domainTable">
+          <thead>
+            <tr>
+              <th>Domain</th>
+              <th class="center">Teachers</th>
+              <th class="center">Parents</th>
+              <th class="center">Supervisors</th>
+              <th class="center">Self</th>
+              <th class="right">Overall</th>
+            </tr>
+          </thead>
+          <tbody id="domainTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- (c) Johari grid -->
+    <div class="section">
+      <h2 class="section-title">Johari-Style Gap Analysis</h2>
+      <p style="font-size: 13px; color: #6b7280; margin-bottom: 18px;">
+        Compares the principal's self-rating to how teachers, parents, and supervisors rated each item.
+      </p>
+      <div class="johari-grid">
+        <div class="johari-card johari-strengths">
+          <h4>Strengths confirmed</h4>
+          <p class="sub">Rated highly by self AND others</p>
+          <ul>
+            <li>Mission Stewardship (4.7 staff &middot; 4.5 self) &mdash; staff and supervisors both name this as the principal's clearest strength</li>
+            <li>Culture &amp; Trust clarity &mdash; fairness in handling sensitive situations rated 4.6 by teachers</li>
+          </ul>
+        </div>
+        <div class="johari-card johari-blind">
+          <h4>Blind spots</h4>
+          <p class="sub">Rated low by others, high by self</p>
+          <ul>
+            <li>Written communication cadence (T2.3): 3.5 from teachers vs 4.2 self-rating &mdash; 0.7 gap</li>
+            <li>"Informs me before changes take effect" frequently appears in open-ended responses</li>
+          </ul>
+        </div>
+        <div class="johari-card johari-hidden">
+          <h4>Hidden strengths</h4>
+          <p class="sub">Rated low by self, high by others</p>
+          <ul>
+            <li>Teacher coaching &amp; feedback (T5.2): 4.1 from teachers vs 3.6 self-rating &mdash; staff feel acknowledged more than the principal realizes</li>
+            <li>Approachability when staff disagree &mdash; 4.5 teacher rating</li>
+          </ul>
+        </div>
+        <div class="johari-card johari-mutual">
+          <h4>Mutual growth areas</h4>
+          <p class="sub">Rated low by both self and others</p>
+          <ul>
+            <li>Direction-setting in curriculum decisions (T4.1): 3.9 overall &middot; 3.7 self</li>
+            <li>Documenting decision rationale so staff understand the "why"</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- (d) Keep / Start / Stop -->
+    <div class="section">
+      <h2 class="section-title">Keep &middot; Start &middot; Stop</h2>
+      <p style="font-size: 13px; color: #6b7280; margin-bottom: 18px;">Synthesized recommendations grounded in open-ended responses and rating patterns.</p>
+      <div class="kss-grid">
+        <div class="kss-card kss-keep">
+          <h4>Keep</h4>
+          <ul>
+            <li>The "culture of warmth" staff describe &mdash; keep holding the weekly staff tefillah circle</li>
+            <li>Continue personal birthday notes to each teacher; multiple respondents named this unprompted</li>
+          </ul>
+        </div>
+        <div class="kss-card kss-start">
+          <h4>Start</h4>
+          <ul>
+            <li>A monthly written newsletter to families to tighten communication rhythm</li>
+            <li>Document decision rationales in 1-paragraph notes so staff understand the "why" before changes land</li>
+          </ul>
+        </div>
+        <div class="kss-card kss-stop">
+          <h4>Stop</h4>
+          <ul>
+            <li>Stop letting Friday announcements run past 15 minutes &mdash; multiple notes on length</li>
+            <li>Hold off on adding new initiatives until current ones have full teacher buy-in</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- (e) Open-ended themes -->
+    <div class="section">
+      <h2 class="section-title">Open-Ended Themes</h2>
+      <div class="themes-block">
+        <div class="theme-row">
+          <p class="theme-label">"Biggest strength" &mdash; most common words across all respondents</p>
+          <div class="word-cloud">
+            <span class="word-chip large">present</span>
+            <span class="word-chip large">warm</span>
+            <span class="word-chip">accessible</span>
+            <span class="word-chip">visionary</span>
+            <span class="word-chip small">steady</span>
+          </div>
+        </div>
+        <div class="theme-row">
+          <p class="theme-label">"Growth area" &mdash; most common words across all respondents</p>
+          <div class="word-cloud">
+            <span class="word-chip large">written follow-through</span>
+            <span class="word-chip">timelines</span>
+            <span class="word-chip">fewer initiatives</span>
+            <span class="word-chip small">clearer handoffs</span>
+          </div>
+        </div>
+        <div class="theme-row">
+          <p class="theme-label">Representative quotes</p>
+          <p class="quote-block">"He is the steadiest leader I have worked under. I trust him with our kids."</p>
+          <p class="quote-block">"Sometimes big decisions are made in hallway conversations, not in writing."</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="report-footer">
+      <a href="#top" class="top-link" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">&uarr; Back to top</a>
+      <button class="download-btn" disabled title="Demo only">Download PDF report (Demo only)</button>
+    </div>
+  </div>
 </div>
 
 <script>
-(function(){
+// ============================================
+// REAL QUESTION TEXT (verbatim from src/data/questions.js)
+// ============================================
+const QUESTIONS = [
+  { id: 'T1.1',  domain: 'Teaching & Learning',     domainColor: '#3b7dd8', text: 'The principal observes my classroom and provides specific feedback I can act on.', type: 'likert' },
+  { id: 'T2.1',  domain: 'Communication',           domainColor: '#2a9d8f', text: 'The principal explains the reasoning behind decisions that affect my work.', type: 'likert' },
+  { id: 'T3.2',  domain: 'Culture & Trust',         domainColor: '#e76f51', text: 'The principal responds constructively when I disagree with a decision or raise a concern.', type: 'likert' },
+  { id: 'T4.1',  domain: 'Direction & Decisions',   domainColor: '#8338ec', text: 'The principal communicates clear goals for the school year that I can connect to my own work.', type: 'likert' },
+  { id: 'T5.2',  domain: 'People Development',      domainColor: '#fb8500', text: 'The principal acknowledges my contributions verbally or in writing.', type: 'likert' },
+  { id: 'T6.1',  domain: 'Mission Stewardship',     domainColor: '#343e85', text: "The principal makes decisions that reflect the school's stated values, even when a different choice would be easier or more popular.", type: 'likert' },
+  { id: 'OE1',   domain: 'Open-Ended',              domainColor: '#343e85', text: 'What is one thing the principal does regularly that has the most positive impact on your work?', type: 'open' },
+  { id: 'OE2',   domain: 'Open-Ended',              domainColor: '#343e85', text: 'What is one specific thing the principal could do differently that would make the biggest difference for you?', type: 'open' }
+];
 
-  const DOMAINS = [
-    { id: 1, name: 'Teaching and Learning' },
-    { id: 2, name: 'Communication' },
-    { id: 3, name: 'Culture and Trust' },
-    { id: 4, name: 'Direction and Decision-Making' },
-    { id: 5, name: 'People Development' },
-    { id: 6, name: 'Mission Stewardship' }
-  ];
+const LIKERT_OPTIONS = [
+  { value: 1, label: 'Almost Never' },
+  { value: 2, label: 'Rarely' },
+  { value: 3, label: 'Sometimes' },
+  { value: 4, label: 'Often' },
+  { value: 5, label: 'Almost Always' }
+];
 
-  // Real items pulled directly from the Reflect item bank (Teacher/Staff form)
-  const ITEMS_TEACHER = [
-    { code: 'T1.1', domain: 1, text: 'The principal observes my classroom and provides specific feedback I can act on.', measures: 'Whether observations produce usable guidance or are just walk-throughs with no follow-up.' },
-    { code: 'T2.1', domain: 2, text: 'The principal explains the reasoning behind decisions that affect my work.', measures: 'Whether staff understand why decisions are made, which builds trust and reduces resentment.' },
-    { code: 'T3.2', domain: 3, text: 'The principal responds constructively when I disagree with a decision or raise a concern.', measures: 'Psychological safety. Whether teachers can be honest without fear of retaliation.' },
-    { code: 'T4.1', domain: 4, text: 'The principal communicates clear goals for the school year that I can connect to my own work.', measures: 'Whether teachers know what the priorities are and how their work fits in.' },
-    { code: 'T5.2', domain: 5, text: 'The principal acknowledges my contributions verbally or in writing.', measures: 'Whether teachers feel appreciated. Recognition is one of the strongest predictors of retention.' },
-    { code: 'T6.1', domain: 6, text: "The principal makes decisions that reflect the school's stated values, even when a different choice would be easier or more popular.", measures: 'Whether values visibly drive decisions or get overridden by convenience and politics.' }
-  ];
+// ============================================
+// REPORT DATA
+// ============================================
+const DOMAIN_COLORS = {
+  'Teaching & Learning':    '#3b7dd8',
+  'Communication':          '#2a9d8f',
+  'Culture & Trust':        '#e76f51',
+  'Direction & Decisions':  '#8338ec',
+  'People Development':     '#fb8500',
+  'Mission Stewardship':    '#343e85'
+};
 
-  const OPEN_ENDED = [
-    { text: 'What is one thing this principal does exceptionally well?', ph: 'Be specific. One concrete moment is worth more than a paragraph of praise.' },
-    { text: 'What is one thing this principal could do better?', ph: 'Think about the single change that would most help you and your colleagues.' }
-  ];
+const DOMAIN_DATA = [
+  {
+    name: 'Teaching & Learning',
+    teachers: 4.5, parents: 4.2, supervisors: 4.4, self: 3.9, overall: 4.3,
+    questions: [
+      { id: 'T1.1', text: 'The principal observes my classroom and provides specific feedback I can act on.', avg: 4.4, dist: [0, 1, 2, 6, 9] },
+      { id: 'T1.3', text: 'The principal gives Judaic Studies instruction the same level of attention as General Studies instruction.', avg: 4.5, dist: [0, 0, 2, 5, 11] },
+      { id: 'T1.4', text: 'The principal follows up on instructional goals that were set earlier in the year.', avg: 4.0, dist: [0, 1, 4, 7, 6] }
+    ]
+  },
+  {
+    name: 'Communication',
+    teachers: 3.8, parents: 4.1, supervisors: 4.2, self: 3.5, overall: 3.9,
+    questions: [
+      { id: 'T2.1', text: 'The principal explains the reasoning behind decisions that affect my work.', avg: 3.9, dist: [0, 2, 4, 7, 5] },
+      { id: 'T2.3', text: 'The principal informs me about changes that affect my work before they take effect.', avg: 3.5, dist: [1, 3, 5, 6, 3] },
+      { id: 'T2.4', text: 'The principal delivers difficult messages to me directly and respectfully.', avg: 4.3, dist: [0, 1, 2, 6, 9] }
+    ]
+  },
+  {
+    name: 'Culture & Trust',
+    teachers: 4.6, parents: 4.4, supervisors: 4.3, self: 4.2, overall: 4.4,
+    questions: [
+      { id: 'T3.1', text: 'When sensitive situations arise involving me or my colleagues, the principal handles them in a way I consider fair.', avg: 4.6, dist: [0, 0, 1, 5, 12] },
+      { id: 'T3.4', text: 'The principal treats all staff members with equal respect, including aides and support staff.', avg: 4.7, dist: [0, 0, 1, 4, 13] },
+      { id: 'T3.2', text: 'The principal responds constructively when I disagree with a decision or raise a concern.', avg: 4.0, dist: [0, 1, 3, 9, 5] }
+    ]
+  },
+  {
+    name: 'Direction & Decisions',
+    teachers: 4.0, parents: 3.9, supervisors: 4.0, self: 3.7, overall: 3.9,
+    questions: [
+      { id: 'T4.1', text: 'The principal communicates clear goals for the school year that I can connect to my own work.', avg: 3.7, dist: [1, 2, 4, 7, 4] },
+      { id: 'T4.5', text: 'The principal follows through on commitments made to the staff.', avg: 4.1, dist: [0, 1, 3, 7, 7] },
+      { id: 'T4.2', text: 'The principal makes decisions within a reasonable timeframe when issues arise.', avg: 3.9, dist: [0, 2, 3, 8, 5] }
+    ]
+  },
+  {
+    name: 'People Development',
+    teachers: 3.9, parents: null, supervisors: 4.1, self: 3.6, overall: 3.9,
+    questions: [
+      { id: 'T5.3', text: 'The principal advocates for the materials, tools, or staffing I need to do my job well.', avg: 4.0, dist: [0, 1, 4, 6, 7] },
+      { id: 'T5.5', text: 'The principal gives me feedback on my strengths and areas for growth in a way that helps me improve.', avg: 3.6, dist: [1, 2, 5, 7, 3] },
+      { id: 'T5.2', text: 'The principal acknowledges my contributions verbally or in writing.', avg: 4.1, dist: [0, 1, 3, 7, 7] }
+    ]
+  },
+  {
+    name: 'Mission Stewardship',
+    teachers: 4.7, parents: 4.5, supervisors: 4.6, self: 4.5, overall: 4.6,
+    questions: [
+      { id: 'T6.1', text: "The principal makes decisions that reflect the school's stated values, even when a different choice would be easier or more popular.", avg: 4.7, dist: [0, 0, 1, 4, 13] },
+      { id: 'T6.2', text: "The principal invests the same creative energy into the programs that define this school's identity as into core academics.", avg: 4.5, dist: [0, 0, 2, 5, 11] },
+      { id: 'T6A.3', text: 'The principal protects time for davening, Jewish holidays, and Judaic learning when scheduling conflicts arise.', avg: 4.6, dist: [0, 0, 2, 4, 12] }
+    ]
+  }
+];
 
-  const SCALE_LABELS = ['Almost Never', 'Rarely', 'Sometimes', 'Often', 'Almost Always'];
+// ============================================
+// STATE
+// ============================================
+const state = {
+  currentIndex: 0,
+  answers: {} // id -> value
+};
 
-  const ALL_QS = ITEMS_TEACHER.concat(OPEN_ENDED.map(function(q, i) {
-    return { code: 'X' + (i + 1), type: 'text', text: q.text, ph: q.ph };
-  }));
+// ============================================
+// SCREEN ROUTING
+// ============================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, left: 0 });
+  updateBackLinkStyle(id);
+}
+function updateBackLinkStyle(screenId) {
+  const link = document.getElementById('backLink');
+  if (!link) return;
+  if (screenId === 'screen-landing') link.classList.add('on-dark');
+  else link.classList.remove('on-dark');
+}
 
-  const answers = new Array(ALL_QS.length).fill(null);
-  let idx = 0;
+function goToWelcome() { showScreen('screen-welcome'); }
+function goToReport() { renderReport(); showScreen('screen-report'); }
 
-  const screen = document.getElementById('screen');
-  const pfill = document.getElementById('pfill');
+function startSurvey() {
+  state.currentIndex = 0;
+  renderQuestion();
+  showScreen('screen-question');
+}
 
-  function setProgress(pct) { pfill.style.width = pct + '%'; }
-  function clear() { while (screen.firstChild) screen.removeChild(screen.firstChild); }
+// ============================================
+// QUESTION RENDERING
+// ============================================
+function renderQuestion() {
+  const q = QUESTIONS[state.currentIndex];
+  const total = QUESTIONS.length;
 
-  function renderIntro() {
-    setProgress(0);
-    clear();
-    const c = document.createElement('div'); c.className = 'intro';
-    const e = document.createElement('div'); e.className = 'eyebrow'; e.textContent = 'Reflect';
-    const h = document.createElement('h1'); h.textContent = 'Leadership Reflection for School Principals.';
-    const p1 = document.createElement('p'); p1.textContent = 'Most school principals have never received structured, multi-perspective feedback on their leadership. Not from their teachers. Not from their board. Not from parents. Reflect is the instrument that fills that gap. It is not a 360 feedback tool in the corporate sense. It is a behavioral reflection built for the realities of a small, mission-driven school.';
-    const p2 = document.createElement('p'); p2.textContent = 'The full Reflect instrument has 75 items across 6 leadership domains and 4 stakeholder forms (Teachers, Supervisors, Parents, Self). This demo walks you through a shortened version of the Teacher/Staff form (6 rated items plus 2 open-ended) and ends with a sample report.';
-    c.appendChild(e); c.appendChild(h); c.appendChild(p1); c.appendChild(p2);
+  // Progress bar
+  const pct = ((state.currentIndex + 1) / total) * 100;
+  const progressBar = document.getElementById('progressBar');
+  progressBar.style.width = pct + '%';
+  progressBar.style.backgroundColor = q.domainColor;
 
-    const domCh = document.createElement('div'); domCh.className = 'domains-chip';
-    DOMAINS.forEach(function(d) {
-      const chip = document.createElement('span'); chip.className = 'domain-chip';
-      chip.textContent = d.id + '. ' + d.name;
-      domCh.appendChild(chip);
-    });
-    c.appendChild(domCh);
+  // Domain meta
+  document.getElementById('domainName').textContent = q.domain.toLowerCase();
+  document.getElementById('domainName').style.color = q.domainColor;
+  document.getElementById('questionCounter').textContent = (state.currentIndex + 1) + ' of ' + total;
 
-    const fp = document.createElement('div'); fp.className = 'form-picker';
-    const fpl = document.createElement('div'); fpl.className = 'form-picker-label'; fpl.textContent = 'In the real pilot, each invitee sees one form only';
-    fp.appendChild(fpl);
-    const forms = document.createElement('div'); forms.className = 'forms';
-    const formDefs = [
-      { nm: 'Teacher / Staff', mt: '18 rated items + 2 open-ended. About 10 minutes.', tag: 'Demo uses this', active: true },
-      { nm: 'Supervisor', mt: 'Board chair, head of school. 18 items + 2 open-ended.', tag: 'Locked', locked: true },
-      { nm: 'Parent', mt: '12 rated items + 2 open-ended. About 7 minutes.', tag: 'Locked', locked: true },
-      { nm: 'Self', mt: 'The principal rates themselves on the same items.', tag: 'Locked', locked: true }
-    ];
-    formDefs.forEach(function(f) {
-      const opt = document.createElement('button'); opt.type = 'button';
-      opt.className = 'form-option' + (f.active ? ' selected' : '') + (f.locked ? ' locked' : '');
-      if (f.locked) opt.disabled = true;
-      const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = f.nm;
-      const mt = document.createElement('div'); mt.className = 'mt'; mt.textContent = f.mt;
-      const tag = document.createElement('div'); tag.className = 'tag'; tag.textContent = f.tag;
-      opt.appendChild(nm); opt.appendChild(mt); opt.appendChild(tag);
-      forms.appendChild(opt);
-    });
-    fp.appendChild(forms);
-    c.appendChild(fp);
+  // Domain badge
+  const badge = document.getElementById('domainBadge');
+  badge.textContent = q.domain;
+  badge.style.backgroundColor = q.domainColor;
+  document.getElementById('questionId').textContent = q.id;
 
-    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'primary'; btn.textContent = 'Start the Teacher/Staff reflection';
-    btn.addEventListener('click', function() { idx = 0; renderQuestion(); });
-    c.appendChild(btn);
+  // Question text — animate in
+  const qt = document.getElementById('questionText');
+  qt.textContent = q.text;
+  qt.classList.remove('animate-slide-right');
+  void qt.offsetWidth;
+  qt.classList.add('animate-slide-right');
 
-    const fn = document.createElement('div'); fn.className = 'footnote';
-    fn.textContent = 'Responses in the real system are anonymous and aggregated. Individual answers are never shown to the principal. Demo answers you enter here are not saved anywhere.';
-    c.appendChild(fn);
-
-    screen.appendChild(c);
+  // Render input by type
+  const inputDiv = document.getElementById('questionInput');
+  inputDiv.innerHTML = '';
+  if (q.type === 'likert') {
+    inputDiv.appendChild(renderLikert(q));
+  } else if (q.type === 'open') {
+    inputDiv.appendChild(renderOpen(q));
   }
 
-  function renderQuestion() {
-    const q = ALL_QS[idx];
-    setProgress(((idx + 1) / (ALL_QS.length + 1)) * 85);
-    clear();
-    const c = document.createElement('div'); c.className = 'qcard';
+  // Back button state
+  document.getElementById('backBtn').disabled = state.currentIndex === 0;
 
-    const nav = document.createElement('div'); nav.className = 'qnav';
-    const backBtn = document.createElement('button'); backBtn.type = 'button'; backBtn.className = 'secondary';
-    backBtn.textContent = idx === 0 ? 'Back to intro' : 'Previous';
-    backBtn.addEventListener('click', function() { if (idx === 0) renderIntro(); else { idx--; renderQuestion(); } });
-    const count = document.createElement('div'); count.className = 'step-count'; count.textContent = (idx + 1) + ' / ' + ALL_QS.length;
-    const nextBtn = document.createElement('button'); nextBtn.type = 'button'; nextBtn.className = 'primary';
-    const isLast = idx === ALL_QS.length - 1;
-    nextBtn.textContent = isLast ? 'Submit reflection' : 'Next';
+  // Next button state and label
+  updateNavState();
+}
 
-    function updateNext() {
-      const a = answers[idx];
-      const hasAnswer = q.type === 'text'
-        ? (typeof a === 'string' && a.trim().length > 0)
-        : (a !== null && a !== undefined);
-      nextBtn.disabled = !hasAnswer;
+function renderLikert(q) {
+  const wrap = document.createElement('div');
+  const list = document.createElement('div');
+  list.className = 'likert-list';
+
+  LIKERT_OPTIONS.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'likert-btn';
+    btn.dataset.value = opt.value;
+    if (state.answers[q.id] === opt.value) {
+      btn.classList.add('selected');
+      btn.style.backgroundColor = q.domainColor;
     }
+    btn.innerHTML = '<span class="likert-num">' + opt.value + '</span><span>' + opt.label + '</span>';
+    btn.addEventListener('click', () => selectLikert(q, opt.value));
+    list.appendChild(btn);
+  });
+  wrap.appendChild(list);
 
-    if (q.type !== 'text') {
-      const domain = DOMAINS.find(function(d) { return d.id === q.domain; });
-      const dm = document.createElement('div'); dm.className = 'q-dom';
-      dm.textContent = 'Domain ' + domain.id + ': ' + domain.name;
-      c.appendChild(dm);
-      const qn = document.createElement('div'); qn.className = 'qnum';
-      qn.textContent = 'Item ' + q.code + '  \u00B7  Question ' + (idx + 1) + ' of ' + ALL_QS.length;
-      c.appendChild(qn);
-      const t = document.createElement('div'); t.className = 'qtext'; t.textContent = q.text;
-      const m = document.createElement('div'); m.className = 'qmeasure'; m.textContent = 'Measures: ' + q.measures;
-      c.appendChild(t); c.appendChild(m);
+  // Cannot Observe
+  const co = document.createElement('button');
+  co.className = 'cannot-observe-btn';
+  if (state.answers[q.id] === 'co') co.classList.add('selected');
+  co.textContent = 'Cannot Observe / Not Applicable';
+  co.addEventListener('click', () => selectLikert(q, 'co'));
+  wrap.appendChild(co);
 
-      const sc = document.createElement('div'); sc.className = 'scale';
-      SCALE_LABELS.forEach(function(lab, i) {
-        const b = document.createElement('button'); b.type = 'button'; b.className = 'scale-btn' + (answers[idx] === i + 1 ? ' selected' : '');
-        const num = document.createElement('div'); num.className = 'num'; num.textContent = (i + 1);
-        const lb = document.createElement('div'); lb.className = 'lbl'; lb.textContent = lab;
-        b.appendChild(num); b.appendChild(lb);
-        b.addEventListener('click', function() { answers[idx] = i + 1; renderQuestion(); });
-        sc.appendChild(b);
-      });
-      c.appendChild(sc);
+  // Hint
+  const hint = document.createElement('p');
+  hint.className = 'keyboard-hint';
+  hint.textContent = 'Tip: Press 1\u20135 on your keyboard to select';
+  wrap.appendChild(hint);
 
-      const co = document.createElement('button'); co.type = 'button'; co.className = 'cannot-observe' + (answers[idx] === 'CO' ? ' selected' : '');
-      co.textContent = 'Cannot observe';
-      co.addEventListener('click', function() { answers[idx] = 'CO'; renderQuestion(); });
-      c.appendChild(co);
+  return wrap;
+}
+
+function selectLikert(q, value) {
+  state.answers[q.id] = value;
+  // Re-render the input in place
+  const inputDiv = document.getElementById('questionInput');
+  inputDiv.innerHTML = '';
+  inputDiv.appendChild(renderLikert(q));
+  updateNavState();
+}
+
+function renderOpen(q) {
+  const wrap = document.createElement('div');
+  const ta = document.createElement('textarea');
+  ta.className = 'open-input';
+  ta.placeholder = 'Share your thoughts here...';
+  ta.maxLength = 500;
+  ta.value = state.answers[q.id] || '';
+  ta.addEventListener('input', e => {
+    state.answers[q.id] = e.target.value;
+    counter.textContent = e.target.value.length + ' / 500 characters';
+    // auto-resize
+    ta.style.height = 'auto';
+    ta.style.height = Math.max(ta.scrollHeight, 110) + 'px';
+    updateNavState();
+  });
+  wrap.appendChild(ta);
+
+  const counterRow = document.createElement('div');
+  counterRow.className = 'char-counter';
+  const counter = document.createElement('span');
+  counter.textContent = (state.answers[q.id]?.length || 0) + ' / 500 characters';
+  counterRow.appendChild(counter);
+  wrap.appendChild(counterRow);
+
+  // Trigger initial sizing after appended
+  setTimeout(() => {
+    ta.style.height = 'auto';
+    ta.style.height = Math.max(ta.scrollHeight, 110) + 'px';
+  }, 0);
+  return wrap;
+}
+
+function updateNavState() {
+  const q = QUESTIONS[state.currentIndex];
+  const isLast = state.currentIndex === QUESTIONS.length - 1;
+  const nextBtn = document.getElementById('nextBtn');
+  const indicator = document.getElementById('answeredIndicator');
+
+  let answered = false;
+  if (q.type === 'likert') {
+    answered = !!state.answers[q.id];
+  } else if (q.type === 'open') {
+    answered = (state.answers[q.id] || '').trim().length > 0;
+  }
+
+  nextBtn.disabled = !answered;
+  nextBtn.textContent = isLast ? 'Submit Survey' : 'Next \u2192';
+
+  if (q.type === 'likert') {
+    if (answered) {
+      indicator.textContent = '\u2713 Answered';
+      indicator.classList.add('checked');
     } else {
-      const dm = document.createElement('div'); dm.className = 'q-dom';
-      dm.textContent = 'Open-ended';
-      c.appendChild(dm);
-      const qn = document.createElement('div'); qn.className = 'qnum';
-      qn.textContent = 'Question ' + (idx + 1) + ' of ' + ALL_QS.length;
-      c.appendChild(qn);
-      const t = document.createElement('div'); t.className = 'qtext'; t.textContent = q.text;
-      c.appendChild(t);
-      const ta = document.createElement('textarea'); ta.className = 'text-area'; ta.placeholder = q.ph;
-      ta.maxLength = 500;
-      if (typeof answers[idx] === 'string') ta.value = answers[idx];
-      const cc = document.createElement('div'); cc.className = 'char-count';
-      cc.textContent = (ta.value.length || 0) + ' / 500';
-      ta.addEventListener('input', function(e) {
-        answers[idx] = e.target.value;
-        cc.textContent = e.target.value.length + ' / 500';
-        updateNext();
-      });
-      c.appendChild(ta);
-      c.appendChild(cc);
+      indicator.textContent = 'Press 1\u20135 to select';
+      indicator.classList.remove('checked');
     }
+  } else {
+    indicator.textContent = answered ? '\u2713 Answered' : 'Type to continue';
+    if (answered) indicator.classList.add('checked'); else indicator.classList.remove('checked');
+  }
+}
 
-    updateNext();
-    nextBtn.addEventListener('click', function() {
-      if (isLast) { renderProcessing(); return; }
-      idx++; renderQuestion();
+function goNext() {
+  const isLast = state.currentIndex === QUESTIONS.length - 1;
+  if (isLast) {
+    submitSurvey();
+    return;
+  }
+  state.currentIndex++;
+  renderQuestion();
+}
+
+function goBack() {
+  if (state.currentIndex === 0) return;
+  state.currentIndex--;
+  renderQuestion();
+}
+
+// ============================================
+// PROCESSING + SUBMIT
+// ============================================
+function submitSurvey() {
+  showScreen('screen-processing');
+  cycleProcessingMessages();
+  setTimeout(() => {
+    renderReport();
+    showScreen('screen-report');
+  }, 4500);
+}
+
+const PROCESSING_MESSAGES = [
+  'Identifying patterns across 6 domains...',
+  'Computing Johari-style gap analysis...',
+  'Drafting Keep / Start / Stop recommendations...',
+  'Finalizing report...'
+];
+
+let processingTimer = null;
+function cycleProcessingMessages() {
+  let i = 0;
+  const el = document.getElementById('processingText');
+  el.textContent = PROCESSING_MESSAGES[0];
+  if (processingTimer) clearInterval(processingTimer);
+  processingTimer = setInterval(() => {
+    i = (i + 1) % PROCESSING_MESSAGES.length;
+    el.style.opacity = '0';
+    setTimeout(() => {
+      el.textContent = PROCESSING_MESSAGES[i];
+      el.style.opacity = '1';
+    }, 250);
+  }, 1100);
+  setTimeout(() => clearInterval(processingTimer), 5000);
+}
+
+// ============================================
+// REPORT RENDERING
+// ============================================
+function renderReport() {
+  const tbody = document.getElementById('domainTableBody');
+  if (!tbody) return;
+  if (tbody.dataset.rendered === 'true') return; // render once
+  tbody.dataset.rendered = 'true';
+  tbody.innerHTML = '';
+
+  DOMAIN_DATA.forEach((d, idx) => {
+    const row = document.createElement('tr');
+    row.className = 'domain-row';
+    row.innerHTML =
+      '<td class="label-cell"><span class="domain-dot" style="background:' + DOMAIN_COLORS[d.name] + '"></span>' + d.name + '<span class="chevron" id="chev-' + idx + '">\u25B6</span></td>' +
+      '<td class="center">' + fmt(d.teachers) + '</td>' +
+      '<td class="center">' + fmt(d.parents) + '</td>' +
+      '<td class="center">' + fmt(d.supervisors) + '</td>' +
+      '<td class="center">' + fmt(d.self) + '</td>' +
+      '<td class="right">' + d.overall.toFixed(1) + '</td>';
+    row.addEventListener('click', () => toggleDomainRow(idx));
+    tbody.appendChild(row);
+
+    // Detail row
+    const detail = document.createElement('tr');
+    detail.className = 'domain-detail-row';
+    detail.id = 'detail-' + idx;
+    const cell = document.createElement('td');
+    cell.colSpan = 6;
+    const inner = document.createElement('div');
+    inner.className = 'domain-detail-inner';
+    d.questions.forEach(q => {
+      inner.appendChild(renderQuestionBox(q));
     });
-    nav.appendChild(backBtn); nav.appendChild(count); nav.appendChild(nextBtn);
-    c.appendChild(nav);
-    screen.appendChild(c);
+    cell.appendChild(inner);
+    detail.appendChild(cell);
+    tbody.appendChild(detail);
+  });
+}
+
+function fmt(v) {
+  if (v === null || v === undefined) return '<span style="color:#9ca3af;">\u2014</span>';
+  return v.toFixed(1);
+}
+
+function renderQuestionBox(q) {
+  const total = q.dist.reduce((a, b) => a + b, 0);
+  const wrap = document.createElement('div');
+  wrap.className = 'qbox';
+  const top = document.createElement('div');
+  top.className = 'qbox-top';
+  top.innerHTML = '<span class="qbox-id">' + q.id + '</span><span class="qbox-score">' + q.avg.toFixed(1) + ' / 5.0</span>';
+  wrap.appendChild(top);
+
+  const text = document.createElement('p');
+  text.className = 'qbox-text';
+  text.textContent = q.text;
+  wrap.appendChild(text);
+
+  const bar = document.createElement('div');
+  bar.className = 'dist-bar';
+  q.dist.forEach((count, idx) => {
+    const value = idx + 1;
+    const width = total > 0 ? (count / total) * 100 : 0;
+    const seg = document.createElement('div');
+    seg.className = 'dist-seg dist-seg-' + value;
+    seg.style.width = width + '%';
+    if (count > 0 && width > 0) seg.style.minWidth = '6px';
+    seg.title = value + ': ' + count + ' response' + (count !== 1 ? 's' : '');
+    if (count > 0 && width > 14) seg.textContent = count;
+    bar.appendChild(seg);
+  });
+  wrap.appendChild(bar);
+
+  const labels = document.createElement('div');
+  labels.className = 'dist-labels';
+  labels.innerHTML = '<span>Almost Never</span><span>Almost Always</span>';
+  wrap.appendChild(labels);
+
+  return wrap;
+}
+
+function toggleDomainRow(idx) {
+  const detail = document.getElementById('detail-' + idx);
+  const chev = document.getElementById('chev-' + idx);
+  if (!detail) return;
+  detail.classList.toggle('open');
+  chev.classList.toggle('expanded');
+}
+
+// ============================================
+// KEYBOARD SHORTCUTS
+// ============================================
+document.addEventListener('keydown', (e) => {
+  const activeScreen = document.querySelector('.screen.active');
+  if (!activeScreen || activeScreen.id !== 'screen-question') return;
+
+  // Ignore typing in textarea (except Escape)
+  if (e.target.tagName === 'TEXTAREA') {
+    if (e.key === 'Escape') goBack();
+    return;
   }
 
-  function renderProcessing() {
-    setProgress(92);
-    clear();
-    const c = document.createElement('div'); c.className = 'processing';
-    const sp = document.createElement('div'); sp.className = 'spinner'; c.appendChild(sp);
-    const h = document.createElement('h2'); h.textContent = 'Analyzing your reflection.'; c.appendChild(h);
-    const p = document.createElement('p'); p.textContent = 'In the real system, Claude scans open-ended responses for themes, Cronbach alpha is computed per domain, and gap analysis compares each rater group to the principal\u2019s self-assessment. This is a simulation using your responses plus representative pilot data.';
-    c.appendChild(p);
-    screen.appendChild(c);
-    setTimeout(renderReport, 2400);
+  if (e.key === 'Escape') {
+    goBack();
+    return;
   }
 
-  function renderReport() {
-    setProgress(100);
-    clear();
-
-    const ratedItems = ALL_QS.filter(function(q) { return q.type !== 'text'; });
-    const userByDomain = {};
-    ratedItems.forEach(function(q, i) {
-      const a = answers[i];
-      if (typeof a === 'number') userByDomain[q.domain] = a;
-    });
-
-    const teacherAvg = { 1: 3.9, 2: 4.2, 3: 4.0, 4: 3.6, 5: 4.3, 6: 4.5 };
-    const selfAvg = { 1: 4.4, 2: 4.1, 3: 4.3, 4: 4.5, 5: 3.9, 6: 4.2 };
-
-    const finalTeacher = {};
-    DOMAINS.forEach(function(d) {
-      if (userByDomain[d.id]) {
-        finalTeacher[d.id] = ((teacherAvg[d.id] * 24) + userByDomain[d.id]) / 25;
-      } else {
-        finalTeacher[d.id] = teacherAvg[d.id];
-      }
-      finalTeacher[d.id] = Math.round(finalTeacher[d.id] * 10) / 10;
-    });
-
-    const c = document.createElement('div'); c.className = 'report';
-
-    const head = document.createElement('div'); head.className = 'report-head';
-    const eb = document.createElement('div'); eb.className = 'eyebrow'; eb.textContent = 'Sample report';
-    const h1 = document.createElement('h1'); h1.textContent = 'Leadership Reflection for Rabbi Dr. Sample Principal';
-    const meta = document.createElement('div'); meta.className = 'meta'; meta.textContent = 'Pardes Pilot Cycle \u00B7 25 teacher responses + 2 supervisor + 14 parent + 1 self';
-    head.appendChild(eb); head.appendChild(h1); head.appendChild(meta);
-    c.appendChild(head);
-
-    const s1 = document.createElement('div'); s1.className = 'section-block';
-    const s1h = document.createElement('h2'); s1h.textContent = 'Domain scores: teachers vs self'; s1.appendChild(s1h);
-    const lede = document.createElement('div'); lede.className = 'lede';
-    lede.textContent = 'Each bar shows your average teacher rating (out of 5). The thin navy line is your self-rating on that domain. Gaps between the two are where your perception and your team\u2019s perception differ.';
-    s1.appendChild(lede);
-    DOMAINS.forEach(function(d) {
-      const row = document.createElement('div'); row.className = 'domain-row';
-      const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = d.name;
-      const bars = document.createElement('div'); bars.className = 'bars';
-      const teacherBar = document.createElement('div'); teacherBar.className = 'bar teacher';
-      teacherBar.style.width = (finalTeacher[d.id] / 5 * 100) + '%';
-      const selfBar = document.createElement('div'); selfBar.className = 'bar self';
-      selfBar.style.width = (selfAvg[d.id] / 5 * 100) + '%';
-      bars.appendChild(teacherBar); bars.appendChild(selfBar);
-      const score = document.createElement('div'); score.className = 'score'; score.textContent = finalTeacher[d.id].toFixed(1);
-      row.appendChild(nm); row.appendChild(bars); row.appendChild(score);
-      s1.appendChild(row);
-    });
-    const lg = document.createElement('div'); lg.className = 'legend-row';
-    const l1 = document.createElement('span');
-    const d1 = document.createElement('span'); d1.className = 'dot'; d1.style.background = 'var(--forest)';
-    l1.appendChild(d1); l1.appendChild(document.createTextNode(' Teacher group average'));
-    const l2 = document.createElement('span');
-    const d2 = document.createElement('span'); d2.className = 'dot'; d2.style.background = 'var(--navy)'; d2.style.opacity = '0.75';
-    l2.appendChild(d2); l2.appendChild(document.createTextNode(' Self-rating'));
-    lg.appendChild(l1); lg.appendChild(l2);
-    s1.appendChild(lg);
-    c.appendChild(s1);
-
-    const s2 = document.createElement('div'); s2.className = 'section-block';
-    const s2h = document.createElement('h2'); s2h.textContent = 'Gap analysis: Johari-style framework'; s2.appendChild(s2h);
-    const s2l = document.createElement('div'); s2l.className = 'lede';
-    s2l.textContent = 'Where your self-rating and your teachers\u2019 average line up or diverge. Confirmed strengths are the ones everyone sees. Blind spots are areas you rate higher than your team does. Hidden strengths are areas the team rates higher than you do.';
-    s2.appendChild(s2l);
-    const johari = document.createElement('div'); johari.className = 'johari';
-    const quads = [
-      { cls: 'strength', label: 'Confirmed strengths', title: 'Mission Stewardship, People Development', body: 'You rated 4.2 on Mission Stewardship, teachers 4.5. You rated 3.9 on People Development, teachers 4.3. Both high, both agreed. These are the landing zones. Protect them.' },
-      { cls: 'blind', label: 'Blind spots', title: 'Direction and Decision-Making', body: 'You rated 4.5, teachers averaged 3.6. A 0.9 point gap. Your team is less clear on school goals than you think. Expect surprise when you read this.' },
-      { cls: 'hidden', label: 'Hidden strengths', title: 'Culture and Trust', body: 'Teachers rated 4.0, you rated 4.3 but underestimated how much your staff feel it. Lean into it. Name it out loud.' },
-      { cls: 'blind', label: 'Development needs', title: 'Teaching and Learning', body: 'Teachers rated 3.9, you rated 4.4. Classroom observation follow-through is the specific gap. The goal is set; the revisit is not.' }
-    ];
-    quads.forEach(function(q) {
-      const quad = document.createElement('div'); quad.className = 'quad ' + q.cls;
-      const lab = document.createElement('div'); lab.className = 'label'; lab.textContent = q.label;
-      const h4 = document.createElement('h4'); h4.textContent = q.title;
-      const p = document.createElement('p'); p.textContent = q.body;
-      quad.appendChild(lab); quad.appendChild(h4); quad.appendChild(p);
-      johari.appendChild(quad);
-    });
-    s2.appendChild(johari);
-    c.appendChild(s2);
-
-    const s3 = document.createElement('div'); s3.className = 'section-block';
-    const s3h = document.createElement('h2'); s3h.textContent = 'Themes from 25 open-ended answers'; s3.appendChild(s3h);
-    const s3l = document.createElement('div'); s3l.className = 'lede';
-    s3l.textContent = 'Claude synthesized patterns from free-text responses. No individual answer is attributed. Quotes below are lightly paraphrased composites preserving anonymity.';
-    s3.appendChild(s3l);
-    const themes = [
-      { name: 'Cares deeply about the school', count: '11 mentions', q: '"You can feel that this school is his life. He shows up for every event and remembers every kid\u2019s name."' },
-      { name: 'Follows through on instructional coaching', count: '7 mentions', q: '"He told me what to work on in October and actually asked me about it in March. That is rare."' },
-      { name: 'Overcommits, hard to reach sometimes', count: '6 mentions', q: '"I know he is doing a hundred things but sometimes my question sits for a week."' },
-      { name: 'Values-driven decision making', count: '5 mentions', q: '"When the easy thing and the right thing diverge, he picks the right thing. That matters."' }
-    ];
-    themes.forEach(function(t) {
-      const card = document.createElement('div'); card.className = 'theme-card';
-      const hd = document.createElement('div'); hd.className = 'hd';
-      const h4 = document.createElement('h4'); h4.textContent = t.name;
-      const cnt = document.createElement('span'); cnt.className = 'count'; cnt.textContent = t.count;
-      hd.appendChild(h4); hd.appendChild(cnt);
-      const q = document.createElement('div'); q.className = 'quote'; q.textContent = t.q;
-      card.appendChild(hd); card.appendChild(q);
-      s3.appendChild(card);
-    });
-    c.appendChild(s3);
-
-    const s4 = document.createElement('div'); s4.className = 'section-block';
-    const s4h = document.createElement('h2'); s4h.textContent = 'Your Keep / Start / Stop plan'; s4.appendChild(s4h);
-    const s4l = document.createElement('div'); s4l.className = 'lede';
-    s4l.textContent = 'The two to three concrete actions that come out of every Reflect debrief. Written during the 60 to 90 minute facilitated session.';
-    s4.appendChild(s4l);
-    const kss = document.createElement('div'); kss.className = 'kss';
-    const kssItems = [
-      { cls: 'keep', label: 'Keep', text: 'Walking the school every morning and greeting students by name. Your team sees this as mission-in-action.' },
-      { cls: 'start', label: 'Start', text: 'A 10-minute weekly written update to faculty on what you decided and why. This directly addresses the Direction and Decision-Making gap.' },
-      { cls: 'stop', label: 'Stop', text: 'Letting non-urgent staff questions sit past 48 hours. Set an explicit response window and tell the team what it is.' }
-    ];
-    kssItems.forEach(function(k) {
-      const col = document.createElement('div'); col.className = 'kss-col ' + k.cls;
-      const lab = document.createElement('div'); lab.className = 'label'; lab.textContent = k.label;
-      const p = document.createElement('p'); p.textContent = k.text;
-      col.appendChild(lab); col.appendChild(p);
-      kss.appendChild(col);
-    });
-    s4.appendChild(kss);
-    c.appendChild(s4);
-
-    const actions = document.createElement('div'); actions.className = 'actions-row';
-    const restart = document.createElement('button'); restart.type = 'button'; restart.className = 'primary'; restart.textContent = 'Take the reflection again';
-    restart.addEventListener('click', function() { for (let i = 0; i < answers.length; i++) answers[i] = null; idx = 0; renderIntro(); });
-    const back = document.createElement('button'); back.type = 'button'; back.textContent = 'Back to portfolio';
-    back.addEventListener('click', function() { window.location.href = '../../index.html'; });
-    actions.appendChild(restart); actions.appendChild(back);
-    c.appendChild(actions);
-
-    const fn = document.createElement('div'); fn.className = 'footnote';
-    fn.textContent = 'The full pilot report is 12 to 15 pages and includes Cronbach alpha per domain, Cannot Observe rates per item, the Jewish day school Identity Module (Domain 6b), and a facilitation guide for the live debrief.';
-    c.appendChild(fn);
-
-    screen.appendChild(c);
+  const q = QUESTIONS[state.currentIndex];
+  if (q.type === 'likert') {
+    const num = parseInt(e.key, 10);
+    if (num >= 1 && num <= 5) {
+      selectLikert(q, num);
+      e.preventDefault();
+    }
   }
 
-  renderIntro();
-})();
+  if (e.key === 'Enter' && !e.shiftKey) {
+    const nextBtn = document.getElementById('nextBtn');
+    if (!nextBtn.disabled) {
+      goNext();
+      e.preventDefault();
+    }
+  }
+});
+
+// ============================================
+// BACK-TO-PORTFOLIO
+// ============================================
+document.getElementById('backLink').addEventListener('click', (e) => {
+  e.preventDefault();
+  if (document.referrer && document.referrer !== window.location.href) {
+    history.back();
+  } else {
+    window.location.href = '../../index.html';
+  }
+});
+
+// ============================================
+// INIT
+// ============================================
+updateBackLinkStyle('screen-landing');
 </script>
 
 </body>
